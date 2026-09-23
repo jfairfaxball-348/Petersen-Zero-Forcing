@@ -14,15 +14,11 @@ theorem allB_eq_true {α : Type*} (s : Finset α) (p : α → Bool) :
   | @insert a s ha ih =>
       simp [allB, Finset.fold_insert ha, ih, ha]
 
+def sources (n : Nat) [NeZero n] : Finset (Vertex n) := {u 0, v 0}
+
 def bases (n : Nat) [NeZero n] : Finset (Finset (Vertex n)) :=
-  {
-    {u 0, u (-1), u 1},
-    {u 0, u (-1), v 0},
-    {u 0, u 1, v 0},
-    {v 0, v (-3), v 3},
-    {v 0, v (-3), u 0},
-    {v 0, v 3, u 0}
-  }
+  (sources n).biUnion fun source =>
+    ((neighbors n source).powersetCard 2).image fun pair => insert source pair
 
 def reducedScanB (n : Nat) [NeZero n] : Bool :=
   allB (bases n) fun base =>
