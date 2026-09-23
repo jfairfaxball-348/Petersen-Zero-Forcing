@@ -3,7 +3,12 @@
   "repository": "jfairfaxball-348/Petersen-Zero-Forcing",
   "suggested_lean_namespace": "PetersenZeroForcing",
   "target_theorem": "For every integer n >= 13, Z(P(n,3)) = 8.",
-  "phase_order": ["PROOF", "LEAN", "PALOMAR", "PAPER"],
+  "phase_order": [
+    "PROOF",
+    "LEAN",
+    "PALOMAR",
+    "PAPER"
+  ],
   "scaffold": "complete",
   "imported_pilot_verdict": "PILOT_POSITIVE",
   "baseline": "reproduced",
@@ -38,10 +43,28 @@
     "certificate_sha256": "6da40e67669395d515e2da5e4e0c25c901ca856ff4e0a4fb489af5b7e1da6453",
     "certificate_shapes": 38,
     "ordered_touching_merges": 1591,
-    "finite_scan_range": [13, 30],
+    "finite_scan_range": [
+      13,
+      30
+    ],
     "finite_reduced_entries_per_implementation": 14271318,
-    "maximum_closure": {"13": 18, "14_to_30": 16}
+    "maximum_closure": {
+      "13": 18,
+      "14_to_30": 16
+    }
   },
-  "next_permitted_task": "Lean formalisation of the audited theorem and dependency graph; do not begin Palomar work until the Lean trust gate passes.",
-  "bootstrap_date": "2026-09-23"
+  "next_permitted_task": "Continue Lean formalisation on branch lean-formalisation / draft PR #2. Do not begin Palomar until the exact theorem builds and the final transitive axiom audit passes.",
+  "bootstrap_date": "2026-09-23",
+  "lean_formalisation": {
+    "state": "in_progress",
+    "branch": "lean-formalisation",
+    "pull_request": 2,
+    "pre_handoff_implementation_head": "8cfa7c67ed1238e672530a887b6da6cde70708b9",
+    "toolchain": "leanprover/lean4:v4.19.0",
+    "mathlib": "v4.19.0",
+    "baseline_verification_on_pre_handoff_head": "passed",
+    "lean_build_on_pre_handoff_head": "pending_at_handoff",
+    "trust_audit": "not_yet_run",
+    "native_decide_allowed": false
+  }
 }
