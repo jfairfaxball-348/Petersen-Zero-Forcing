@@ -1,0 +1,32 @@
+name: Bootstrap repository expansion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bootstrap/ready'
+
+permissions:
+  contents: write
+
+jobs:
+  expand:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: true
+      - name: Expand committed bootstrap tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .bootstrap/chunk-* | base64 -d > /tmp/petersen-repo.tar.gz
+          rm -rf .bootstrap
+          rm -f .github/workflows/bootstrap-expand.yml
+          tar -xzf /tmp/petersen-repo.tar.gz -C .
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Bootstrap Petersen zero-forcing research repository"
+          git push origin HEAD:main
