@@ -66,12 +66,14 @@ theorem merge_row_properties (m : CertificateData.MergeDatum)
   simpa [mergeRowOKB] using h
 
 theorem certificate_keys_eq_expected : certificateKeys = expectedKeys := by
-  have h := certificate_keys_checked
-  simpa [certificateKeysOKB] using h |>.1
+  have h : certificateKeys = expectedKeys ∧ certificateKeys.Nodup := by
+    simpa [certificateKeysOKB] using certificate_keys_checked
+  exact h.1
 
 theorem certificate_keys_nodup : certificateKeys.Nodup := by
-  have h := certificate_keys_checked
-  simpa [certificateKeysOKB] using h |>.2
+  have h : certificateKeys = expectedKeys ∧ certificateKeys.Nodup := by
+    simpa [certificateKeysOKB] using certificate_keys_checked
+  exact h.2
 
 end Certificate
 end PetersenZeroForcing
