@@ -1,0 +1,10 @@
+.build/
+__pycache__/
+*.pyc
+*.pyo
+*.o
+*.out
+verify_certificate
+petersen_screen_extended
+.pytest_cache/
+.DS_Store
