@@ -3,6 +3,9 @@ name: Lean formalisation
 on:
   push:
     branches: [main, lean-formalisation]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: lean-${{ github.workflow }}-${{ github.ref }}
@@ -16,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: leanprover/lean-action@v1
+      - name: Lean build
+        uses: leanprover/lean-action@v1
         with:
           build: true
           use-github-cache: true
