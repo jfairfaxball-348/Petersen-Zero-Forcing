@@ -6,3 +6,4 @@ import PetersenZeroForcing.Forcing
 import PetersenZeroForcing.CertificateLemmas
 import PetersenZeroForcing.Projection
 import PetersenZeroForcing.Contact
+import PetersenZeroForcing.FiniteScan
