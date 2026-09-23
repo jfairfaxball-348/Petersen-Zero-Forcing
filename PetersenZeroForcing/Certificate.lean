@@ -9,7 +9,7 @@ abbrev ShiftId := Fin 43
 def datum (i : ShapeId) : CertificateData.ShapeDatum :=
   CertificateData.shapeByNat i.1
 
-def shape (i : ShapeId) : Finset StripVertex := (datum i).vertices
+def shape (i : ShapeId) : Finset StripVertex := (datum i).vertices.toFinset
 def weight (i : ShapeId) : Nat := (datum i).weight
 
 def sizeBound : Nat → Nat
@@ -1620,41 +1620,53 @@ def mergeByKey : Nat → Nat → Nat → Option (Nat × ℤ)
   | 24, 1, 39 => some (37, (0 : ℤ))
   | _, _, _ => none
 
-noncomputable def coordsOKB (i : ShapeId) : Bool :=
-  (shape i).toList.all fun x => decide (0 ≤ x.2 ∧ x.2 ≤ 18)
+def shapeClosedB (i : ShapeId) : Bool :=
+  (datum i).vertices.all fun x => decide ((stripNeighbors x \ shape i).card ≠ 1)
 
-noncomputable def shapeRowOKB (i : ShapeId) : Bool :=
-  stripClosedB (shape i) &&
+def coordsOKB (i : ShapeId) : Bool :=
+  (datum i).vertices.all fun x => decide (0 ≤ x.2 ∧ x.2 ≤ 18)
+
+def shapeRowOKB (i : ShapeId) : Bool :=
+  shapeClosedB i &&
   coordsOKB i &&
   decide (1 ≤ weight i ∧ weight i ≤ 7) &&
   decide ((shape i).card ≤ sizeBound (weight i))
 
-noncomputable def mergeExpectedB (a b : ShapeId) (s : ShiftId) : Bool :=
-  decide (weight a + weight b ≤ 7) &&
-  stripTouchesB (shape a) (translateSet (shape b) (shiftValue s))
+def translatedVertices (i : ShapeId) (t : ℤ) : List StripVertex :=
+  (datum i).vertices.map (translateVertex t)
 
-noncomputable def mergeWitnessOKB (a b : ShapeId) (s : ShiftId) (c : Nat) (q : ℤ) : Bool :=
+def mergeExpectedB (a b : ShapeId) (s : ShiftId) : Bool :=
+  decide (weight a + weight b ≤ 7) &&
+  (datum a).vertices.any fun x =>
+    (translatedVertices b (shiftValue s)).any fun y =>
+      decide (x = y ∨ y ∈ stripNeighbors x)
+
+def mergeWitnessOKB (a b : ShapeId) (s : ShiftId) (c : Nat) (q : ℤ) : Bool :=
   decide (c < 38) &&
   decide ((CertificateData.shapeByNat c).weight ≤ weight a + weight b) &&
-  decide (shape a ⊆ translateSet (CertificateData.shapeByNat c).vertices q) &&
+  decide (shape a ⊆ translateSet (CertificateData.shapeByNat c).vertices.toFinset q) &&
   decide (translateSet (shape b) (shiftValue s) ⊆
-    translateSet (CertificateData.shapeByNat c).vertices q)
+    translateSet (CertificateData.shapeByNat c).vertices.toFinset q)
 
-noncomputable def mergeKeyOKB (a b : ShapeId) (s : ShiftId) : Bool :=
+def mergeKeyOKB (a b : ShapeId) (s : ShiftId) : Bool :=
   match mergeByKey a.1 b.1 s.1 with
   | none => !(mergeExpectedB a b s)
   | some (c,q) => mergeExpectedB a b s && mergeWitnessOKB a b s c q
 
-noncomputable def certificateRowsOKB : Bool :=
+def certificateRowsOKB : Bool :=
   (List.ofFn (fun i : ShapeId => shapeRowOKB i)).all id
 
-noncomputable def certificateMergesOKB : Bool :=
+def certificateMergesOKB : Bool :=
   (List.ofFn (fun a : ShapeId =>
     (List.ofFn (fun b : ShapeId =>
       (List.ofFn (fun s : ShiftId => mergeKeyOKB a b s)).all id)).all id)).all id
 
-theorem certificate_rows_checked : certificateRowsOKB = true := by decide
+def certificateDataOKB : Bool :=
+  decide (CertificateData.shapes.length = 38) &&
+  decide (CertificateData.merges.length = 1591)
 
+theorem certificate_data_checked : certificateDataOKB = true := by decide
+theorem certificate_rows_checked : certificateRowsOKB = true := by decide
 theorem certificate_merges_checked : certificateMergesOKB = true := by decide
 
 theorem outer_singleton : shape ⟨0, by decide⟩ = {su 0} := by decide
