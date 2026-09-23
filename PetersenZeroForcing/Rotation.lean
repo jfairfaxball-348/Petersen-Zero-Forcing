@@ -18,7 +18,13 @@ def rotateSet (n : Nat) [NeZero n] (r : ZMod n) (S : Finset (Vertex n)) :
 @[simp] theorem mem_rotateSet (n : Nat) [NeZero n] (r : ZMod n)
     (S : Finset (Vertex n)) (x : Vertex n) :
     rotateEquiv n r x ∈ rotateSet n r S ↔ x ∈ S := by
-  simp [rotateSet]
+  constructor
+  · intro hx
+    rcases Finset.mem_map.mp hx with ⟨y, hy, hxy⟩
+    have : y = x := (rotateEquiv n r).injective hxy
+    simpa [this] using hy
+  · intro hx
+    exact Finset.mem_map.mpr ⟨x, hx, rfl⟩
 
 @[simp] theorem card_rotateSet (n : Nat) [NeZero n] (r : ZMod n)
     (S : Finset (Vertex n)) :
@@ -36,8 +42,30 @@ theorem whiteNeighbors_rotate (n : Nat) [NeZero n] (r : ZMod n)
     (S : Finset (Vertex n)) (x : Vertex n) :
     (whiteNeighbors n S x).map (rotateEquiv n r).toEmbedding =
       whiteNeighbors n (rotateSet n r S) (rotateEquiv n r x) := by
-  simp only [whiteNeighbors, rotateSet, Finset.map_sdiff]
-  exact neighbors_rotate n r x
+  apply Finset.ext
+  intro z
+  constructor
+  · intro hz
+    rcases Finset.mem_map.mp hz with ⟨y, hy, hyz⟩
+    rcases Finset.mem_sdiff.mp hy with ⟨hyN, hyS⟩
+    subst z
+    apply Finset.mem_sdiff.mpr
+    constructor
+    · rw [← neighbors_rotate n r x]
+      exact Finset.mem_map.mpr ⟨y, hyN, rfl⟩
+    · intro h
+      exact hyS ((mem_rotateSet n r S y).mp h)
+  · intro hz
+    rcases Finset.mem_sdiff.mp hz with ⟨hzN, hzS⟩
+    have hzN' : z ∈ (neighbors n x).map (rotateEquiv n r).toEmbedding := by
+      rw [neighbors_rotate n r x]
+      exact hzN
+    rcases Finset.mem_map.mp hzN' with ⟨y, hyN, hyz⟩
+    subst z
+    apply Finset.mem_map.mpr
+    refine ⟨y, Finset.mem_sdiff.mpr ⟨hyN, ?_⟩, rfl⟩
+    intro hyS
+    exact hzS ((mem_rotateSet n r S y).mpr hyS)
 
 theorem whiteNeighbors_rotate_eq_singleton (n : Nat) [NeZero n] (r : ZMod n)
     (S : Finset (Vertex n)) (x y : Vertex n) :
@@ -54,31 +82,41 @@ theorem whiteNeighbors_rotate_eq_singleton (n : Nat) [NeZero n] (r : ZMod n)
 theorem forceStep_rotate (n : Nat) [NeZero n] (r : ZMod n)
     (S : Finset (Vertex n)) :
     rotateSet n r (forceStep n S) = forceStep n (rotateSet n r S) := by
-  ext y
-  let x := (rotateEquiv n r).symm y
-  have hy : y = rotateEquiv n r x := by
-    simp [x]
-  subst y
-  simp only [rotateSet, Finset.mem_map, forceStep, Finset.mem_union,
-    Finset.mem_filter, Finset.mem_univ, true_and]
+  apply Finset.ext
+  intro y
   constructor
-  · rintro ⟨z, hz, hzx⟩
-    have hz_eq : z = x := (rotateEquiv n r).injective hzx
-    subst z
-    rcases hz with hxS | ⟨source, hsS, hforce⟩
-    · exact Or.inl (by simp [rotateSet, hxS])
-    · refine Or.inr ⟨rotateEquiv n r source, ?_, ?_⟩
-      · simp [rotateSet, hsS]
-      · exact (whiteNeighbors_rotate_eq_singleton n r S source x).2 hforce
-  · intro h
-    refine ⟨x, ?_, rfl⟩
-    rcases h with hxS | ⟨sourceR, hsR, hforceR⟩
-    · exact Or.inl ((mem_rotateSet n r S x).mp hxS)
-    · rcases Finset.mem_map.mp hsR with ⟨source, hsS, hsource⟩
-      have hsEq : sourceR = rotateEquiv n r source := hsource.symm
-      subst sourceR
-      exact Or.inr ⟨source, hsS,
-        (whiteNeighbors_rotate_eq_singleton n r S source x).1 hforceR⟩
+  · intro hy
+    rcases Finset.mem_map.mp hy with ⟨z, hz, hzy⟩
+    rcases Finset.mem_union.mp hz with hzS | hzF
+    · rw [← hzy]
+      exact Finset.mem_union_left _ (Finset.mem_map.mpr ⟨z, hzS, rfl⟩)
+    · rcases (Finset.mem_filter.mp hzF).2 with ⟨source, hsS, hforce⟩
+      rw [← hzy]
+      apply Finset.mem_union_right
+      apply Finset.mem_filter.mpr
+      refine ⟨Finset.mem_univ _, ⟨rotateEquiv n r source, ?_, ?_⟩⟩
+      · exact Finset.mem_map.mpr ⟨source, hsS, rfl⟩
+      · exact (whiteNeighbors_rotate_eq_singleton n r S source z).2 hforce
+  · intro hy
+    rcases Finset.mem_union.mp hy with hyS | hyF
+    · rcases Finset.mem_map.mp hyS with ⟨z, hzS, hzy⟩
+      exact Finset.mem_map.mpr
+        ⟨z, Finset.mem_union_left _ hzS, hzy⟩
+    · rcases (Finset.mem_filter.mp hyF).2 with ⟨sourceR, hsR, hforceR⟩
+      rcases Finset.mem_map.mp hsR with ⟨source, hsS, hsource⟩
+      let z : Vertex n := (rotateEquiv n r).symm y
+      have hzy : rotateEquiv n r z = y := (rotateEquiv n r).apply_symm_apply y
+      have hsource' : sourceR = rotateEquiv n r source := hsource.symm
+      have hforceR' :
+          whiteNeighbors n (rotateSet n r S) (rotateEquiv n r source) =
+            {rotateEquiv n r z} := by
+        simpa [hsource', hzy] using hforceR
+      have hforce : whiteNeighbors n S source = {z} :=
+        (whiteNeighbors_rotate_eq_singleton n r S source z).1 hforceR'
+      apply Finset.mem_map.mpr
+      refine ⟨z, Finset.mem_union_right _ ?_, hzy⟩
+      apply Finset.mem_filter.mpr
+      exact ⟨Finset.mem_univ _, ⟨source, hsS, hforce⟩⟩
 
 theorem iterate_forceStep_rotate (n : Nat) [NeZero n] (r : ZMod n)
     (S : Finset (Vertex n)) :
@@ -100,20 +138,24 @@ theorem closure_rotate (n : Nat) [NeZero n] (r : ZMod n)
 
 theorem rotateSet_univ (n : Nat) [NeZero n] (r : ZMod n) :
     rotateSet n r (Finset.univ : Finset (Vertex n)) = Finset.univ := by
-  ext x
-  let y := (rotateEquiv n r).symm x
-  have : x = rotateEquiv n r y := by simp [y]
-  subst x
-  simp [rotateSet]
+  apply Finset.eq_univ_of_forall
+  intro y
+  rcases (rotateEquiv n r).surjective y with ⟨x, rfl⟩
+  exact Finset.mem_map.mpr ⟨x, Finset.mem_univ _, rfl⟩
 
 theorem isZeroForcing_rotate_iff (n : Nat) [NeZero n] (r : ZMod n)
     (S : Finset (Vertex n)) :
     IsZeroForcing n (rotateSet n r S) ↔ IsZeroForcing n S := by
-  rw [IsZeroForcing, ← closure_rotate]
+  unfold IsZeroForcing
+  rw [← closure_rotate n r S]
   constructor
   · intro h
-    have h' := congrArg (fun T => rotateSet n (-r) T) h
-    simpa [rotateSet, Finset.map_map, rotateSet_univ] using h'
+    apply Finset.eq_univ_of_forall
+    intro x
+    have hx : rotateEquiv n r x ∈ rotateSet n r (closure n S) := by
+      rw [h]
+      exact Finset.mem_univ _
+    exact (mem_rotateSet n r (closure n S) x).mp hx
   · intro h
     rw [h, rotateSet_univ]
 
