@@ -16,7 +16,7 @@ def StripClosed (C : Finset StripVertex) : Prop :=
   ∀ x ∈ C, (stripNeighbors x \ C).card ≠ 1
 
 /-- Executable checker equivalent to strip closedness; used only to reflect the finite certificate. -/
-def stripClosedB (C : Finset StripVertex) : Bool :=
+noncomputable def stripClosedB (C : Finset StripVertex) : Bool :=
   C.toList.all fun x => decide ((stripNeighbors x \ C).card ≠ 1)
 
 theorem stripClosedB_eq_true_iff (C : Finset StripVertex) :
@@ -34,7 +34,7 @@ def StripTouches (A B : Finset StripVertex) : Prop :=
   ∃ x ∈ A, ∃ y ∈ B, x = y ∨ y ∈ stripNeighbors x
 
 /-- Executable contact checker for finite certificate reflection. -/
-def stripTouchesB (A B : Finset StripVertex) : Bool :=
+noncomputable def stripTouchesB (A B : Finset StripVertex) : Bool :=
   A.toList.any fun x => B.toList.any fun y => decide (x = y ∨ y ∈ stripNeighbors x)
 
 theorem stripTouchesB_eq_true_iff (A B : Finset StripVertex) :
