@@ -1,0 +1,132 @@
+{
+  "status": "passed",
+  "scans": [
+    {
+      "n": 13,
+      "k": 7,
+      "reduced": true,
+      "tested": 53130,
+      "maximum_closure": 18
+    },
+    {
+      "n": 14,
+      "k": 7,
+      "reduced": true,
+      "tested": 75900,
+      "maximum_closure": 16
+    },
+    {
+      "n": 15,
+      "k": 7,
+      "reduced": true,
+      "tested": 105300,
+      "maximum_closure": 16
+    },
+    {
+      "n": 16,
+      "k": 7,
+      "reduced": true,
+      "tested": 142506,
+      "maximum_closure": 16
+    },
+    {
+      "n": 17,
+      "k": 7,
+      "reduced": true,
+      "tested": 188790,
+      "maximum_closure": 16
+    },
+    {
+      "n": 18,
+      "k": 7,
+      "reduced": true,
+      "tested": 245520,
+      "maximum_closure": 16
+    },
+    {
+      "n": 19,
+      "k": 7,
+      "reduced": true,
+      "tested": 314160,
+      "maximum_closure": 16
+    },
+    {
+      "n": 20,
+      "k": 7,
+      "reduced": true,
+      "tested": 396270,
+      "maximum_closure": 16
+    },
+    {
+      "n": 21,
+      "k": 7,
+      "reduced": true,
+      "tested": 493506,
+      "maximum_closure": 16
+    },
+    {
+      "n": 22,
+      "k": 7,
+      "reduced": true,
+      "tested": 607620,
+      "maximum_closure": 16
+    },
+    {
+      "n": 23,
+      "k": 7,
+      "reduced": true,
+      "tested": 740460,
+      "maximum_closure": 16
+    },
+    {
+      "n": 24,
+      "k": 7,
+      "reduced": true,
+      "tested": 893970,
+      "maximum_closure": 16
+    },
+    {
+      "n": 25,
+      "k": 7,
+      "reduced": true,
+      "tested": 1070190,
+      "maximum_closure": 16
+    },
+    {
+      "n": 26,
+      "k": 7,
+      "reduced": true,
+      "tested": 1271256,
+      "maximum_closure": 16
+    },
+    {
+      "n": 27,
+      "k": 7,
+      "reduced": true,
+      "tested": 1499400,
+      "maximum_closure": 16
+    },
+    {
+      "n": 28,
+      "k": 7,
+      "reduced": true,
+      "tested": 1756950,
+      "maximum_closure": 16
+    },
+    {
+      "n": 29,
+      "k": 7,
+      "reduced": true,
+      "tested": 2046330,
+      "maximum_closure": 16
+    },
+    {
+      "n": 30,
+      "k": 7,
+      "reduced": true,
+      "tested": 2370060,
+      "maximum_closure": 16
+    }
+  ],
+  "scope": "All n=13,...,30, seven seeds; complete first-force reduced scans with duplicate entries allowed"
+}

@@ -1,0 +1,34 @@
+{
+  "project": "Zero Forcing in Generalized Petersen Graphs",
+  "repository": "jfairfaxball-348/Petersen-Zero-Forcing",
+  "suggested_lean_namespace": "PetersenZeroForcing",
+  "target_theorem": "For every integer n >= 13, Z(P(n,3)) = 8.",
+  "phase_order": ["PROOF", "LEAN", "PALOMAR", "PAPER"],
+  "scaffold": "complete",
+  "imported_pilot_verdict": "PILOT_POSITIVE",
+  "baseline": "reproduced",
+  "active_phase": "PROOF",
+  "independent_proof_audit": "pending",
+  "phase_gates": {
+    "PROOF": "open",
+    "LEAN": "locked_by_PROOF",
+    "PALOMAR": "locked_by_LEAN",
+    "PAPER": "locked_by_PALOMAR"
+  },
+  "treestack_blueprint": {
+    "repository": "jfairfaxball-348/TreeStack-Structural-Certificates-for-Stacking-on-Trees",
+    "commit": "9963a9d7d30c2c31a251e069ac87fea0c802882b"
+  },
+  "pilot_evidence": {
+    "results_zip_sha256": "7fdc0a1cd7ed326fa51c01ad3343924b3645e1da7674fb67e67d839f32b81977",
+    "report_sha256": "586e0f757446a2d7cd95df198b7f3838a9c9774a6971de81b417a0d992a4671e",
+    "certificate_sha256": "6da40e67669395d515e2da5e4e0c25c901ca856ff4e0a4fb489af5b7e1da6453",
+    "certificate_shapes": 38,
+    "ordered_touching_merges": 1591,
+    "finite_scan_range": [13, 30],
+    "finite_reduced_entries_per_implementation": 14271318,
+    "maximum_closure": {"13": 18, "14_to_30": 16}
+  },
+  "next_permitted_task": "Independent hostile mathematical audit of the exact theorem and imported candidate proof.",
+  "bootstrap_date": "2026-09-23"
+}

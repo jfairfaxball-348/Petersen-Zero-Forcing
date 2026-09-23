@@ -1,0 +1,23 @@
+{
+  "verdict": "PILOT_POSITIVE",
+  "target": "Z(P(n,3)) = 8 for all integers n >= 13",
+  "uniform_lemma": "For n >= 22 and |S| <= 7, |cl(S)| <= 16",
+  "certificate_shapes": 38,
+  "certificate_ordered_touching_merges": 1591,
+  "standalone_certificate_verifiers": [
+    "C++17",
+    "Python3"
+  ],
+  "finite_scan_range": [
+    13,
+    30
+  ],
+  "finite_reduced_entries_per_implementation": 14271318,
+  "proof_status": "Computer-assisted argument with checked finite certificate and written uniform proof",
+  "independent_human_or_agent_audit": false,
+  "lean_formalized": false,
+  "palomar_submitted": false,
+  "publication_submitted": false,
+  "next_gate": "Independent hostile audit of the written proof and certificate",
+  "input_zip_sha256": "bb84e355aa50a44868acdbbc087137389f98a42ed6be8a1005bbd1ab6dfddef6"
+}

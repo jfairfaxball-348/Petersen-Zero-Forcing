@@ -1,0 +1,15 @@
+{
+  "baseline_cpu_budget_seconds": 7200,
+  "execution": "certificate/C++ stages serial; Python finite stage up to four fresh subprocesses concurrently",
+  "final_clean_run": {
+    "command": "./scripts/verify_baseline.sh",
+    "exit_status": 0,
+    "user_cpu_seconds": 88.49,
+    "system_cpu_seconds": 2.52,
+    "elapsed_wall_seconds": 31.02,
+    "maximum_resident_set_kib_reported_by_time": 100204
+  },
+  "acceptance_note": "Machine-dependent timings and memory observations are logs only; acceptance uses hashes, counts, ranges, and maxima.",
+  "per_process_virtual_memory_cap_bytes": 805306368,
+  "aggregate_memory_ceiling_note": "The parent plus at most four Python worker subprocesses inherit the 768 MiB per-process virtual-memory cap, for a configured ceiling below 4 GiB."
+}

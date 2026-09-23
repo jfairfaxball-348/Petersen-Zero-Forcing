@@ -31,7 +31,7 @@ From a clean checkout with Python 3, a C++17 compiler, `sha256sum`, and standard
 ./scripts/verify_baseline.sh
 ```
 
-The command verifies the preserved input hashes, checks the canonical merge certificate with independent C++ and Python verifiers, reproduces the C++ reduced seven-seed scans for every `n=13,...,30`, and independently repeats those finite scans in Python. Acceptance compares counts, ranges, maxima, and hashes; timings are not acceptance criteria. The command keeps certificate/C++ stages serial and uses at most four fresh Python finite-scan workers; each process is capped at 768 MiB virtual memory, keeping the aggregate ceiling below 4 GiB and the computation well below the two-CPU-hour bootstrap budget.
+The command verifies the preserved outer hashes and both checksum manifests inside the untouched pilot ZIP, checks the canonical merge certificate with independent C++ and Python verifiers, reproduces the C++ reduced seven-seed scans for every `n=13,...,30`, and independently repeats those finite scans in Python. Acceptance compares counts, ranges, maxima, and hashes; timings are not acceptance criteria. Each process is capped at 768 MiB virtual memory, the Python finite stage uses at most four worker subprocesses, and the aggregate configured ceiling remains below 4 GiB and two CPU-hours.
 
 ## Evidence boundary
 
