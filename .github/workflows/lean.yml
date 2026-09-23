@@ -2,7 +2,7 @@ name: Lean formalisation
 
 on:
   push:
-    branches: [main]
+    branches: [main, lean-formalisation]
   pull_request:
     branches: [main]
   workflow_dispatch:
