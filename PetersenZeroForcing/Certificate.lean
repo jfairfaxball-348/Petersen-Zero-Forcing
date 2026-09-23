@@ -99,17 +99,24 @@ def certificateKeysOKB : Bool :=
   decide (certificateKeys = expectedKeys) &&
   decide certificateKeys.Nodup
 
+set_option maxRecDepth 1000000 in
 theorem certificate_data_checked : certificateDataOKB = true := by decide
 
+set_option maxRecDepth 1000000 in
 theorem certificate_shapes_checked : certificateShapesOKB = true := by decide
 
 set_option maxHeartbeats 4000000 in
+set_option maxRecDepth 1000000 in
 theorem certificate_merge_rows_checked : certificateMergeRowsOKB = true := by decide
 
 set_option maxHeartbeats 4000000 in
+set_option maxRecDepth 1000000 in
 theorem certificate_keys_checked : certificateKeysOKB = true := by decide
 
+set_option maxRecDepth 1000000 in
 theorem outer_singleton : shape ⟨0, by decide⟩ = {su 0} := by decide
+
+set_option maxRecDepth 1000000 in
 theorem inner_singleton : shape ⟨1, by decide⟩ = {sv 0} := by decide
 
 end Certificate
