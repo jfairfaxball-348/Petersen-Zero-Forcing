@@ -83,17 +83,22 @@ theorem univ_zero_forcing (n : Nat) [NeZero n] :
   · exact subset_closure n Finset.univ
 
 /-- The zero-forcing number, defined as the least cardinality of a forcing set. -/
-noncomputable def Z (n : Nat) [NeZero n] : Nat :=
-  Nat.find (show ∃ k : Nat, ∃ S : Finset (Vertex n), IsZeroForcing n S ∧ S.card = k by
+noncomputable def Z (n : Nat) [NeZero n] : Nat := by
+  classical
+  exact Nat.find (show ∃ k : Nat, ∃ S : Finset (Vertex n), IsZeroForcing n S ∧ S.card = k by
     exact ⟨(Finset.univ : Finset (Vertex n)).card, Finset.univ, univ_zero_forcing n, rfl⟩)
 
 theorem Z_spec (n : Nat) [NeZero n] :
     ∃ S : Finset (Vertex n), IsZeroForcing n S ∧ S.card = Z n := by
+  classical
+  rw [Z]
   exact Nat.find_spec (show ∃ k : Nat, ∃ S : Finset (Vertex n), IsZeroForcing n S ∧ S.card = k by
     exact ⟨(Finset.univ : Finset (Vertex n)).card, Finset.univ, univ_zero_forcing n, rfl⟩)
 
 theorem Z_le_card (n : Nat) [NeZero n] {S : Finset (Vertex n)}
     (hS : IsZeroForcing n S) : Z n ≤ S.card := by
+  classical
+  rw [Z]
   apply Nat.find_min'
   exact ⟨S, hS, rfl⟩
 
