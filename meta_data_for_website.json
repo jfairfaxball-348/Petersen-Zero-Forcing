@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "title": "Zero Forcing in Generalized Petersen Graphs",
+  "slug": "petersen-zero-forcing",
+  "status": "Active research",
+  "headline": "The computational baseline for the conjecture $Z(P(n,3))=8$ for all $n\\ge 13$ has been reproduced, while the mathematical proof remains under independent audit.",
+  "year": 2026,
+  "description": "Research on the zero-forcing number of the generalized Petersen graphs $P(n,3)$, focused on the conjecture that $Z(P(n,3))=8$ for every integer $n\\ge 13$. The imported computational pilot is positive and its certificate and finite-search baseline have been reproduced in this repository, but the mathematical proof is still undergoing an independent hostile audit; no Lean formalisation, Palomar verification, or research paper has begun.",
+  "topics": [
+    "Graph theory",
+    "Zero forcing",
+    "Generalized Petersen graphs",
+    "Computational verification"
+  ],
+  "github_url": "https://github.com/jfairfaxball-348/Petersen-Zero-Forcing",
+  "palomar_id": null,
+  "palomar_url": null,
+  "paper_url": null,
+  "arxiv_id": null,
+  "arxiv_url": null,
+  "doi": null,
+  "formalisation_system": null,
+  "verification": "Computational baseline reproduced; mathematical proof not yet independently accepted.",
+  "attribution": "The target is Conjecture 5 in Arnav Krishnan's July 2026 preprint A correction to the Zero Forcing Number of the Generalized Petersen Graphs P(n,3) (arXiv:2607.19412v1). John Fairfax-Ball's repository has reproduced the imported computational baseline and is conducting an independent audit of the candidate proof; it does not claim authorship of the underlying conjecture.",
+  "original_source": "https://arxiv.org/abs/2607.19412v1",
+  "featured": true,
+  "additional_links": []
+}
