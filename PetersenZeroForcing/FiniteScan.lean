@@ -36,8 +36,8 @@ theorem reducedScanB_spec (n : Nat) [NeZero n]
   simpa using of_decide_eq_true he
 
 /-- The finite cases are checked in `FiniteScanChecked.lean` once the reduced scanner is
-implemented efficiently enough for kernel reduction.  Keeping the specification here
-lets the foundational library build independently of that finite computation. -/
+implemented efficiently enough for kernel reduction.  The checked cases will be restored
+against this exact specification after the foundational clean build is established. -/
 
 end FiniteScan
 end PetersenZeroForcing
