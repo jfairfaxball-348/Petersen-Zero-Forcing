@@ -23,8 +23,8 @@ jobs:
           set -euo pipefail
           cat .bootstrap/chunk-* | base64 -d > /tmp/petersen-repo.tar.gz
           rm -rf .bootstrap
-          rm -f .github/workflows/bootstrap-expand.yml
           tar -xzf /tmp/petersen-repo.tar.gz -C .
+          rm -f .github/workflows/baseline.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
