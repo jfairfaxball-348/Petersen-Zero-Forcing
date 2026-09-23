@@ -5,3 +5,4 @@ import PetersenZeroForcing.Certificate
 import PetersenZeroForcing.Forcing
 import PetersenZeroForcing.CertificateLemmas
 import PetersenZeroForcing.Projection
+import PetersenZeroForcing.Contact
