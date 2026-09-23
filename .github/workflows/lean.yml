@@ -6,11 +6,10 @@ on:
     paths-ignore:
       - 'lean-ci/**'
       - 'lake-manifest.json'
-  pull_request:
-    branches: [main]
-    paths-ignore:
-      - 'lean-ci/**'
-      - 'lake-manifest.json'
+
+concurrency:
+  group: lean-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -20,8 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'push' && github.ref_name || '' }}
       - name: Lean build
         id: lean
         uses: leanprover/lean-action@v1
@@ -34,17 +31,15 @@ jobs:
         run: |
           lake build > /tmp/lean-build.log 2>&1 || true
       - name: Record branch build result
-        if: github.event_name == 'push' && github.ref == 'refs/heads/lean-formalisation'
+        if: github.ref == 'refs/heads/lean-formalisation'
         env:
           BUILD_STATUS: ${{ steps.lean.outputs.build-status }}
-          AXIOM_STATUS: ${{ steps.lean.outputs.axiom-audit-status }}
           HEAD_SHA: ${{ github.sha }}
         run: |
           mkdir -p lean-ci
           {
             echo "head_sha=$HEAD_SHA"
             echo "build_status=$BUILD_STATUS"
-            echo "axiom_audit_status=$AXIOM_STATUS"
             echo
             if [ -f /tmp/lean-build.log ]; then
               cat /tmp/lean-build.log
