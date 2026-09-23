@@ -67,5 +67,45 @@ theorem merge_witness_properties (a b : ShapeId) (s : ShiftId)
   have h := (merge_key_some_valid a b s hlookup).2
   simpa [mergeWitnessOKB] using h
 
+theorem mergeExpectedB_true_of_touch (a b : ShapeId) (s : ShiftId)
+    (hweight : weight a + weight b ≤ 7)
+    (htouch : StripTouches (shape a) (translateSet (shape b) (shiftValue s))) :
+    mergeExpectedB a b s = true := by
+  rcases htouch with ⟨x, hxa, y, hyb, hxy⟩
+  rcases Finset.mem_image.mp hyb with ⟨y0, hy0, rfl⟩
+  have hxl : x ∈ (datum a).vertices := by
+    simpa [shape] using hxa
+  have hy0l : y0 ∈ (datum b).vertices := by
+    simpa [shape] using hy0
+  simp only [mergeExpectedB, Bool.and_eq_true]
+  constructor
+  · simpa using hweight
+  · simp only [List.any_eq_true]
+    refine ⟨x, hxl, ?_⟩
+    refine ⟨translateVertex (shiftValue s) y0, ?_, ?_⟩
+    · simp [translatedVertices, hy0l]
+    · simpa using hxy
+
+theorem exists_merge_witness (a b : ShapeId) (s : ShiftId)
+    (hweight : weight a + weight b ≤ 7)
+    (htouch : StripTouches (shape a) (translateSet (shape b) (shiftValue s))) :
+    ∃ (c : ShapeId) (q : ℤ),
+      weight c ≤ weight a + weight b ∧
+      shape a ⊆ translateSet (shape c) q ∧
+      translateSet (shape b) (shiftValue s) ⊆ translateSet (shape c) q := by
+  have hexp := mergeExpectedB_true_of_touch a b s hweight htouch
+  have hkey := merge_key_checked a b s
+  cases hlookup : mergeByKey a.1 b.1 s.1 with
+  | none =>
+      simp [mergeKeyOKB, hlookup, hexp] at hkey
+  | some cq =>
+      rcases cq with ⟨cn, q⟩
+      have hp := merge_witness_properties a b s hlookup
+      let c : ShapeId := ⟨cn, hp.1⟩
+      refine ⟨c, q, ?_, ?_, ?_⟩
+      · simpa [c, weight, datum] using hp.2.1
+      · simpa [c, shape, datum] using hp.2.2.1
+      · simpa [c, shape, datum] using hp.2.2.2
+
 end Certificate
 end PetersenZeroForcing
