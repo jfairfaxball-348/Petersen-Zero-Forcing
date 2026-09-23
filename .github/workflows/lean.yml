@@ -5,10 +5,12 @@ on:
     branches: [main, lean-formalisation]
     paths-ignore:
       - 'lean-ci/**'
+      - 'lake-manifest.json'
   pull_request:
     branches: [main]
     paths-ignore:
       - 'lean-ci/**'
+      - 'lake-manifest.json'
 
 permissions:
   contents: write
@@ -50,7 +52,7 @@ jobs:
           } > lean-ci/latest.txt
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lean-ci/latest.txt
+          git add lean-ci/latest.txt lake-manifest.json
           if ! git diff --cached --quiet; then
             git commit -m "ci: record Lean build result [skip ci]"
             git push origin HEAD:lean-formalisation
