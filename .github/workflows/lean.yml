@@ -3,17 +3,58 @@ name: Lean formalisation
 on:
   push:
     branches: [main, lean-formalisation]
+    paths-ignore:
+      - 'lean-ci/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'lean-ci/**'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: leanprover/lean-action@v1
         with:
+          ref: ${{ github.event_name == 'push' && github.ref_name || '' }}
+      - name: Lean build
+        id: lean
+        uses: leanprover/lean-action@v1
+        continue-on-error: true
+        with:
+          build: true
           use-github-cache: true
+      - name: Capture failed build log
+        if: steps.lean.outputs.build-status == 'FAILURE'
+        run: |
+          lake build > /tmp/lean-build.log 2>&1 || true
+      - name: Record branch build result
+        if: github.event_name == 'push' && github.ref == 'refs/heads/lean-formalisation'
+        env:
+          BUILD_STATUS: ${{ steps.lean.outputs.build-status }}
+          AXIOM_STATUS: ${{ steps.lean.outputs.axiom-audit-status }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          mkdir -p lean-ci
+          {
+            echo "head_sha=$HEAD_SHA"
+            echo "build_status=$BUILD_STATUS"
+            echo "axiom_audit_status=$AXIOM_STATUS"
+            echo
+            if [ -f /tmp/lean-build.log ]; then
+              cat /tmp/lean-build.log
+            fi
+          } > lean-ci/latest.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lean-ci/latest.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: record Lean build result [skip ci]"
+            git push origin HEAD:lean-formalisation
+          fi
+      - name: Enforce Lean build success
+        if: steps.lean.outputs.build-status != 'SUCCESS'
+        run: exit 1
