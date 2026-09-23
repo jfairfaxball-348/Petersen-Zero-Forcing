@@ -28,7 +28,7 @@ jobs:
           build: true
           use-github-cache: true
       - name: Capture failed build log
-        if: steps.lean.outputs.build-status == 'FAILURE'
+        if: steps.lean.outputs.build-status != 'SUCCESS'
         run: |
           lake build > /tmp/lean-build.log 2>&1 || true
       - name: Record branch build result
