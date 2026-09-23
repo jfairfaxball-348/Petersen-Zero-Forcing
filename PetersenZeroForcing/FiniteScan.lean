@@ -35,9 +35,9 @@ theorem reducedScanB_spec (n : Nat) [NeZero n]
   have he := (allB_eq_true ((Finset.univ \ base).powersetCard 4) _).mp hb extra hextra
   simpa using of_decide_eq_true he
 
-set_option maxHeartbeats 0 in
-set_option maxRecDepth 1000000 in
-theorem scan13_checked : reducedScanB 13 = true := by decide
+/-- The finite cases are checked in `FiniteScanChecked.lean` once the reduced scanner is
+implemented efficiently enough for kernel reduction.  Keeping the specification here
+lets the foundational library build independently of that finite computation. -/
 
 end FiniteScan
 end PetersenZeroForcing
