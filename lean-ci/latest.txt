@@ -1,4 +1,4 @@
-head_sha=3b2b5b2c8b9d890ace29cf7bd5c24e1766113442
+head_sha=9164bccffce1ea435edbce137c35e642f82ae2d5
 build_status=
 axiom_audit_status=
 
@@ -31,39 +31,25 @@ info: mathlib: running post-update hooks
 ✔ [7/12] Built Cache.Hashing:c.o
 ✔ [8/12] Built Cache.Main
 ✔ [9/12] Built Cache.IO:c.o
-✔ [10/12] Built Cache.Main:c.o
-✔ [11/12] Built Cache.Requests:c.o
+✔ [10/12] Built Cache.Requests:c.o
+✔ [11/12] Built Cache.Main:c.o
 ✔ [12/12] Built cache
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 1075k  100 1075k    0     0  4977k      0 --:--:-- --:--:-- --:--:-- 4977k
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1075k  100 1075k    0     0  8353k      0 --:--:-- --:--:-- --:--:-- 61.7M
 
 installing leantar 0.1.15
 Attempting to download 6641 file(s)
-Downloaded: 1 file(s) [attempted 1/6641 = 0%]Downloaded: 90 file(s) [attempted 90/6641 = 1%]Downloaded: 187 file(s) [attempted 187/6641 = 2%]Downloaded: 296 file(s) [attempted 296/6641 = 4%]Downloaded: 405 file(s) [attempted 405/6641 = 6%]Downloaded: 520 file(s) [attempted 520/6641 = 7%]Downloaded: 633 file(s) [attempted 633/6641 = 9%]Downloaded: 746 file(s) [attempted 746/6641 = 11%]Downloaded: 865 file(s) [attempted 865/6641 = 13%]Downloaded: 976 file(s) [attempted 976/6641 = 14%]Downloaded: 1094 file(s) [attempted 1094/6641 = 16%]Downloaded: 1210 file(s) [attempted 1210/6641 = 18%]Downloaded: 1324 file(s) [attempted 1324/6641 = 19%]Downloaded: 1442 file(s) [attempted 1442/6641 = 21%]Downloaded: 1558 file(s) [attempted 1558/6641 = 23%]Downloaded: 1673 file(s) [attempted 1673/6641 = 25%]Downloaded: 1793 file(s) [attempted 1793/6641 = 26%]Downloaded: 1906 file(s) [attempted 1906/6641 = 28%]Downloaded: 2024 file(s) [attempted 2024/6641 = 30%]Downloaded: 2145 file(s) [attempted 2145/6641 = 32%]Downloaded: 2265 file(s) [attempted 2265/6641 = 34%]Downloaded: 2379 file(s) [attempted 2379/6641 = 35%]Downloaded: 2500 file(s) [attempted 2500/6641 = 37%]Downloaded: 2618 file(s) [attempted 2618/6641 = 39%]Downloaded: 2744 file(s) [attempted 2744/6641 = 41%]Downloaded: 2857 file(s) [attempted 2857/6641 = 43%]Downloaded: 2976 file(s) [attempted 2976/6641 = 44%]Downloaded: 3099 file(s) [attempted 3099/6641 = 46%]Downloaded: 3215 file(s) [attempted 3215/6641 = 48%]Downloaded: 3326 file(s) [attempted 3326/6641 = 50%]Downloaded: 3445 file(s) [attempted 3445/6641 = 51%]Downloaded: 3563 file(s) [attempted 3563/6641 = 53%]Downloaded: 3681 file(s) [attempted 3681/6641 = 55%]Downloaded: 3799 file(s) [attempted 3799/6641 = 57%]Downloaded: 3917 file(s) [attempted 3917/6641 = 58%]Downloaded: 4038 file(s) [attempted 4038/6641 = 60%]Downloaded: 4164 file(s) [attempted 4164/6641 = 62%]Downloaded: 4282 file(s) [attempted 4282/6641 = 64%]Downloaded: 4400 file(s) [attempted 4400/6641 = 66%]Downloaded: 4521 file(s) [attempted 4521/6641 = 68%]Downloaded: 4642 file(s) [attempted 4642/6641 = 69%]Downloaded: 4765 file(s) [attempted 4765/6641 = 71%]Downloaded: 4876 file(s) [attempted 4876/6641 = 73%]Downloaded: 4996 file(s) [attempted 4996/6641 = 75%]Downloaded: 5111 file(s) [attempted 5111/6641 = 76%]Downloaded: 5233 file(s) [attempted 5233/6641 = 78%]Downloaded: 5351 file(s) [attempted 5351/6641 = 80%]Downloaded: 5470 file(s) [attempted 5470/6641 = 82%]Downloaded: 5588 file(s) [attempted 5588/6641 = 84%]Downloaded: 5709 file(s) [attempted 5709/6641 = 85%]Downloaded: 5822 file(s) [attempted 5822/6641 = 87%]Downloaded: 5951 file(s) [attempted 5951/6641 = 89%]Downloaded: 6064 file(s) [attempted 6064/6641 = 91%]Downloaded: 6187 file(s) [attempted 6187/6641 = 93%]Downloaded: 6300 file(s) [attempted 6300/6641 = 94%]Downloaded: 6426 file(s) [attempted 6426/6641 = 96%]Downloaded: 6539 file(s) [attempted 6539/6641 = 98%]Downloaded: 6639 file(s) [attempted 6639/6641 = 99%]Downloaded: 6641 file(s) [attempted 6641/6641 = 100%] (100% success)
+Downloaded: 1 file(s) [attempted 1/6641 = 0%]Downloaded: 106 file(s) [attempted 106/6641 = 1%]Downloaded: 241 file(s) [attempted 241/6641 = 3%]Downloaded: 382 file(s) [attempted 382/6641 = 5%]Downloaded: 524 file(s) [attempted 524/6641 = 7%]Downloaded: 675 file(s) [attempted 675/6641 = 10%]Downloaded: 829 file(s) [attempted 829/6641 = 12%]Downloaded: 986 file(s) [attempted 986/6641 = 14%]Downloaded: 1142 file(s) [attempted 1142/6641 = 17%]Downloaded: 1294 file(s) [attempted 1294/6641 = 19%]Downloaded: 1447 file(s) [attempted 1447/6641 = 21%]Downloaded: 1599 file(s) [attempted 1599/6641 = 24%]Downloaded: 1746 file(s) [attempted 1746/6641 = 26%]Downloaded: 1902 file(s) [attempted 1902/6641 = 28%]Downloaded: 2058 file(s) [attempted 2058/6641 = 30%]Downloaded: 2214 file(s) [attempted 2214/6641 = 33%]Downloaded: 2373 file(s) [attempted 2373/6641 = 35%]Downloaded: 2527 file(s) [attempted 2527/6641 = 38%]Downloaded: 2671 file(s) [attempted 2671/6641 = 40%]Downloaded: 2823 file(s) [attempted 2823/6641 = 42%]Downloaded: 2972 file(s) [attempted 2972/6641 = 44%]Downloaded: 3124 file(s) [attempted 3124/6641 = 47%]Downloaded: 3263 file(s) [attempted 3263/6641 = 49%]Downloaded: 3420 file(s) [attempted 3420/6641 = 51%]Downloaded: 3571 file(s) [attempted 3571/6641 = 53%]Downloaded: 3725 file(s) [attempted 3725/6641 = 56%]Downloaded: 3876 file(s) [attempted 3876/6641 = 58%]Downloaded: 4033 file(s) [attempted 4033/6641 = 60%]Downloaded: 4180 file(s) [attempted 4180/6641 = 62%]Downloaded: 4329 file(s) [attempted 4329/6641 = 65%]Downloaded: 4480 file(s) [attempted 4480/6641 = 67%]Downloaded: 4636 file(s) [attempted 4636/6641 = 69%]Downloaded: 4789 file(s) [attempted 4789/6641 = 72%]Downloaded: 4942 file(s) [attempted 4942/6641 = 74%]Downloaded: 5084 file(s) [attempted 5084/6641 = 76%]Downloaded: 5235 file(s) [attempted 5235/6641 = 78%]Downloaded: 5387 file(s) [attempted 5387/6641 = 81%]Downloaded: 5536 file(s) [attempted 5536/6641 = 83%]Downloaded: 5685 file(s) [attempted 5685/6641 = 85%]Downloaded: 5841 file(s) [attempted 5841/6641 = 87%]Downloaded: 5984 file(s) [attempted 5984/6641 = 90%]Downloaded: 6128 file(s) [attempted 6128/6641 = 92%]Downloaded: 6284 file(s) [attempted 6284/6641 = 94%]Downloaded: 6440 file(s) [attempted 6440/6641 = 96%]Downloaded: 6594 file(s) [attempted 6594/6641 = 99%]Downloaded: 6641 file(s) [attempted 6641/6641 = 100%] (100% success)
 Decompressing 6641 file(s)
-Unpacked in 14066 ms
+Unpacked in 13553 ms
 Completed successfully!
-✔ [6653/6657] Built PetersenZeroForcing.Core
-✖ [6654/6657] Building PetersenZeroForcing.Strip
+✔ [6653/6658] Built PetersenZeroForcing.Core
+✖ [6654/6658] Building PetersenZeroForcing.Strip
 trace: .> LEAN_PATH=././.lake/packages/Cli/.lake/build/lib/lean:././.lake/packages/batteries/.lake/build/lib/lean:././.lake/packages/Qq/.lake/build/lib/lean:././.lake/packages/aesop/.lake/build/lib/lean:././.lake/packages/proofwidgets/.lake/build/lib/lean:././.lake/packages/importGraph/.lake/build/lib/lean:././.lake/packages/LeanSearchClient/.lake/build/lib/lean:././.lake/packages/plausible/.lake/build/lib/lean:././.lake/packages/mathlib/.lake/build/lib/lean:././.lake/build/lib/lean /home/runner/.elan/toolchains/leanprover--lean4---v4.19.0/bin/lean ././././PetersenZeroForcing/Strip.lean -R ./././. -o ././.lake/build/lib/lean/PetersenZeroForcing/Strip.olean -i ././.lake/build/lib/lean/PetersenZeroForcing/Strip.ilean -c ././.lake/build/ir/PetersenZeroForcing/Strip.c --json
-error: ././././PetersenZeroForcing/Strip.lean:16:30: unexpected token '\'; expected term
-error: ././././PetersenZeroForcing/Strip.lean:20:36: unexpected token '\'; expected term
-error: ././././PetersenZeroForcing/Strip.lean:23:45: unsolved goals
-C : Finset StripVertex
-⊢ sorry () = true ↔ sorry ()
-warning: ././././PetersenZeroForcing/Strip.lean:24:2: declaration uses 'sorry'
-warning: ././././PetersenZeroForcing/Strip.lean:24:2: declaration uses 'sorry'
-error: ././././PetersenZeroForcing/Strip.lean:38:2: invalid field 'any', the environment does not contain 'Finset.any'
-  A
-has type
-  Finset StripVertex
-error: ././././PetersenZeroForcing/Strip.lean:41:51: unsolved goals
-A B : Finset StripVertex
-⊢ sorry () = true ↔
-    ∃ a b, (a, b) ∈ A ∧ ∃ a_1 b_1, (a_1, b_1) ∈ B ∧ (a = a_1 ∧ b = b_1 ∨ (a_1, b_1) ∈ stripNeighbors (a, b))
-warning: ././././PetersenZeroForcing/Strip.lean:42:2: declaration uses 'sorry'
+error: ././././PetersenZeroForcing/Strip.lean:19:4: failed to compile definition, compiler IR check failed at 'PetersenZeroForcing.stripClosedB'. Error: depends on declaration 'Finset.toList', which has no executable code; consider marking definition as 'noncomputable'
+error: ././././PetersenZeroForcing/Strip.lean:37:4: failed to compile definition, compiler IR check failed at 'PetersenZeroForcing.stripTouchesB._lambda_2'. Error: depends on declaration 'Finset.toList', which has no executable code; consider marking definition as 'noncomputable'
 error: Lean exited with code 1
 Some required builds logged failures:
 - PetersenZeroForcing.Strip
