@@ -12,7 +12,9 @@ theorem allB_eq_true {α : Type*} (s : Finset α) (p : α → Bool) :
   induction s using Finset.induction_on with
   | empty => simp [allB]
   | @insert a s ha ih =>
-      simp [allB, Finset.fold_insert ha, ih, ha]
+      rw [allB, Finset.fold_insert ha]
+      change ((p a && allB s p) = true ↔ ∀ x ∈ insert a s, p x = true)
+      simp [ih, ha]
 
 def sources (n : Nat) [NeZero n] : Finset (Vertex n) := {u 0, v 0}
 
@@ -35,7 +37,7 @@ theorem reducedScanB_spec (n : Nat) [NeZero n]
   have he := (allB_eq_true ((Finset.univ \ base).powersetCard 4) _).mp hb extra hextra
   simpa using of_decide_eq_true he
 
-/-- The finite cases are checked in `FiniteScanChecked.lean` once the reduced scanner is
+/- The finite cases are checked in `FiniteScanChecked.lean` once the reduced scanner is
 implemented efficiently enough for kernel reduction.  The checked cases will be restored
 against this exact specification after the foundational clean build is established. -/
 
