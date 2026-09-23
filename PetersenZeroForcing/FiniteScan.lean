@@ -39,7 +39,7 @@ theorem reducedScanB_spec (n : Nat) [NeZero n]
 
 /- The finite cases are checked in `FiniteScanChecked.lean` once the reduced scanner is
 implemented efficiently enough for kernel reduction.  The checked cases will be restored
-against this exact specification after the foundational clean build is established. -/
+against this exact specification after the foundational clean build is established; no finite-case theorem is claimed here. -/
 
 end FiniteScan
 end PetersenZeroForcing
