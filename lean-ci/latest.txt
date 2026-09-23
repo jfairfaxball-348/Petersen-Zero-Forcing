@@ -1,0 +1,56 @@
+head_sha=9164bccffce1ea435edbce137c35e642f82ae2d5
+build_status=
+axiom_audit_status=
+
+info: PetersenZeroForcing: no previous manifest, creating one from scratch
+info: mathlib: cloning https://github.com/leanprover-community/mathlib4.git
+info: mathlib: checking out revision 'c44e0c8ee63ca166450922a373c7409c5d26b00b'
+info: toolchain not updated; already up-to-date
+info: plausible: cloning https://github.com/leanprover-community/plausible
+info: plausible: checking out revision '77e08eddc486491d7b9e470926b3dbe50319451a'
+info: LeanSearchClient: cloning https://github.com/leanprover-community/LeanSearchClient
+info: LeanSearchClient: checking out revision '25078369972d295301f5a1e53c3e5850cf6d9d4c'
+info: importGraph: cloning https://github.com/leanprover-community/import-graph
+info: importGraph: checking out revision 'e6a9f0f5ee3ccf7443a0070f92b62f8db12ae82b'
+info: proofwidgets: cloning https://github.com/leanprover-community/ProofWidgets4
+info: proofwidgets: checking out revision 'c4919189477c3221e6a204008998b0d724f49904'
+info: aesop: cloning https://github.com/leanprover-community/aesop
+info: aesop: checking out revision '5d50b08dedd7d69b3d9b3176e0d58a23af228884'
+info: Qq: cloning https://github.com/leanprover-community/quote4
+info: Qq: checking out revision 'fa4f7f15d97591a9cf3aa7724ba371c7fc6dda02'
+info: batteries: cloning https://github.com/leanprover-community/batteries
+info: batteries: checking out revision 'f5d04a9c4973d401c8c92500711518f7c656f034'
+info: Cli: cloning https://github.com/leanprover/lean4-cli
+info: Cli: checking out revision '02dbd02bc00ec4916e99b04b2245b30200e200d0'
+info: mathlib: running post-update hooks
+✔ [2/12] Built Cache.Lean
+✔ [3/12] Built Cache.Lean:c.o
+✔ [4/12] Built Cache.IO
+✔ [5/12] Built Cache.Hashing
+✔ [6/12] Built Cache.Requests
+✔ [7/12] Built Cache.Hashing:c.o
+✔ [8/12] Built Cache.Main
+✔ [9/12] Built Cache.IO:c.o
+✔ [10/12] Built Cache.Requests:c.o
+✔ [11/12] Built Cache.Main:c.o
+✔ [12/12] Built cache
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1075k  100 1075k    0     0  8353k      0 --:--:-- --:--:-- --:--:-- 61.7M
+
+installing leantar 0.1.15
+Attempting to download 6641 file(s)
+Downloaded: 1 file(s) [attempted 1/6641 = 0%]Downloaded: 106 file(s) [attempted 106/6641 = 1%]Downloaded: 241 file(s) [attempted 241/6641 = 3%]Downloaded: 382 file(s) [attempted 382/6641 = 5%]Downloaded: 524 file(s) [attempted 524/6641 = 7%]Downloaded: 675 file(s) [attempted 675/6641 = 10%]Downloaded: 829 file(s) [attempted 829/6641 = 12%]Downloaded: 986 file(s) [attempted 986/6641 = 14%]Downloaded: 1142 file(s) [attempted 1142/6641 = 17%]Downloaded: 1294 file(s) [attempted 1294/6641 = 19%]Downloaded: 1447 file(s) [attempted 1447/6641 = 21%]Downloaded: 1599 file(s) [attempted 1599/6641 = 24%]Downloaded: 1746 file(s) [attempted 1746/6641 = 26%]Downloaded: 1902 file(s) [attempted 1902/6641 = 28%]Downloaded: 2058 file(s) [attempted 2058/6641 = 30%]Downloaded: 2214 file(s) [attempted 2214/6641 = 33%]Downloaded: 2373 file(s) [attempted 2373/6641 = 35%]Downloaded: 2527 file(s) [attempted 2527/6641 = 38%]Downloaded: 2671 file(s) [attempted 2671/6641 = 40%]Downloaded: 2823 file(s) [attempted 2823/6641 = 42%]Downloaded: 2972 file(s) [attempted 2972/6641 = 44%]Downloaded: 3124 file(s) [attempted 3124/6641 = 47%]Downloaded: 3263 file(s) [attempted 3263/6641 = 49%]Downloaded: 3420 file(s) [attempted 3420/6641 = 51%]Downloaded: 3571 file(s) [attempted 3571/6641 = 53%]Downloaded: 3725 file(s) [attempted 3725/6641 = 56%]Downloaded: 3876 file(s) [attempted 3876/6641 = 58%]Downloaded: 4033 file(s) [attempted 4033/6641 = 60%]Downloaded: 4180 file(s) [attempted 4180/6641 = 62%]Downloaded: 4329 file(s) [attempted 4329/6641 = 65%]Downloaded: 4480 file(s) [attempted 4480/6641 = 67%]Downloaded: 4636 file(s) [attempted 4636/6641 = 69%]Downloaded: 4789 file(s) [attempted 4789/6641 = 72%]Downloaded: 4942 file(s) [attempted 4942/6641 = 74%]Downloaded: 5084 file(s) [attempted 5084/6641 = 76%]Downloaded: 5235 file(s) [attempted 5235/6641 = 78%]Downloaded: 5387 file(s) [attempted 5387/6641 = 81%]Downloaded: 5536 file(s) [attempted 5536/6641 = 83%]Downloaded: 5685 file(s) [attempted 5685/6641 = 85%]Downloaded: 5841 file(s) [attempted 5841/6641 = 87%]Downloaded: 5984 file(s) [attempted 5984/6641 = 90%]Downloaded: 6128 file(s) [attempted 6128/6641 = 92%]Downloaded: 6284 file(s) [attempted 6284/6641 = 94%]Downloaded: 6440 file(s) [attempted 6440/6641 = 96%]Downloaded: 6594 file(s) [attempted 6594/6641 = 99%]Downloaded: 6641 file(s) [attempted 6641/6641 = 100%] (100% success)
+Decompressing 6641 file(s)
+Unpacked in 13553 ms
+Completed successfully!
+✔ [6653/6658] Built PetersenZeroForcing.Core
+✖ [6654/6658] Building PetersenZeroForcing.Strip
+trace: .> LEAN_PATH=././.lake/packages/Cli/.lake/build/lib/lean:././.lake/packages/batteries/.lake/build/lib/lean:././.lake/packages/Qq/.lake/build/lib/lean:././.lake/packages/aesop/.lake/build/lib/lean:././.lake/packages/proofwidgets/.lake/build/lib/lean:././.lake/packages/importGraph/.lake/build/lib/lean:././.lake/packages/LeanSearchClient/.lake/build/lib/lean:././.lake/packages/plausible/.lake/build/lib/lean:././.lake/packages/mathlib/.lake/build/lib/lean:././.lake/build/lib/lean /home/runner/.elan/toolchains/leanprover--lean4---v4.19.0/bin/lean ././././PetersenZeroForcing/Strip.lean -R ./././. -o ././.lake/build/lib/lean/PetersenZeroForcing/Strip.olean -i ././.lake/build/lib/lean/PetersenZeroForcing/Strip.ilean -c ././.lake/build/ir/PetersenZeroForcing/Strip.c --json
+error: ././././PetersenZeroForcing/Strip.lean:19:4: failed to compile definition, compiler IR check failed at 'PetersenZeroForcing.stripClosedB'. Error: depends on declaration 'Finset.toList', which has no executable code; consider marking definition as 'noncomputable'
+error: ././././PetersenZeroForcing/Strip.lean:37:4: failed to compile definition, compiler IR check failed at 'PetersenZeroForcing.stripTouchesB._lambda_2'. Error: depends on declaration 'Finset.toList', which has no executable code; consider marking definition as 'noncomputable'
+error: Lean exited with code 1
+Some required builds logged failures:
+- PetersenZeroForcing.Strip
+error: build failed

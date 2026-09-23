@@ -1,43 +1,75 @@
-# Session handoff — proof gate passed
+# Session handoff — Lean formalisation in progress
 
-## Current state
+## Gate state
 
-The bootstrap computational baseline remains reproduced. The independent hostile mathematical audit has now passed the exact theorem:
+The independent mathematical proof audit remains passed.
 
-[
-Z(P(n,3))=8 quad	ext{for every integer } nge 13.
-]
+- audit-record commit: `a159d3415531a6f24770d56039bb4543ed455633`
+- exact audited proof/evidence state: `08164566d86c7129c5b5b0b8bed9c9a539aa55c0`
+- target theorem: for every integer `n >= 13`, `Z(P(n,3)) = 8`
 
-Decision: **PROOF_PASS**.
+Phase order remains:
 
-Audited proof/evidence commit: `08164566d86c7129c5b5b0b8bed9c9a539aa55c0`.
-A concurrent later commit `e031413ca6114e38b9bd09fdaa579a72e069c6a4` added only `meta_data_for_website.json`; it did not alter any audited proof/evidence file and is preserved under the audit-record commit.
+`PROOF -> LEAN -> PALOMAR -> PAPER`
 
-## What was independently discharged
+Current gates:
 
-All 14 obligations in `audit/OPEN_OBLIGATIONS.md` are PASS. Highlights:
+- PROOF: passed
+- LEAN: open/in progress
+- PALOMAR: locked by LEAN
+- PAPER: locked by PALOMAR
 
-- direct certificate semantics and closedness match the zero-forcing definition;
-- the independent contact set and the C++ interval enumeration both contain exactly 1,591 ordered touching translations, with no missing/extraneous rows;
-- every merge witness is a containment into a closed shape of admissible weight;
-- the projection proof is valid for `n >= 22`; certified shape 37 gives a concrete wrap-around closedness failure at `n=21`, confirming that the cutoff is not being silently weakened;
-- cyclic contacts lift pairwise without any global-cut assumption;
-- repeated merging terminates with a separated closed union of total partition bound at most 16;
-- the first-force reduction is complete and the finite cases `n=13,...,21` were independently re-enumerated with recorded maxima;
-- eight consecutive outer vertices force the whole graph in the required range;
-- lower and upper bounds cover every `n >= 13` with no gap.
+Do not start Palomar or paper work.
 
-See `audit/FINDINGS.md` and `proof/DEPENDENCIES.md`.
+## Lean branch and PR
 
-## Phase state
+Formalisation branch: `lean-formalisation`.
 
-PROOF: passed.
-LEAN: active/open.
-PALOMAR: locked by LEAN.
-PAPER: locked by PALOMAR.
+Draft PR: #2, **Lean formalisation of Z(P(n,3)) = 8**.
 
-No Lean work was begun in the proof-audit session.
+Pre-handoff implementation head: `8cfa7c67ed1238e672530a887b6da6cde70708b9`.
 
-## Next permitted task
+Lean is pinned to Lean 4.19.0 with mathlib v4.19.0. A generated `lake-manifest.json` records the resolved dependency graph.
 
-Formalise the audited dependency graph in Lean, preserving the exact theorem and the certificate trust boundary. If formalisation exposes a mathematical error rather than a formalisation inconvenience, reopen PROOF.
+At handoff, baseline verification on the implementation head was successful. The Lean workflow for that head was still pending, so the LEAN gate has **not** passed and no trust/axiom audit has been accepted.
+
+## Formalisation implemented so far
+
+The branch now contains:
+
+- `PetersenZeroForcing/Core.lean`: vertices of `P(n,3)`, neighbours, one forcing round, bounded forcing closure, and `IsZeroForcing`.
+- `PetersenZeroForcing/Strip.lean`: infinite-strip vertices, strip neighbours, closedness, translations, contact, and projection.
+- `PetersenZeroForcing/Forcing.lean`: closed-superset forcing invariant, closure containment, definition of the zero-forcing number `Z`, and basic extremal lemmas.
+- `PetersenZeroForcing/CertificateData.lean`: the 38 canonical certificate shapes and 1,591 merge rows imported as Lean data.
+- `PetersenZeroForcing/Certificate.lean`: executable certificate checks using kernel reduction, without `native_decide`.
+- `PetersenZeroForcing/CertificateLemmas.lean`: extraction of mathematical closedness, coordinate bounds, size/weight facts, and merge witnesses from checked certificate data.
+- `PetersenZeroForcing/Projection.lean`: the `n >= 22` projection threshold and preservation of strip closedness under projection.
+- `PetersenZeroForcing/Contact.lean`: the certified touching-shift bound `[-21,21]` and conversion of strip contact into a certificate merge witness.
+- `PetersenZeroForcing/Rotation.lean`: rotational symmetry infrastructure for cyclic first-force normalization.
+- `PetersenZeroForcing/FiniteScan.lean`: the start of a kernel-only reduced finite scan; bases are generated as a source plus two neighbours, and an initial `n=13` check is present.
+
+No `sorry` or intentional axiom was introduced by design. This must still be confirmed by a successful build and final transitive axiom audit.
+
+## Important trust boundary
+
+Preserve the audited distinction between **certificate containment** and **exact zero-forcing closure**.
+
+Do not trust producer code or imported search output as theorem evidence. Any finite computation used in the final theorem must reduce to the mathematical Lean definitions and be accepted by the kernel. Do not use `native_decide` or any hidden native-evaluation axiom.
+
+The permitted final theorem dependencies remain only:
+
+- `propext`
+- `Classical.choice`
+- `Quot.sound`
+
+## Next work
+
+1. Check the newest GitHub Actions run on PR #2 and repair every Lean compilation error until the current branch builds cleanly.
+2. Validate the canonical certificate checks and their extracted lemmas under the kernel.
+3. Complete the first-force reduction using the rotation formalisation, then extend the finite kernel-checked scan to every `n=13,...,21`.
+4. Formalise cyclic contact lifting, the block-merging invariant, strict termination, and the resulting lower bound for `n >= 22`.
+5. Formalise the eight-consecutive-outer-vertex upper construction.
+6. Assemble the exact quantified theorem `forall n >= 13, Z(P(n,3)) = 8`.
+7. Run a full transitive axiom/trust audit. Only after the build and audit pass may LEAN be marked passed or Palomar be unlocked.
+
+If Lean exposes a genuine mathematical gap, reopen PROOF and record the exact issue rather than weakening the theorem.
