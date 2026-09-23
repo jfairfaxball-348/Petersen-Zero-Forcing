@@ -5,6 +5,7 @@
   "status": "Active research",
   "headline": "The mathematical proof of $Z(P(n,3))=8$ for every $n\\ge 13$ has passed an independent hostile audit; Lean formalisation is the next active phase.",
   "year": 2026,
+  "date": "2026-09-23",
   "description": "Research on the zero-forcing number of the generalized Petersen graphs $P(n,3)$. The imported computational pilot and baseline were reproduced, and the exact quantified mathematical proof has now passed an independent hostile audit. Lean formalisation is next; Palomar verification and publication work have not begun.",
   "topics": [
     "Graph theory",
