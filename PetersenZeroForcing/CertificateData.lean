@@ -5,7 +5,7 @@ namespace PetersenZeroForcing.CertificateData
 structure ShapeDatum where
   weight : Nat
   vertices : Finset StripVertex
-  deriving Repr
+  deriving Repr, Inhabited
 
 structure MergeDatum where
   left : Nat
@@ -13,52 +13,91 @@ structure MergeDatum where
   shift : ℤ
   target : Nat
   targetShift : ℤ
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
-/-- Generated directly from certificates/merge_certificate.txt (38 shape rows). -/
-def shapes : Array ShapeDatum := #[
-  { weight := 1, vertices := {su (0 : ℤ)} },
-  { weight := 1, vertices := {sv (0 : ℤ)} },
-  { weight := 2, vertices := {su (0 : ℤ), sv (0 : ℤ)} },
-  { weight := 2, vertices := {su (0 : ℤ), su (1 : ℤ)} },
-  { weight := 2, vertices := {sv (0 : ℤ), sv (3 : ℤ)} },
-  { weight := 3, vertices := {su (0 : ℤ), su (1 : ℤ), sv (1 : ℤ), su (2 : ℤ)} },
-  { weight := 3, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), sv (6 : ℤ)} },
-  { weight := 4, vertices := {su (0 : ℤ), su (1 : ℤ), sv (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ)} },
-  { weight := 4, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (6 : ℤ)} },
-  { weight := 4, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), sv (9 : ℤ)} },
-  { weight := 5, vertices := {su (0 : ℤ), su (1 : ℤ), sv (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ)} },
-  { weight := 5, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (6 : ℤ)} },
-  { weight := 5, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ)} },
-  { weight := 5, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), sv (9 : ℤ)} },
-  { weight := 5, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (9 : ℤ)} },
-  { weight := 5, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), sv (9 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), sv (1 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ), sv (7 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (9 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (9 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (12 : ℤ)} },
-  { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), sv (1 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (9 : ℤ), sv (10 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), sv (1 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), sv (10 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (12 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), sv (4 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (9 : ℤ), sv (10 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (12 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (10 : ℤ), su (11 : ℤ), sv (12 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (11 : ℤ), su (12 : ℤ), sv (12 : ℤ), su (13 : ℤ), sv (15 : ℤ)} },
-  { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), su (15 : ℤ), sv (15 : ℤ), sv (18 : ℤ)} }
+def shapeByNat : Nat → ShapeDatum
+  | 0 => { weight := 1, vertices := {su (0 : ℤ)} }
+  | 1 => { weight := 1, vertices := {sv (0 : ℤ)} }
+  | 2 => { weight := 2, vertices := {su (0 : ℤ), sv (0 : ℤ)} }
+  | 3 => { weight := 2, vertices := {su (0 : ℤ), su (1 : ℤ)} }
+  | 4 => { weight := 2, vertices := {sv (0 : ℤ), sv (3 : ℤ)} }
+  | 5 => { weight := 3, vertices := {su (0 : ℤ), su (1 : ℤ), sv (1 : ℤ), su (2 : ℤ)} }
+  | 6 => { weight := 3, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), sv (6 : ℤ)} }
+  | 7 => { weight := 4, vertices := {su (0 : ℤ), su (1 : ℤ), sv (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ)} }
+  | 8 => { weight := 4, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (6 : ℤ)} }
+  | 9 => { weight := 4, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), sv (9 : ℤ)} }
+  | 10 => { weight := 5, vertices := {su (0 : ℤ), su (1 : ℤ), sv (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ)} }
+  | 11 => { weight := 5, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (6 : ℤ)} }
+  | 12 => { weight := 5, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ)} }
+  | 13 => { weight := 5, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), sv (9 : ℤ)} }
+  | 14 => { weight := 5, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (9 : ℤ)} }
+  | 15 => { weight := 5, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} }
+  | 16 => { weight := 6, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ)} }
+  | 17 => { weight := 6, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), sv (9 : ℤ)} }
+  | 18 => { weight := 6, vertices := {sv (0 : ℤ), sv (1 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ), sv (7 : ℤ)} }
+  | 19 => { weight := 6, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (9 : ℤ)} }
+  | 20 => { weight := 6, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} }
+  | 21 => { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (9 : ℤ)} }
+  | 22 => { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} }
+  | 23 => { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (12 : ℤ)} }
+  | 24 => { weight := 6, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} }
+  | 25 => { weight := 7, vertices := {sv (0 : ℤ), su (1 : ℤ), su (2 : ℤ), sv (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} }
+  | 26 => { weight := 7, vertices := {sv (0 : ℤ), sv (1 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (9 : ℤ), sv (10 : ℤ)} }
+  | 27 => { weight := 7, vertices := {sv (0 : ℤ), sv (1 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), sv (10 : ℤ)} }
+  | 28 => { weight := 7, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), sv (4 : ℤ), su (5 : ℤ), sv (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), su (9 : ℤ), sv (9 : ℤ), sv (12 : ℤ)} }
+  | 29 => { weight := 7, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (12 : ℤ)} }
+  | 30 => { weight := 7, vertices := {sv (0 : ℤ), su (2 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (4 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} }
+  | 31 => { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), sv (4 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (9 : ℤ), sv (10 : ℤ)} }
+  | 32 => { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), sv (7 : ℤ), su (8 : ℤ), sv (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (12 : ℤ)} }
+  | 33 => { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (5 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (7 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} }
+  | 34 => { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), sv (10 : ℤ), su (11 : ℤ), sv (12 : ℤ)} }
+  | 35 => { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (8 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (10 : ℤ), su (12 : ℤ), sv (12 : ℤ), sv (15 : ℤ)} }
+  | 36 => { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (11 : ℤ), su (12 : ℤ), sv (12 : ℤ), su (13 : ℤ), sv (15 : ℤ)} }
+  | 37 => { weight := 7, vertices := {sv (0 : ℤ), su (3 : ℤ), sv (3 : ℤ), su (6 : ℤ), sv (6 : ℤ), su (9 : ℤ), sv (9 : ℤ), su (12 : ℤ), sv (12 : ℤ), su (15 : ℤ), sv (15 : ℤ), sv (18 : ℤ)} }
+  | _ => default
+
+def shapes : List ShapeDatum := [
+  shapeByNat 0,
+  shapeByNat 1,
+  shapeByNat 2,
+  shapeByNat 3,
+  shapeByNat 4,
+  shapeByNat 5,
+  shapeByNat 6,
+  shapeByNat 7,
+  shapeByNat 8,
+  shapeByNat 9,
+  shapeByNat 10,
+  shapeByNat 11,
+  shapeByNat 12,
+  shapeByNat 13,
+  shapeByNat 14,
+  shapeByNat 15,
+  shapeByNat 16,
+  shapeByNat 17,
+  shapeByNat 18,
+  shapeByNat 19,
+  shapeByNat 20,
+  shapeByNat 21,
+  shapeByNat 22,
+  shapeByNat 23,
+  shapeByNat 24,
+  shapeByNat 25,
+  shapeByNat 26,
+  shapeByNat 27,
+  shapeByNat 28,
+  shapeByNat 29,
+  shapeByNat 30,
+  shapeByNat 31,
+  shapeByNat 32,
+  shapeByNat 33,
+  shapeByNat 34,
+  shapeByNat 35,
+  shapeByNat 36,
+  shapeByNat 37
 ]
 
-/-- Generated directly from certificates/merge_certificate.txt (1,591 merge rows). -/
-def merges : Array MergeDatum := #[
+def merges : List MergeDatum := [
   { left := 0, right := 0, shift := (-1 : ℤ), target := 3, targetShift := (-1 : ℤ) },
   { left := 0, right := 0, shift := (0 : ℤ), target := 0, targetShift := (0 : ℤ) },
   { left := 0, right := 0, shift := (1 : ℤ), target := 3, targetShift := (0 : ℤ) },
