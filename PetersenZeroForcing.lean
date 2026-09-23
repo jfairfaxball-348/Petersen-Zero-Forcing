@@ -3,3 +3,4 @@ import PetersenZeroForcing.Strip
 import PetersenZeroForcing.CertificateData
 import PetersenZeroForcing.Certificate
 import PetersenZeroForcing.Forcing
+import PetersenZeroForcing.CertificateLemmas
