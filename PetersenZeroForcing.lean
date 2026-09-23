@@ -7,3 +7,4 @@ import PetersenZeroForcing.CertificateLemmas
 import PetersenZeroForcing.Projection
 import PetersenZeroForcing.Contact
 import PetersenZeroForcing.FiniteScan
+import PetersenZeroForcing.Rotation
