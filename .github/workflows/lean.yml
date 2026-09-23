@@ -3,55 +3,20 @@ name: Lean formalisation
 on:
   push:
     branches: [main, lean-formalisation]
-    paths-ignore:
-      - 'lean-ci/**'
-      - 'lake-manifest.json'
 
 concurrency:
   group: lean-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Lean build
-        id: lean
-        uses: leanprover/lean-action@v1
-        continue-on-error: true
+      - uses: leanprover/lean-action@v1
         with:
           build: true
           use-github-cache: true
-      - name: Capture failed build log
-        if: steps.lean.outputs.build-status != 'SUCCESS'
-        run: |
-          lake build > /tmp/lean-build.log 2>&1 || true
-      - name: Record branch build result
-        if: github.ref == 'refs/heads/lean-formalisation'
-        env:
-          BUILD_STATUS: ${{ steps.lean.outputs.build-status }}
-          HEAD_SHA: ${{ github.sha }}
-        run: |
-          mkdir -p lean-ci
-          {
-            echo "head_sha=$HEAD_SHA"
-            echo "build_status=$BUILD_STATUS"
-            echo
-            if [ -f /tmp/lean-build.log ]; then
-              cat /tmp/lean-build.log
-            fi
-          } > lean-ci/latest.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lean-ci/latest.txt lake-manifest.json
-          if ! git diff --cached --quiet; then
-            git commit -m "ci: record Lean build result [skip ci]"
-            git push origin HEAD:lean-formalisation
-          fi
-      - name: Enforce Lean build success
-        if: steps.lean.outputs.build-status != 'SUCCESS'
-        run: exit 1
