@@ -2,13 +2,13 @@ name: Lean formalisation
 
 on:
   push:
-    branches: [main, lean-formalisation]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 concurrency:
-  group: lean-${{ github.workflow }}-${{ github.ref }}
+  group: lean-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -17,6 +17,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Lean build
