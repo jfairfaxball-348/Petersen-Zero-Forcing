@@ -75,5 +75,61 @@ theorem certificate_keys_nodup : certificateKeys.Nodup := by
     simpa [certificateKeysOKB] using certificate_keys_checked
   exact h.2
 
+theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
+    (htouch : StripTouches (shape a) (translateSet (shape b) t)) :
+    touchesNatB a.1 b.1 t = true := by
+  rcases htouch with ⟨x, hxa, y, hyb, hxy⟩
+  rcases Finset.mem_image.mp hyb with ⟨y0, hy0, rfl⟩
+  have hxl : x ∈ (datum a).vertices := by
+    simpa [shape] using hxa
+  have hy0l : y0 ∈ (datum b).vertices := by
+    simpa [shape] using hy0
+  simp only [touchesNatB, List.any_eq_true]
+  refine ⟨x, hxl, ?_⟩
+  refine ⟨translateVertex t y0, ?_, ?_⟩
+  · simp [translatedVerticesNat, datum, hy0l]
+  · simpa using hxy
+
+theorem expected_key_mem_of_touch (a b : ShapeId) (s : ShiftId)
+    (hweight : weight a + weight b ≤ 7)
+    (htouch : StripTouches (shape a) (translateSet (shape b) (shiftValue s))) :
+    MergeKey.mk a.1 b.1 (shiftValue s) ∈ expectedKeys := by
+  have htb := touchesNatB_true_of_touch a b (shiftValue s) htouch
+  simp only [expectedKeys, List.mem_flatMap]
+  refine ⟨a.1, List.mem_range.mpr a.2, ?_⟩
+  refine ⟨b.1, List.mem_range.mpr b.2, ?_⟩
+  refine ⟨s.1, List.mem_range.mpr s.2, ?_⟩
+  simp [shiftValue, shiftValueNat, weight, weightNat, datum, hweight, htb]
+
+theorem exists_merge_witness (a b : ShapeId) (s : ShiftId)
+    (hweight : weight a + weight b ≤ 7)
+    (htouch : StripTouches (shape a) (translateSet (shape b) (shiftValue s))) :
+    ∃ (c : ShapeId) (q : ℤ),
+      weight c ≤ weight a + weight b ∧
+      shape a ⊆ translateSet (shape c) q ∧
+      translateSet (shape b) (shiftValue s) ⊆ translateSet (shape c) q := by
+  let key : MergeKey := ⟨a.1, b.1, shiftValue s⟩
+  have hexp : key ∈ expectedKeys := by
+    exact expected_key_mem_of_touch a b s hweight htouch
+  have hcert : key ∈ certificateKeys := by
+    rw [certificate_keys_eq_expected]
+    exact hexp
+  rcases List.mem_map.mp hcert with ⟨m, hm, hmk⟩
+  have hp := merge_row_properties m hm
+  have hleft : m.left = a.1 := by
+    have := congrArg MergeKey.left hmk
+    simpa [mergeKeyOf, key] using this
+  have hright : m.right = b.1 := by
+    have := congrArg MergeKey.right hmk
+    simpa [mergeKeyOf, key] using this
+  have hshift : m.shift = shiftValue s := by
+    have := congrArg MergeKey.shift hmk
+    simpa [mergeKeyOf, key] using this
+  let target : ShapeId := ⟨m.target, hp.1.2.2⟩
+  refine ⟨target, m.targetShift, ?_, ?_, ?_⟩
+  · simpa [target, weight, datum, weightNat, hleft, hright] using hp.2.2.2.1
+  · simpa [target, shape, datum, shapeNat, hleft] using hp.2.2.2.2.1
+  · simpa [target, shape, datum, shapeNat, hright, hshift] using hp.2.2.2.2.2
+
 end Certificate
 end PetersenZeroForcing
