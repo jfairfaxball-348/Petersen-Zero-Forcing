@@ -11,12 +11,17 @@ def stripNeighbors : StripVertex → Finset StripVertex
   | (Layer.outer, i) => {su (i - 1), su (i + 1), sv i}
   | (Layer.inner, i) => {sv (i - 3), sv (i + 3), su i}
 
+/-- Mathematical closedness on the infinite strip. -/
 def StripClosed (C : Finset StripVertex) : Prop :=
-  ∀ x ∈ C, (stripNeighbors x \ C).card ≠ 1
+  ∀ x ∈ C, (stripNeighbors x \\ C).card ≠ 1
 
-instance (C : Finset StripVertex) : Decidable (StripClosed C) := by
-  unfold StripClosed
-  infer_instance
+/-- Executable checker equivalent to strip closedness; used only to reflect the finite certificate. -/
+def stripClosedB (C : Finset StripVertex) : Bool :=
+  C.all fun x => (stripNeighbors x \\ C).card != 1
+
+theorem stripClosedB_eq_true_iff (C : Finset StripVertex) :
+    stripClosedB C = true ↔ StripClosed C := by
+  simp [stripClosedB, StripClosed]
 
 def translateVertex (t : ℤ) (x : StripVertex) : StripVertex :=
   (x.1, x.2 + t)
@@ -24,12 +29,17 @@ def translateVertex (t : ℤ) (x : StripVertex) : StripVertex :=
 def translateSet (C : Finset StripVertex) (t : ℤ) : Finset StripVertex :=
   C.image (translateVertex t)
 
+/-- Mathematical contact: overlap or a strip edge joins the two finite sets. -/
 def StripTouches (A B : Finset StripVertex) : Prop :=
   ∃ x ∈ A, ∃ y ∈ B, x = y ∨ y ∈ stripNeighbors x
 
-instance (A B : Finset StripVertex) : Decidable (StripTouches A B) := by
-  unfold StripTouches
-  infer_instance
+/-- Executable contact checker for finite certificate reflection. -/
+def stripTouchesB (A B : Finset StripVertex) : Bool :=
+  A.any fun x => B.any fun y => decide (x = y ∨ y ∈ stripNeighbors x)
+
+theorem stripTouchesB_eq_true_iff (A B : Finset StripVertex) :
+    stripTouchesB A B = true ↔ StripTouches A B := by
+  simp [stripTouchesB, StripTouches]
 
 def projectVertex (n : Nat) [NeZero n] (x : StripVertex) : Vertex n :=
   (x.1, (x.2 : ZMod n))
