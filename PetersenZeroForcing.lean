@@ -2,3 +2,4 @@ import PetersenZeroForcing.Core
 import PetersenZeroForcing.Strip
 import PetersenZeroForcing.CertificateData
 import PetersenZeroForcing.Certificate
+import PetersenZeroForcing.Forcing
