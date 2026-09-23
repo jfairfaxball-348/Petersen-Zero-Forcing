@@ -6,23 +6,25 @@ This repository must proceed in the strict order:
 
 `PROJECT_STATUS.json` is authoritative for phase state; `ROADMAP.md` is authoritative for phase gates. Do not create parallel status systems.
 
-## Bootstrap boundary
+## Current phase boundary
 
-The bootstrap imported and reproduced a positive pilot. It did **not** independently accept the mathematical proof. The next permitted task is the hostile proof audit in `audit/INDEPENDENT_PROOF_AUDIT_BRIEF.md`.
+The independent hostile mathematical audit passed on 2026-09-23 for the exact theorem
+`Z(P(n,3)) = 8` for every integer `n >= 13`.
+The audited proof/evidence state is commit `08164566d86c7129c5b5b0b8bed9c9a539aa55c0`.
+
+The next permitted phase is **LEAN**. The proof-audit session itself did not begin Lean work.
 
 Do not:
 
-- mark the proof accepted because certificate or finite-search checks pass;
-- start Lean, pin/install a Lean toolchain, or add proof code before the PROOF gate passes;
+- weaken or replace the audited mathematical statement during formalisation;
+- treat executable checks as substitutes for their mathematical specifications;
 - prepare Palomar submission configuration before the Lean trust audit passes;
 - draft a publication before Palomar verification and registration;
-- extend the cyclic search beyond `n=30` as part of baseline work;
-- trust certificate-production code as a checker of its own output;
 - replace failed expected results merely to make verification green;
 - introduce an autonomous/G-style research programme.
 
 ## Evidence conventions
 
-Preserve original evidence under `data/pilot/original/`. Do not edit those files. Integrated copies must state their provenance and role. Separate discovery/producers, certificates, verifiers, and run outputs. Machine-dependent timings are logs only, never acceptance values.
+Preserve original evidence under `data/pilot/original/`. Do not edit those files. Separate discovery/producers, certificates, verifiers, and run outputs. The certificate producer is not a trusted checker. Machine-dependent timings are logs only, never acceptance values.
 
-A failed proof obligation keeps PROOF open and every later phase locked.
+A failure in Lean that exposes a mathematical gap reopens the PROOF gate; otherwise the audited proof record in `audit/` is the basis for formalisation.

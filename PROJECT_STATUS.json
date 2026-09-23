@@ -7,13 +7,26 @@
   "scaffold": "complete",
   "imported_pilot_verdict": "PILOT_POSITIVE",
   "baseline": "reproduced",
-  "active_phase": "PROOF",
-  "independent_proof_audit": "pending",
+  "active_phase": "LEAN",
+  "independent_proof_audit": "passed",
   "phase_gates": {
-    "PROOF": "open",
-    "LEAN": "locked_by_PROOF",
+    "PROOF": "passed",
+    "LEAN": "open",
     "PALOMAR": "locked_by_LEAN",
     "PAPER": "locked_by_PALOMAR"
+  },
+  "proof_audit": {
+    "decision": "PROOF_PASS",
+    "date": "2026-09-23",
+    "audited_repository_commit": "08164566d86c7129c5b5b0b8bed9c9a539aa55c0",
+    "post_audit_parent_commit": "e031413ca6114e38b9bd09fdaa579a72e069c6a4",
+    "post_audit_parent_delta": "meta_data_for_website.json only; no audited proof/evidence file changed",
+    "canonical_certificate_blob": "719903ea909229247bfc81231e15990265c3d69a",
+    "cpp_certificate_verifier_blob": "27c98412a05ace3794a797600c8bc0b75715d09b",
+    "python_certificate_verifier_blob": "e43d1c6e6d6f3bb6b793fdb5bed2f3ff7fdc7fe2",
+    "cpp_finite_search_blob": "49cdee253b9bf6d834698b51519a846429cce187",
+    "python_finite_reference_blob": "f716a29935108f7323bdb7bad58312c8cacab928",
+    "blocking_findings": 0
   },
   "treestack_blueprint": {
     "repository": "jfairfaxball-348/TreeStack-Structural-Certificates-for-Stacking-on-Trees",
@@ -29,6 +42,6 @@
     "finite_reduced_entries_per_implementation": 14271318,
     "maximum_closure": {"13": 18, "14_to_30": 16}
   },
-  "next_permitted_task": "Independent hostile mathematical audit of the exact theorem and imported candidate proof.",
+  "next_permitted_task": "Lean formalisation of the audited theorem and dependency graph; do not begin Palomar work until the Lean trust gate passes.",
   "bootstrap_date": "2026-09-23"
 }

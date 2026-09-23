@@ -1,18 +1,23 @@
-# Open proof obligations
+# Proof obligations — final audit disposition
 
-All items are pending at bootstrap. A single unresolved or failed item keeps PROOF open.
+Audit decision: **PROOF_PASS**.
+Audited proof/evidence commit: `08164566d86c7129c5b5b0b8bed9c9a539aa55c0`.
 
-1. **Definitions and forcing rule.** Verify graph conventions, indexing, cubic-neighbour statements for the quantified range, and exact use of the standard zero-forcing rule/closure.
-2. **Certificate closedness.** Check that the direct closedness test matches the mathematical definition and applies to every certified shape.
-3. **Contact translation coverage.** Prove that every relevant touching translation is captured; audit both the finite interval argument and the independent direct-generation argument.
-4. **Containment merging.** Verify that each certificate row gives a closed superset containing both touching blocks, with correct translation and weight inequality; do not trust the producer.
-5. **Weight accounting and termination.** Prove repeated merging cannot violate total weight `<=7`, terminates, and yields the claimed collection of separated closed supersets.
-6. **Projection threshold and wrap-around.** Audit injectivity and neighbour correspondence for projected strip shapes, the `n > span+3` threshold, all cyclic boundary cases, and why maximum span 18 gives `n>=22`.
-7. **Contact lifting.** Check that any touch after cyclic projection admits integer representatives that touch in the strip and that the certificate merge projects as required.
-8. **Separated seed groups / arbitrary gaps / overlaps.** Audit the treatment of initially separated blocks, arbitrary cyclic gaps, block overlaps, merges that alter representatives, and all cases of cyclic ordering.
-9. **Closed superset versus exact closure.** Ensure every argument only needs containment in a closed set, and never silently substitutes an exact closure property not certified by the verifiers.
-10. **First-force reduction completeness.** Prove that every hypothetical zero-forcing seven-set has a first forcing vertex; rotation reduces it to `u_0` or `v_0`; and the source plus the correct two neighbours must already lie in the initial seven-set. Account for duplicates in enumeration without losing completeness.
-11. **Finite cases.** Use the reproduced scans to justify at least `n=13,...,21`; verify the relationship between maximum closure `< 2n` and failure to zero-force.
-12. **Eight-seed upper bound.** Audit the forcing sequence from `u_0,...,u_7`, its propagation, small-index/cyclic cases, and exact range needed for the theorem.
-13. **Full theorem assembly.** Check lower and upper bounds cover every integer `n>=13` with no gap or inconsistent threshold.
-14. **Evidence/trust boundary.** Explain precisely what is trusted in ordinary C++/Python checking and why two implementations are falsification/certificate evidence rather than a substitute for the mathematical audit.
+No proof obligation remains open.
+
+| # | Obligation | Verdict | Independent discharge |
+|---:|---|---|---|
+| 1 | Definitions and forcing rule | **PASS** | For `n>=13`, the listed neighbours are three distinct vertices. The standard rule is “blue vertex with exactly one white neighbour forces it”; iterative closure is monotone under enlarging the initial blue set. |
+| 2 | Certificate closedness | **PASS** | In a cubic graph, “not exactly one neighbour outside” is equivalent to “not exactly two blue neighbours”. Both verifier predicates implement this exactly for every certified vertex; direct re-check passed all 38 shapes. |
+| 3 | Contact translation coverage | **PASS** | If normalized spans are `a,b`, contact implies `-b-3 <= t <= a+3`. Filtering that interval by actual intersection/adjacency and independently generating shifts from the left frontier both produce the identical 1,591 ordered keys. |
+| 4 | Containment merging | **PASS** | Every one of the 1,591 rows was checked as containment `A union (B+t) subseteq C+q`, with `weight(C) <= weight(A)+weight(B)`; target closedness follows from the separately checked shape table. Exact closure is not used. |
+| 5 | Weight accounting and termination | **PASS** | Initial singleton weights sum to `|S|<=7`; each merge does not increase total weight; each merge reduces block count by one; therefore termination occurs after at most `|S|-1` merges. |
+| 6 | Projection threshold and wrap-around | **PASS** | For span `w`, projection is injective when `w<n`. A projected neighbour alias would give a same-layer difference divisible by `n` of absolute value at most `w+3`; `n>w+3` forces difference zero. With max span 18 this gives `n>=22`. At `n=21`, shape 37 becomes non-closed, so the threshold is not silently overextended. |
+| 7 | Contact lifting | **PASS** | A cyclic intersection/spoke/outer edge/inner edge has a representative difference congruent to `0,0,±1,±3`; shifting one block by a multiple of `n` realizes that exact strip contact. The certificate containment then projects back. No global simultaneous lift is required. |
+| 8 | Separated groups / arbitrary gaps / overlaps | **PASS** | Overlap is a contact and is merged. Arbitrary gaps simply leave blocks separate. At termination, blocks are disjoint and nonadjacent in the cycle, independent of cyclic ordering or representative choices. |
+| 9 | Closed superset versus exact closure | **PASS** | The proof uses only: if a closed set `U` contains the seed set, no first force can leave `U`; hence `cl(S) subseteq U`. Neither the producer's exact closure nor closure minimality is a premise. |
+| 10 | First-force reduction completeness | **PASS** | A nontrivial zero-forcing set must have an initial force. Its source and exactly two of its three neighbours are initially blue. Rotation sends the source to `u_0` or `v_0`; all three neighbour-pairs are enumerated, and the other four vertices are unrestricted. Duplicates cannot remove a case. |
+| 11 | Finite cases | **PASS** | Complete reduced scans for each `n=13,...,21` were independently re-enumerated: counts `6*C(2n-3,4)`; maxima 18 for 13 and 16 for 14–21; all are less than `2n`, so no seven-set zero-forces. Monotonicity excludes smaller sets. |
+| 12 | Eight-seed upper bound | **PASS** | From eight consecutive outer vertices, the six interior vertices force their spokes; then `v_{r+4}->v_{r+7}` and `u_{r+7}->u_{r+8}`. Iterating colors all outer vertices, which then force any remaining inner vertices. Valid for the theorem range. |
+| 13 | Full theorem assembly | **PASS** | Lower bound `Z>=8`: finite scans cover 13–21 and certificate argument covers `n>=22`. Upper bound `Z<=8`: explicit construction covers all `n>=13`. No threshold gap remains. |
+| 14 | Evidence / trust boundary | **PASS** | Ordinary C++/Python execution is finite evidence. Producer code is not trusted. The audit inspected checker semantics and proved why each finite check is exactly the proposition used by the mathematical argument. |

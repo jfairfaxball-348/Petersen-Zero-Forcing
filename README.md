@@ -10,20 +10,22 @@ Here `P(n,3)` has vertices `u_i,v_i` modulo `n`, with edges `u_i u_(i+1)`, `u_i 
 
 **MATHEMATICAL PROOF → LEAN FORMALISATION → PALOMAR → RESEARCH PAPER**
 
-Only **PROOF** is active. The imported pilot is `PILOT_POSITIVE` and its computational baseline has been reproduced, but the mathematical proof is **not accepted** until an independent hostile audit passes every obligation in `audit/OPEN_OBLIGATIONS.md`. Lean, Palomar, and paper work are locked.
+The **PROOF gate passed on 2026-09-23** after an independent hostile audit of the exact quantified theorem. The audited proof/evidence state is commit `08164566d86c7129c5b5b0b8bed9c9a539aa55c0`. The later commit `e031413ca6114e38b9bd09fdaa579a72e069c6a4` changed only public website metadata and did not alter any audited proof or evidence file.
 
-## Current bootstrap status
+Only **LEAN** is now active. No Lean formalisation, Palomar work, or publication drafting was begun during the proof-audit session.
+
+## Current status
 
 - scaffold: **complete**
 - imported pilot verdict: **PILOT_POSITIVE**
 - baseline: **reproduced**
-- active phase: **PROOF**
-- independent proof audit: **pending**
-- Lean / Palomar / paper: **locked by preceding gates**
+- independent proof audit: **PROOF_PASS**
+- active phase: **LEAN**
+- Palomar / paper: **locked by preceding gates**
 
-`PROJECT_STATUS.json` is the machine-readable status authority. `ROADMAP.md` is the single phase roadmap.
+See `audit/FINDINGS.md`, `audit/OPEN_OBLIGATIONS.md`, and `proof/DEPENDENCIES.md` for the proof-gate record and audited dependency account. `PROJECT_STATUS.json` is the machine-readable status authority; `ROADMAP.md` is the phase roadmap.
 
-## Reproduce the baseline
+## Reproduce the computational baseline
 
 From a clean checkout with Python 3, a C++17 compiler, `sha256sum`, and standard Unix tools:
 
@@ -31,21 +33,12 @@ From a clean checkout with Python 3, a C++17 compiler, `sha256sum`, and standard
 ./scripts/verify_baseline.sh
 ```
 
-The command verifies the preserved outer hashes and both checksum manifests inside the untouched pilot ZIP, checks the canonical merge certificate with independent C++ and Python verifiers, reproduces the C++ reduced seven-seed scans for every `n=13,...,30`, and independently repeats those finite scans in Python. Acceptance compares counts, ranges, maxima, and hashes; timings are not acceptance criteria. Each process is capped at 768 MiB virtual memory, the Python finite stage uses at most four worker subprocesses, and the aggregate configured ceiling remains below 4 GiB and two CPU-hours.
+The command verifies preserved hashes, checks the canonical merge certificate with standalone C++ and Python verifiers, reproduces the C++ reduced seven-seed scans for every `n=13,...,30`, and independently repeats those finite scans in Python. Timings are diagnostic only.
 
 ## Evidence boundary
 
-The unchanged pilot archive and standalone report are under `data/pilot/original/`. Working copies are separated by role:
-
-- `certificates/` — canonical certificate and schema;
-- `research/` — discovery and certificate-generation / finite-search producers;
-- `verifiers/` — checking code, including the independent finite reference implementation;
-- `results/bootstrap/` — structural reproduction outputs from this bootstrap;
-- `proof/` — imported candidate mathematical argument, definitions, dependencies, and sources;
-- `audit/` — claim register, open obligations, findings, and the next-session hostile-audit brief.
-
-Successful computation is evidence, not an independent mathematical audit. In particular, two working implementations do not by themselves justify the projection, coverage, merging, termination, first-force reduction, or theorem assembly arguments.
+The proof audit did not trust the certificate producer. It directly inspected the canonical certificate and both standalone certificate verifiers, checked the mathematical meaning of closedness and all 1,591 ordered contact translations, audited containment/weight accounting/projection/contact lifting/termination, and separately audited the first-force finite reduction and the eight-seed upper construction. The original pilot remains evidence rather than a proof source.
 
 ## Next task
 
-Read `docs/SESSION_HANDOFF.md` and perform the independent proof audit described in `audit/INDEPENDENT_PROOF_AUDIT_BRIEF.md`. Do not begin Lean until that audit passes the exact quantified theorem.
+Begin Lean formalisation from the audited dependency account in `proof/DEPENDENCIES.md`. Do not start Palomar work until the Lean build and trust/axiom audit pass.
