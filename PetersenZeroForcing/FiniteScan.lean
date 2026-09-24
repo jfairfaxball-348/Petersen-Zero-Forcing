@@ -63,6 +63,85 @@ theorem closureEarly_eq_closure
     closureEarly n blue = closure n blue := by
   rw [closureEarly, closure, closureEarlyAux_eq_iterate]
 
+/-- Computationally cheaper one-round evaluator.  It scans each blue
+source once instead of scanning every possible target and then searching for a
+source.  The next theorem proves it is exactly the mathematical `forceStep`. -/
+def forceStepFast (n : Nat) [NeZero n]
+    (blue : Finset (Vertex n)) : Finset (Vertex n) :=
+  blue ∪ blue.biUnion fun x =>
+    let white := whiteNeighbors n blue x
+    if white.card = 1 then white else ∅
+
+theorem forceStepFast_eq_forceStep
+    (n : Nat) [NeZero n] (blue : Finset (Vertex n)) :
+    forceStepFast n blue = forceStep n blue := by
+  ext y
+  simp only [forceStepFast, forceStep, Finset.mem_union, Finset.mem_biUnion,
+    Finset.mem_filter, Finset.mem_univ, true_and]
+  constructor
+  · intro hy
+    rcases hy with hy | hy
+    · exact Or.inl hy
+    · right
+      rcases hy with ⟨x, hx, hyx⟩
+      dsimp at hyx
+      by_cases hcard : (whiteNeighbors n blue x).card = 1
+      · rw [if_pos hcard] at hyx
+        rcases Finset.card_eq_one.mp hcard with ⟨z, hz⟩
+        have hyz : y = z := by
+          rw [hz] at hyx
+          simpa using hyx
+        subst z
+        exact ⟨x, hx, hz⟩
+      · rw [if_neg hcard] at hyx
+        simp at hyx
+  · intro hy
+    rcases hy with hy | ⟨x, hx, hwhite⟩
+    · exact Or.inl hy
+    · right
+      refine ⟨x, hx, ?_⟩
+      dsimp
+      have hcard : (whiteNeighbors n blue x).card = 1 := by
+        rw [hwhite]
+        simp
+      rw [if_pos hcard, hwhite]
+      simp
+
+/-- Early-stopping closure using the source-oriented evaluator. -/
+def closureFastAux (n : Nat) [NeZero n] :
+    Nat → Finset (Vertex n) → Finset (Vertex n)
+  | 0, blue => blue
+  | k + 1, blue =>
+      let next := forceStepFast n blue
+      if next = blue then blue else closureFastAux n k next
+
+theorem closureFastAux_eq_iterate
+    (n : Nat) [NeZero n] :
+    ∀ (k : Nat) (blue : Finset (Vertex n)),
+      closureFastAux n k blue = (forceStep n)^[k] blue := by
+  intro k
+  induction k with
+  | zero =>
+      intro blue
+      rfl
+  | succ k ih =>
+      intro blue
+      simp only [closureFastAux, forceStepFast_eq_forceStep]
+      by_cases hfixed : forceStep n blue = blue
+      · rw [if_pos hfixed]
+        exact (iterate_forceStep_eq_of_fixed n hfixed (k + 1)).symm
+      · rw [if_neg hfixed, ih]
+        rw [Function.iterate_succ_apply]
+
+def closureFast (n : Nat) [NeZero n]
+    (blue : Finset (Vertex n)) : Finset (Vertex n) :=
+  closureFastAux n (Fintype.card (Vertex n)) blue
+
+theorem closureFast_eq_closure
+    (n : Nat) [NeZero n] (blue : Finset (Vertex n)) :
+    closureFast n blue = closure n blue := by
+  rw [closureFast, closure, closureFastAux_eq_iterate]
+
 def sources (n : Nat) [NeZero n] : Finset (Vertex n) := {u 0, v 0}
 
 def bases (n : Nat) [NeZero n] : Finset (Finset (Vertex n)) :=
@@ -168,9 +247,9 @@ theorem reducedScanB_spec (n : Nat) [NeZero n]
     closure n (base ∪ extra) ≠ Finset.univ := by
   have hb := (allB_eq_true (bases n) _).mp h base hbase
   have he := (allB_eq_true ((Finset.univ \ base).powersetCard 4) _).mp hb extra hextra
-  have hfast : closureEarly n (base ∪ extra) ≠ Finset.univ :=
+  have hfast : closureFast n (base ∪ extra) ≠ Finset.univ :=
     of_decide_eq_true he
-  rw [closureEarly_eq_closure] at hfast
+  rw [closureFast_eq_closure] at hfast
   exact hfast
 
 end FiniteScan
