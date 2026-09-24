@@ -302,21 +302,22 @@ def extraIndexEvenB {n : Nat} (extra : Finset (Vertex n)) : Bool :=
   decide (((extra.sum (fun x => vertexBitIndex x)) % 2) = 0)
 
 
-/-- Third deterministic classifier for exact finite sharding.  The three
-Boolean classifiers together partition every four-extra set into eight
-exhaustive buckets. -/
-def extraEvenIndexCountEvenB {n : Nat} (extra : Finset (Vertex n)) : Bool :=
-  decide (((extra.filter fun x => x.2.val % 2 = 0).card % 2) = 0)
+/-- Third deterministic classifier for exact finite sharding: the second
+binary bit of the sum of vertex indices.  Together with outer-count parity and
+index-sum parity, this partitions every four-extra set into eight genuinely
+distinct exhaustive buckets. -/
+def extraIndexBitOneEvenB {n : Nat} (extra : Finset (Vertex n)) : Bool :=
+  decide ((((extra.sum (fun x => vertexBitIndex x)) / 2) % 2) = 0)
 
 def pairCertScanOctantB (n : Nat) [NeZero n]
     (source : Vertex n) (pair : Finset (Vertex n))
-    (wantOuterEven wantIndexEven wantEvenIndexCountEven : Bool) : Bool :=
+    (wantOuterEven wantIndexEven wantIndexBitOneEven : Bool) : Bool :=
   allB
     ((((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4).filter
       (fun extra =>
         extraOuterEvenB extra = wantOuterEven ∧
           extraIndexEvenB extra = wantIndexEven ∧
-          extraEvenIndexCountEvenB extra = wantEvenIndexCountEven))
+          extraIndexBitOneEvenB extra = wantIndexBitOneEven))
     fun extra =>
       candidateCertB n (insert source pair ∪ extra)
 
@@ -340,31 +341,31 @@ theorem pairCertScanB_of_octants
   | false =>
       cases hidx : extraIndexEvenB extra with
       | false =>
-          cases hcnt : extraEvenIndexCountEvenB extra with
+          cases hbit : extraIndexBitOneEvenB extra with
           | false =>
-              exact (allB_eq_true _ _).mp h000 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h000 extra (by simp [hextra, hout, hidx, hbit])
           | true =>
-              exact (allB_eq_true _ _).mp h001 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h001 extra (by simp [hextra, hout, hidx, hbit])
       | true =>
-          cases hcnt : extraEvenIndexCountEvenB extra with
+          cases hbit : extraIndexBitOneEvenB extra with
           | false =>
-              exact (allB_eq_true _ _).mp h010 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h010 extra (by simp [hextra, hout, hidx, hbit])
           | true =>
-              exact (allB_eq_true _ _).mp h011 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h011 extra (by simp [hextra, hout, hidx, hbit])
   | true =>
       cases hidx : extraIndexEvenB extra with
       | false =>
-          cases hcnt : extraEvenIndexCountEvenB extra with
+          cases hbit : extraIndexBitOneEvenB extra with
           | false =>
-              exact (allB_eq_true _ _).mp h100 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h100 extra (by simp [hextra, hout, hidx, hbit])
           | true =>
-              exact (allB_eq_true _ _).mp h101 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h101 extra (by simp [hextra, hout, hidx, hbit])
       | true =>
-          cases hcnt : extraEvenIndexCountEvenB extra with
+          cases hbit : extraIndexBitOneEvenB extra with
           | false =>
-              exact (allB_eq_true _ _).mp h110 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h110 extra (by simp [hextra, hout, hidx, hbit])
           | true =>
-              exact (allB_eq_true _ _).mp h111 extra (by simp [hextra, hout, hidx, hcnt])
+              exact (allB_eq_true _ _).mp h111 extra (by simp [hextra, hout, hidx, hbit])
 
 def pairCertScanQuarterB (n : Nat) [NeZero n]
     (source : Vertex n) (pair : Finset (Vertex n))
