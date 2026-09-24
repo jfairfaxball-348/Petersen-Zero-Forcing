@@ -97,7 +97,7 @@ def shapes : List ShapeDatum := [
   shapeByNat 37
 ]
 
-def merges : List MergeDatum := [
+def mergeGroup0 : List MergeDatum := [
   { left := 0, right := 0, shift := (-1 : ℤ), target := 3, targetShift := (-1 : ℤ) },
   { left := 0, right := 0, shift := (0 : ℤ), target := 0, targetShift := (0 : ℤ) },
   { left := 0, right := 0, shift := (1 : ℤ), target := 3, targetShift := (0 : ℤ) },
@@ -283,7 +283,10 @@ def merges : List MergeDatum := [
   { left := 0, right := 24, shift := (-4 : ℤ), target := 30, targetShift := (-4 : ℤ) },
   { left := 0, right := 24, shift := (-3 : ℤ), target := 24, targetShift := (-3 : ℤ) },
   { left := 0, right := 24, shift := (-2 : ℤ), target := 30, targetShift := (-2 : ℤ) },
-  { left := 0, right := 24, shift := (0 : ℤ), target := 37, targetShift := (-3 : ℤ) },
+  { left := 0, right := 24, shift := (0 : ℤ), target := 37, targetShift := (-3 : ℤ) }
+]
+
+def mergeGroup1 : List MergeDatum := [
   { left := 1, right := 0, shift := (0 : ℤ), target := 2, targetShift := (0 : ℤ) },
   { left := 1, right := 1, shift := (-3 : ℤ), target := 4, targetShift := (-3 : ℤ) },
   { left := 1, right := 1, shift := (0 : ℤ), target := 1, targetShift := (0 : ℤ) },
@@ -471,7 +474,10 @@ def merges : List MergeDatum := [
   { left := 1, right := 24, shift := (-6 : ℤ), target := 24, targetShift := (-6 : ℤ) },
   { left := 1, right := 24, shift := (-3 : ℤ), target := 24, targetShift := (-3 : ℤ) },
   { left := 1, right := 24, shift := (0 : ℤ), target := 24, targetShift := (0 : ℤ) },
-  { left := 1, right := 24, shift := (3 : ℤ), target := 37, targetShift := (0 : ℤ) },
+  { left := 1, right := 24, shift := (3 : ℤ), target := 37, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup2 : List MergeDatum := [
   { left := 2, right := 0, shift := (-1 : ℤ), target := 5, targetShift := (-1 : ℤ) },
   { left := 2, right := 0, shift := (0 : ℤ), target := 2, targetShift := (0 : ℤ) },
   { left := 2, right := 0, shift := (1 : ℤ), target := 5, targetShift := (-1 : ℤ) },
@@ -595,7 +601,10 @@ def merges : List MergeDatum := [
   { left := 2, right := 15, shift := (-3 : ℤ), target := 15, targetShift := (-3 : ℤ) },
   { left := 2, right := 15, shift := (-2 : ℤ), target := 25, targetShift := (-2 : ℤ) },
   { left := 2, right := 15, shift := (0 : ℤ), target := 24, targetShift := (-3 : ℤ) },
-  { left := 2, right := 15, shift := (3 : ℤ), target := 37, targetShift := (-3 : ℤ) },
+  { left := 2, right := 15, shift := (3 : ℤ), target := 37, targetShift := (-3 : ℤ) }
+]
+
+def mergeGroup3 : List MergeDatum := [
   { left := 3, right := 0, shift := (-1 : ℤ), target := 5, targetShift := (-1 : ℤ) },
   { left := 3, right := 0, shift := (0 : ℤ), target := 3, targetShift := (0 : ℤ) },
   { left := 3, right := 0, shift := (1 : ℤ), target := 3, targetShift := (0 : ℤ) },
@@ -714,7 +723,10 @@ def merges : List MergeDatum := [
   { left := 3, right := 15, shift := (-2 : ℤ), target := 20, targetShift := (-2 : ℤ) },
   { left := 3, right := 15, shift := (-1 : ℤ), target := 25, targetShift := (-1 : ℤ) },
   { left := 3, right := 15, shift := (0 : ℤ), target := 30, targetShift := (-3 : ℤ) },
-  { left := 3, right := 15, shift := (1 : ℤ), target := 30, targetShift := (-2 : ℤ) },
+  { left := 3, right := 15, shift := (1 : ℤ), target := 30, targetShift := (-2 : ℤ) }
+]
+
+def mergeGroup4 : List MergeDatum := [
   { left := 4, right := 0, shift := (0 : ℤ), target := 6, targetShift := (-3 : ℤ) },
   { left := 4, right := 0, shift := (3 : ℤ), target := 6, targetShift := (0 : ℤ) },
   { left := 4, right := 1, shift := (-3 : ℤ), target := 6, targetShift := (-3 : ℤ) },
@@ -843,7 +855,10 @@ def merges : List MergeDatum := [
   { left := 4, right := 15, shift := (-3 : ℤ), target := 15, targetShift := (-3 : ℤ) },
   { left := 4, right := 15, shift := (0 : ℤ), target := 15, targetShift := (0 : ℤ) },
   { left := 4, right := 15, shift := (3 : ℤ), target := 24, targetShift := (0 : ℤ) },
-  { left := 4, right := 15, shift := (6 : ℤ), target := 37, targetShift := (0 : ℤ) },
+  { left := 4, right := 15, shift := (6 : ℤ), target := 37, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup5 : List MergeDatum := [
   { left := 5, right := 0, shift := (-1 : ℤ), target := 7, targetShift := (-1 : ℤ) },
   { left := 5, right := 0, shift := (0 : ℤ), target := 5, targetShift := (0 : ℤ) },
   { left := 5, right := 0, shift := (1 : ℤ), target := 5, targetShift := (0 : ℤ) },
@@ -925,7 +940,10 @@ def merges : List MergeDatum := [
   { left := 5, right := 9, shift := (0 : ℤ), target := 28, targetShift := (-3 : ℤ) },
   { left := 5, right := 9, shift := (1 : ℤ), target := 20, targetShift := (-2 : ℤ) },
   { left := 5, right := 9, shift := (2 : ℤ), target := 25, targetShift := (-1 : ℤ) },
-  { left := 5, right := 9, shift := (4 : ℤ), target := 30, targetShift := (-2 : ℤ) },
+  { left := 5, right := 9, shift := (4 : ℤ), target := 30, targetShift := (-2 : ℤ) }
+]
+
+def mergeGroup6 : List MergeDatum := [
   { left := 6, right := 0, shift := (0 : ℤ), target := 9, targetShift := (-3 : ℤ) },
   { left := 6, right := 0, shift := (2 : ℤ), target := 8, targetShift := (0 : ℤ) },
   { left := 6, right := 0, shift := (3 : ℤ), target := 6, targetShift := (0 : ℤ) },
@@ -1015,7 +1033,10 @@ def merges : List MergeDatum := [
   { left := 6, right := 9, shift := (1 : ℤ), target := 27, targetShift := (0 : ℤ) },
   { left := 6, right := 9, shift := (3 : ℤ), target := 15, targetShift := (0 : ℤ) },
   { left := 6, right := 9, shift := (6 : ℤ), target := 24, targetShift := (0 : ℤ) },
-  { left := 6, right := 9, shift := (9 : ℤ), target := 37, targetShift := (0 : ℤ) },
+  { left := 6, right := 9, shift := (9 : ℤ), target := 37, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup7 : List MergeDatum := [
   { left := 7, right := 0, shift := (-1 : ℤ), target := 10, targetShift := (-1 : ℤ) },
   { left := 7, right := 0, shift := (0 : ℤ), target := 7, targetShift := (0 : ℤ) },
   { left := 7, right := 0, shift := (1 : ℤ), target := 7, targetShift := (0 : ℤ) },
@@ -1077,7 +1098,10 @@ def merges : List MergeDatum := [
   { left := 7, right := 6, shift := (2 : ℤ), target := 17, targetShift := (-1 : ℤ) },
   { left := 7, right := 6, shift := (3 : ℤ), target := 28, targetShift := (-3 : ℤ) },
   { left := 7, right := 6, shift := (4 : ℤ), target := 28, targetShift := (-2 : ℤ) },
-  { left := 7, right := 6, shift := (5 : ℤ), target := 25, targetShift := (-1 : ℤ) },
+  { left := 7, right := 6, shift := (5 : ℤ), target := 25, targetShift := (-1 : ℤ) }
+]
+
+def mergeGroup8 : List MergeDatum := [
   { left := 8, right := 0, shift := (0 : ℤ), target := 14, targetShift := (-3 : ℤ) },
   { left := 8, right := 0, shift := (1 : ℤ), target := 11, targetShift := (0 : ℤ) },
   { left := 8, right := 0, shift := (2 : ℤ), target := 8, targetShift := (0 : ℤ) },
@@ -1142,7 +1166,10 @@ def merges : List MergeDatum := [
   { left := 8, right := 6, shift := (3 : ℤ), target := 13, targetShift := (0 : ℤ) },
   { left := 8, right := 6, shift := (4 : ℤ), target := 27, targetShift := (0 : ℤ) },
   { left := 8, right := 6, shift := (6 : ℤ), target := 20, targetShift := (0 : ℤ) },
-  { left := 8, right := 6, shift := (9 : ℤ), target := 30, targetShift := (0 : ℤ) },
+  { left := 8, right := 6, shift := (9 : ℤ), target := 30, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup9 : List MergeDatum := [
   { left := 9, right := 0, shift := (0 : ℤ), target := 15, targetShift := (-3 : ℤ) },
   { left := 9, right := 0, shift := (2 : ℤ), target := 13, targetShift := (0 : ℤ) },
   { left := 9, right := 0, shift := (3 : ℤ), target := 9, targetShift := (0 : ℤ) },
@@ -1210,7 +1237,10 @@ def merges : List MergeDatum := [
   { left := 9, right := 6, shift := (4 : ℤ), target := 31, targetShift := (0 : ℤ) },
   { left := 9, right := 6, shift := (6 : ℤ), target := 15, targetShift := (0 : ℤ) },
   { left := 9, right := 6, shift := (9 : ℤ), target := 24, targetShift := (0 : ℤ) },
-  { left := 9, right := 6, shift := (12 : ℤ), target := 37, targetShift := (0 : ℤ) },
+  { left := 9, right := 6, shift := (12 : ℤ), target := 37, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup10 : List MergeDatum := [
   { left := 10, right := 0, shift := (-1 : ℤ), target := 19, targetShift := (-3 : ℤ) },
   { left := 10, right := 0, shift := (0 : ℤ), target := 10, targetShift := (0 : ℤ) },
   { left := 10, right := 0, shift := (1 : ℤ), target := 10, targetShift := (0 : ℤ) },
@@ -1255,7 +1285,10 @@ def merges : List MergeDatum := [
   { left := 10, right := 4, shift := (3 : ℤ), target := 19, targetShift := (-3 : ℤ) },
   { left := 10, right := 4, shift := (4 : ℤ), target := 19, targetShift := (-2 : ℤ) },
   { left := 10, right := 4, shift := (5 : ℤ), target := 26, targetShift := (-2 : ℤ) },
-  { left := 10, right := 4, shift := (6 : ℤ), target := 28, targetShift := (-3 : ℤ) },
+  { left := 10, right := 4, shift := (6 : ℤ), target := 28, targetShift := (-3 : ℤ) }
+]
+
+def mergeGroup11 : List MergeDatum := [
   { left := 11, right := 0, shift := (0 : ℤ), target := 19, targetShift := (-3 : ℤ) },
   { left := 11, right := 0, shift := (1 : ℤ), target := 11, targetShift := (0 : ℤ) },
   { left := 11, right := 0, shift := (2 : ℤ), target := 11, targetShift := (0 : ℤ) },
@@ -1303,7 +1336,10 @@ def merges : List MergeDatum := [
   { left := 11, right := 4, shift := (4 : ℤ), target := 26, targetShift := (-3 : ℤ) },
   { left := 11, right := 4, shift := (5 : ℤ), target := 26, targetShift := (-1 : ℤ) },
   { left := 11, right := 4, shift := (6 : ℤ), target := 17, targetShift := (0 : ℤ) },
-  { left := 11, right := 4, shift := (9 : ℤ), target := 25, targetShift := (0 : ℤ) },
+  { left := 11, right := 4, shift := (9 : ℤ), target := 25, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup12 : List MergeDatum := [
   { left := 12, right := 0, shift := (0 : ℤ), target := 21, targetShift := (-3 : ℤ) },
   { left := 12, right := 0, shift := (1 : ℤ), target := 16, targetShift := (0 : ℤ) },
   { left := 12, right := 0, shift := (2 : ℤ), target := 12, targetShift := (0 : ℤ) },
@@ -1351,7 +1387,10 @@ def merges : List MergeDatum := [
   { left := 12, right := 4, shift := (5 : ℤ), target := 26, targetShift := (-1 : ℤ) },
   { left := 12, right := 4, shift := (6 : ℤ), target := 19, targetShift := (0 : ℤ) },
   { left := 12, right := 4, shift := (7 : ℤ), target := 27, targetShift := (0 : ℤ) },
-  { left := 12, right := 4, shift := (9 : ℤ), target := 28, targetShift := (0 : ℤ) },
+  { left := 12, right := 4, shift := (9 : ℤ), target := 28, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup13 : List MergeDatum := [
   { left := 13, right := 0, shift := (0 : ℤ), target := 22, targetShift := (-3 : ℤ) },
   { left := 13, right := 0, shift := (1 : ℤ), target := 17, targetShift := (0 : ℤ) },
   { left := 13, right := 0, shift := (2 : ℤ), target := 13, targetShift := (0 : ℤ) },
@@ -1401,7 +1440,10 @@ def merges : List MergeDatum := [
   { left := 13, right := 4, shift := (4 : ℤ), target := 26, targetShift := (0 : ℤ) },
   { left := 13, right := 4, shift := (6 : ℤ), target := 13, targetShift := (0 : ℤ) },
   { left := 13, right := 4, shift := (9 : ℤ), target := 20, targetShift := (0 : ℤ) },
-  { left := 13, right := 4, shift := (12 : ℤ), target := 30, targetShift := (0 : ℤ) },
+  { left := 13, right := 4, shift := (12 : ℤ), target := 30, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup14 : List MergeDatum := [
   { left := 14, right := 0, shift := (0 : ℤ), target := 23, targetShift := (-3 : ℤ) },
   { left := 14, right := 0, shift := (2 : ℤ), target := 19, targetShift := (0 : ℤ) },
   { left := 14, right := 0, shift := (3 : ℤ), target := 14, targetShift := (0 : ℤ) },
@@ -1451,7 +1493,10 @@ def merges : List MergeDatum := [
   { left := 14, right := 4, shift := (6 : ℤ), target := 14, targetShift := (0 : ℤ) },
   { left := 14, right := 4, shift := (7 : ℤ), target := 31, targetShift := (0 : ℤ) },
   { left := 14, right := 4, shift := (9 : ℤ), target := 22, targetShift := (0 : ℤ) },
-  { left := 14, right := 4, shift := (12 : ℤ), target := 33, targetShift := (0 : ℤ) },
+  { left := 14, right := 4, shift := (12 : ℤ), target := 33, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup15 : List MergeDatum := [
   { left := 15, right := 0, shift := (0 : ℤ), target := 24, targetShift := (-3 : ℤ) },
   { left := 15, right := 0, shift := (2 : ℤ), target := 20, targetShift := (0 : ℤ) },
   { left := 15, right := 0, shift := (3 : ℤ), target := 15, targetShift := (0 : ℤ) },
@@ -1504,7 +1549,10 @@ def merges : List MergeDatum := [
   { left := 15, right := 4, shift := (6 : ℤ), target := 15, targetShift := (0 : ℤ) },
   { left := 15, right := 4, shift := (9 : ℤ), target := 15, targetShift := (0 : ℤ) },
   { left := 15, right := 4, shift := (12 : ℤ), target := 24, targetShift := (0 : ℤ) },
-  { left := 15, right := 4, shift := (15 : ℤ), target := 37, targetShift := (0 : ℤ) },
+  { left := 15, right := 4, shift := (15 : ℤ), target := 37, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup16 : List MergeDatum := [
   { left := 16, right := 0, shift := (0 : ℤ), target := 26, targetShift := (-3 : ℤ) },
   { left := 16, right := 0, shift := (1 : ℤ), target := 16, targetShift := (0 : ℤ) },
   { left := 16, right := 0, shift := (2 : ℤ), target := 16, targetShift := (0 : ℤ) },
@@ -1522,7 +1570,10 @@ def merges : List MergeDatum := [
   { left := 16, right := 1, shift := (5 : ℤ), target := 26, targetShift := (-1 : ℤ) },
   { left := 16, right := 1, shift := (6 : ℤ), target := 16, targetShift := (0 : ℤ) },
   { left := 16, right := 1, shift := (7 : ℤ), target := 26, targetShift := (-3 : ℤ) },
-  { left := 16, right := 1, shift := (9 : ℤ), target := 26, targetShift := (-1 : ℤ) },
+  { left := 16, right := 1, shift := (9 : ℤ), target := 26, targetShift := (-1 : ℤ) }
+]
+
+def mergeGroup17 : List MergeDatum := [
   { left := 17, right := 0, shift := (0 : ℤ), target := 28, targetShift := (-3 : ℤ) },
   { left := 17, right := 0, shift := (1 : ℤ), target := 17, targetShift := (0 : ℤ) },
   { left := 17, right := 0, shift := (2 : ℤ), target := 17, targetShift := (0 : ℤ) },
@@ -1542,7 +1593,10 @@ def merges : List MergeDatum := [
   { left := 17, right := 1, shift := (5 : ℤ), target := 27, targetShift := (-1 : ℤ) },
   { left := 17, right := 1, shift := (6 : ℤ), target := 17, targetShift := (0 : ℤ) },
   { left := 17, right := 1, shift := (9 : ℤ), target := 17, targetShift := (0 : ℤ) },
-  { left := 17, right := 1, shift := (12 : ℤ), target := 25, targetShift := (0 : ℤ) },
+  { left := 17, right := 1, shift := (12 : ℤ), target := 25, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup18 : List MergeDatum := [
   { left := 18, right := 0, shift := (0 : ℤ), target := 31, targetShift := (-3 : ℤ) },
   { left := 18, right := 0, shift := (1 : ℤ), target := 26, targetShift := (-3 : ℤ) },
   { left := 18, right := 0, shift := (2 : ℤ), target := 18, targetShift := (0 : ℤ) },
@@ -1562,7 +1616,10 @@ def merges : List MergeDatum := [
   { left := 18, right := 1, shift := (6 : ℤ), target := 18, targetShift := (0 : ℤ) },
   { left := 18, right := 1, shift := (7 : ℤ), target := 18, targetShift := (0 : ℤ) },
   { left := 18, right := 1, shift := (9 : ℤ), target := 26, targetShift := (0 : ℤ) },
-  { left := 18, right := 1, shift := (10 : ℤ), target := 27, targetShift := (0 : ℤ) },
+  { left := 18, right := 1, shift := (10 : ℤ), target := 27, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup19 : List MergeDatum := [
   { left := 19, right := 0, shift := (0 : ℤ), target := 32, targetShift := (-3 : ℤ) },
   { left := 19, right := 0, shift := (1 : ℤ), target := 26, targetShift := (-1 : ℤ) },
   { left := 19, right := 0, shift := (2 : ℤ), target := 19, targetShift := (0 : ℤ) },
@@ -1584,7 +1641,10 @@ def merges : List MergeDatum := [
   { left := 19, right := 1, shift := (7 : ℤ), target := 26, targetShift := (0 : ℤ) },
   { left := 19, right := 1, shift := (8 : ℤ), target := 26, targetShift := (-1 : ℤ) },
   { left := 19, right := 1, shift := (9 : ℤ), target := 19, targetShift := (0 : ℤ) },
-  { left := 19, right := 1, shift := (12 : ℤ), target := 28, targetShift := (0 : ℤ) },
+  { left := 19, right := 1, shift := (12 : ℤ), target := 28, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup20 : List MergeDatum := [
   { left := 20, right := 0, shift := (0 : ℤ), target := 33, targetShift := (-3 : ℤ) },
   { left := 20, right := 0, shift := (1 : ℤ), target := 25, targetShift := (0 : ℤ) },
   { left := 20, right := 0, shift := (2 : ℤ), target := 20, targetShift := (0 : ℤ) },
@@ -1605,7 +1665,10 @@ def merges : List MergeDatum := [
   { left := 20, right := 1, shift := (6 : ℤ), target := 20, targetShift := (0 : ℤ) },
   { left := 20, right := 1, shift := (9 : ℤ), target := 20, targetShift := (0 : ℤ) },
   { left := 20, right := 1, shift := (12 : ℤ), target := 20, targetShift := (0 : ℤ) },
-  { left := 20, right := 1, shift := (15 : ℤ), target := 30, targetShift := (0 : ℤ) },
+  { left := 20, right := 1, shift := (15 : ℤ), target := 30, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup21 : List MergeDatum := [
   { left := 21, right := 0, shift := (0 : ℤ), target := 34, targetShift := (-3 : ℤ) },
   { left := 21, right := 0, shift := (2 : ℤ), target := 26, targetShift := (0 : ℤ) },
   { left := 21, right := 0, shift := (3 : ℤ), target := 21, targetShift := (0 : ℤ) },
@@ -1625,7 +1688,10 @@ def merges : List MergeDatum := [
   { left := 21, right := 1, shift := (8 : ℤ), target := 32, targetShift := (0 : ℤ) },
   { left := 21, right := 1, shift := (9 : ℤ), target := 21, targetShift := (0 : ℤ) },
   { left := 21, right := 1, shift := (10 : ℤ), target := 31, targetShift := (0 : ℤ) },
-  { left := 21, right := 1, shift := (12 : ℤ), target := 32, targetShift := (0 : ℤ) },
+  { left := 21, right := 1, shift := (12 : ℤ), target := 32, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup22 : List MergeDatum := [
   { left := 22, right := 0, shift := (0 : ℤ), target := 35, targetShift := (-3 : ℤ) },
   { left := 22, right := 0, shift := (2 : ℤ), target := 28, targetShift := (0 : ℤ) },
   { left := 22, right := 0, shift := (3 : ℤ), target := 22, targetShift := (0 : ℤ) },
@@ -1645,7 +1711,10 @@ def merges : List MergeDatum := [
   { left := 22, right := 1, shift := (7 : ℤ), target := 32, targetShift := (0 : ℤ) },
   { left := 22, right := 1, shift := (9 : ℤ), target := 22, targetShift := (0 : ℤ) },
   { left := 22, right := 1, shift := (12 : ℤ), target := 22, targetShift := (0 : ℤ) },
-  { left := 22, right := 1, shift := (15 : ℤ), target := 33, targetShift := (0 : ℤ) },
+  { left := 22, right := 1, shift := (15 : ℤ), target := 33, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup23 : List MergeDatum := [
   { left := 23, right := 0, shift := (0 : ℤ), target := 36, targetShift := (-3 : ℤ) },
   { left := 23, right := 0, shift := (2 : ℤ), target := 29, targetShift := (0 : ℤ) },
   { left := 23, right := 0, shift := (3 : ℤ), target := 23, targetShift := (0 : ℤ) },
@@ -1666,7 +1735,10 @@ def merges : List MergeDatum := [
   { left := 23, right := 1, shift := (9 : ℤ), target := 23, targetShift := (0 : ℤ) },
   { left := 23, right := 1, shift := (10 : ℤ), target := 34, targetShift := (0 : ℤ) },
   { left := 23, right := 1, shift := (12 : ℤ), target := 23, targetShift := (0 : ℤ) },
-  { left := 23, right := 1, shift := (15 : ℤ), target := 35, targetShift := (0 : ℤ) },
+  { left := 23, right := 1, shift := (15 : ℤ), target := 35, targetShift := (0 : ℤ) }
+]
+
+def mergeGroup24 : List MergeDatum := [
   { left := 24, right := 0, shift := (0 : ℤ), target := 37, targetShift := (-3 : ℤ) },
   { left := 24, right := 0, shift := (2 : ℤ), target := 30, targetShift := (0 : ℤ) },
   { left := 24, right := 0, shift := (3 : ℤ), target := 24, targetShift := (0 : ℤ) },
@@ -1690,5 +1762,87 @@ def merges : List MergeDatum := [
   { left := 24, right := 1, shift := (15 : ℤ), target := 24, targetShift := (0 : ℤ) },
   { left := 24, right := 1, shift := (18 : ℤ), target := 37, targetShift := (0 : ℤ) }
 ]
+
+def mergeGroup25 : List MergeDatum := [
+]
+
+def mergeGroup26 : List MergeDatum := [
+]
+
+def mergeGroup27 : List MergeDatum := [
+]
+
+def mergeGroup28 : List MergeDatum := [
+]
+
+def mergeGroup29 : List MergeDatum := [
+]
+
+def mergeGroup30 : List MergeDatum := [
+]
+
+def mergeGroup31 : List MergeDatum := [
+]
+
+def mergeGroup32 : List MergeDatum := [
+]
+
+def mergeGroup33 : List MergeDatum := [
+]
+
+def mergeGroup34 : List MergeDatum := [
+]
+
+def mergeGroup35 : List MergeDatum := [
+]
+
+def mergeGroup36 : List MergeDatum := [
+]
+
+def mergeGroup37 : List MergeDatum := [
+]
+
+def mergeGroups : List (List MergeDatum) := [
+  mergeGroup0,
+  mergeGroup1,
+  mergeGroup2,
+  mergeGroup3,
+  mergeGroup4,
+  mergeGroup5,
+  mergeGroup6,
+  mergeGroup7,
+  mergeGroup8,
+  mergeGroup9,
+  mergeGroup10,
+  mergeGroup11,
+  mergeGroup12,
+  mergeGroup13,
+  mergeGroup14,
+  mergeGroup15,
+  mergeGroup16,
+  mergeGroup17,
+  mergeGroup18,
+  mergeGroup19,
+  mergeGroup20,
+  mergeGroup21,
+  mergeGroup22,
+  mergeGroup23,
+  mergeGroup24,
+  mergeGroup25,
+  mergeGroup26,
+  mergeGroup27,
+  mergeGroup28,
+  mergeGroup29,
+  mergeGroup30,
+  mergeGroup31,
+  mergeGroup32,
+  mergeGroup33,
+  mergeGroup34,
+  mergeGroup35,
+  mergeGroup36,
+  mergeGroup37
+]
+
+def merges : List MergeDatum := mergeGroups.flatten
 
 end PetersenZeroForcing.CertificateData
