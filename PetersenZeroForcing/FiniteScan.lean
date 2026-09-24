@@ -84,7 +84,6 @@ theorem forceStepFast_eq_forceStep
     · exact Or.inl hy
     · right
       rcases hy with ⟨x, hx, hyx⟩
-      dsimp at hyx
       by_cases hcard : (whiteNeighbors n blue x).card = 1
       · rw [if_pos hcard] at hyx
         rcases Finset.card_eq_one.mp hcard with ⟨z, hz⟩
@@ -100,7 +99,6 @@ theorem forceStepFast_eq_forceStep
     · exact Or.inl hy
     · right
       refine ⟨x, hx, ?_⟩
-      dsimp
       have hcard : (whiteNeighbors n blue x).card = 1 := by
         rw [hwhite]
         simp
@@ -151,7 +149,7 @@ def bases (n : Nat) [NeZero n] : Finset (Finset (Vertex n)) :=
 def pairScanB (n : Nat) [NeZero n]
     (source : Vertex n) (pair : Finset (Vertex n)) : Bool :=
   allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
-    decide (closureEarly n (insert source pair ∪ extra) ≠ Finset.univ)
+    decide (closureFast n (insert source pair ∪ extra) ≠ Finset.univ)
 
 /-- Balanced classifier used only to split the exact four-extra kernel scan.
 Every extra set lies in exactly one Boolean parity shard. -/
@@ -166,7 +164,7 @@ def pairScanParityB (n : Nat) [NeZero n]
     ((((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4).filter
       (fun extra => extraOuterEvenB extra = wantEven))
     fun extra =>
-      decide (closureEarly n (insert source pair ∪ extra) ≠ Finset.univ)
+      decide (closureFast n (insert source pair ∪ extra) ≠ Finset.univ)
 
 theorem pairScanB_of_parity
     (n : Nat) [NeZero n]
@@ -190,7 +188,7 @@ def sourceScanB (n : Nat) [NeZero n] (source : Vertex n) : Bool :=
 def reducedScanB (n : Nat) [NeZero n] : Bool :=
   allB (bases n) fun base =>
     allB ((Finset.univ \ base).powersetCard 4) fun extra =>
-      decide (closureEarly n (base ∪ extra) ≠ Finset.univ)
+      decide (closureFast n (base ∪ extra) ≠ Finset.univ)
 
 def outerPair0 (n : Nat) [NeZero n] : Finset (Vertex n) := {u (-1), u 1}
 def outerPair1 (n : Nat) [NeZero n] : Finset (Vertex n) := {u (-1), v 0}
