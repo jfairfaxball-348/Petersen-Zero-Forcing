@@ -1,12 +1,15 @@
-import PetersenZeroForcing.FiniteScan
+import PetersenZeroForcing.FiniteScanCheck14InnerPair2O110H0
+import PetersenZeroForcing.FiniteScanCheck14InnerPair2O110H1
 
 namespace PetersenZeroForcing
 namespace FiniteScan
 
-set_option maxHeartbeats 0 in
-set_option maxRecDepth 1000000 in
 theorem scan14_inner_pair2_o110_cert_checked :
-    pairCertScanOctantB 14 (v 0) (innerPair2 14) true true false = true := by decide
+    pairCertScanOctantB 14 (v 0) (innerPair2 14) true true false = true :=
+  pairCertScanOctantB_of_halves 14 (v 0) (innerPair2 14)
+    true true false
+    scan14_inner_pair2_o110_h0_cert_checked
+    scan14_inner_pair2_o110_h1_cert_checked
 
 end FiniteScan
 end PetersenZeroForcing

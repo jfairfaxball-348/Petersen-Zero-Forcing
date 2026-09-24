@@ -16,8 +16,8 @@ permissions:
   actions: read
 
 jobs:
-  finite14-shards:
-    name: finite14-${{ matrix.pair.name }}-${{ matrix.octant }}
+  finite14-repair-shards:
+    name: finite14-repair-${{ matrix.name }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
@@ -26,44 +26,43 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        pair:
-          - name: outer-pair0
-            stem: OuterPair0
-          - name: outer-pair1
-            stem: OuterPair1
-          - name: outer-pair2
-            stem: OuterPair2
-          - name: inner-pair0
-            stem: InnerPair0
-          - name: inner-pair1
-            stem: InnerPair1
-          - name: inner-pair2
-            stem: InnerPair2
-        octant: ["000", "001", "010", "011", "100", "101", "110", "111"]
+        include:
+          - name: outer-pair0-001-h0
+            module: PetersenZeroForcing.FiniteScanCheck14OuterPair0O001H0
+            stem: FiniteScanCheck14OuterPair0O001H0
+          - name: outer-pair0-001-h1
+            module: PetersenZeroForcing.FiniteScanCheck14OuterPair0O001H1
+            stem: FiniteScanCheck14OuterPair0O001H1
+          - name: inner-pair2-110-h0
+            module: PetersenZeroForcing.FiniteScanCheck14InnerPair2O110H0
+            stem: FiniteScanCheck14InnerPair2O110H0
+          - name: inner-pair2-110-h1
+            module: PetersenZeroForcing.FiniteScanCheck14InnerPair2O110H1
+            stem: FiniteScanCheck14InnerPair2O110H1
     steps:
       - uses: actions/checkout@v4
-      - name: Kernel-check finite shard
+      - name: Kernel-check repaired finite shard
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.FiniteScanCheck14${{ matrix.pair.stem }}O${{ matrix.octant }}
+          build-args: ${{ matrix.module }}
           test: false
           lint: false
           use-github-cache: false
-      - name: Save checked module
+      - name: Save checked repaired module
         uses: actions/upload-artifact@v4
         with:
-          name: finite14-${{ matrix.pair.name }}-${{ matrix.octant }}
+          name: finite14-repair-${{ matrix.name }}
           path: |
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14${{ matrix.pair.stem }}O${{ matrix.octant }}.olean
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14${{ matrix.pair.stem }}O${{ matrix.octant }}.ilean
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.stem }}.olean
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.stem }}.ilean
           if-no-files-found: error
           retention-days: 1
 
   assemble:
     name: assemble
-    needs: finite14-shards
+    needs: finite14-repair-shards
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -75,7 +74,7 @@ jobs:
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound PetersenZeroForcing.FiniteScanOctantSplit
           test: false
           lint: false
           use-github-cache: false
@@ -87,12 +86,31 @@ jobs:
           merge-multiple: true
           github-token: ${{ github.token }}
           run-id: 35996619272
-      - name: Restore n=14 checked shards
+      - name: Restore successful n=14 shards from run 134
         uses: actions/download-artifact@v5
         with:
           pattern: finite14-*
           path: .lake/build/lib/lean/PetersenZeroForcing
           merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: 36005536222
+      - name: Restore repaired n=14 split shards
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite14-repair-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+      - name: Reconstruct timed-out n=14 octants
+        shell: bash
+        run: |
+          set -euo pipefail
+          for stem in \
+            FiniteScanCheck14OuterPair0O001 \
+            FiniteScanCheck14InnerPair2O110
+          do
+            lake env lean "PetersenZeroForcing/${stem}.lean" \
+              -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
+          done
       - name: Assemble finite scans through n=14 and root module
         shell: bash
         run: |
@@ -125,6 +143,7 @@ jobs:
         with:
           name: finite-checked-through-14
           path: |
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
