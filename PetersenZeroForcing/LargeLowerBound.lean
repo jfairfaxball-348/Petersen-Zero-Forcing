@@ -11,17 +11,29 @@ def singletonBlock (n : Nat) [NeZero n] (p : Vertex n) : CertifiedBlock :=
     (n : Nat) [NeZero n] (p : Vertex n) :
     CertifiedBlock.weight (singletonBlock n p) = 1 := by
   rcases p with ⟨layer, i⟩
-  cases layer <;> decide
+  cases layer <;>
+    simp [singletonBlock, CertifiedBlock.weight, Certificate.weight,
+      Certificate.datum, CertificateData.shapeByNat]
 
 @[simp] theorem singletonBlock_vertices
     (n : Nat) [NeZero n] (p : Vertex n) :
     CertifiedBlock.vertices n (singletonBlock n p) = {p} := by
   rcases p with ⟨layer, i⟩
-  cases layer <;>
-    simp [singletonBlock, CertifiedBlock.vertices,
-      Certificate.outer_singleton, Certificate.inner_singleton,
-      translateSet, projectSet, translateVertex, projectVertex, su, sv,
-      u, v, ZMod.natCast_zmod_val]
+  cases layer
+  · change
+      projectSet n
+        (translateSet (Certificate.shape ⟨0, by decide⟩) (i.val : ℤ)) =
+        {(Layer.outer, i)}
+    rw [Certificate.outer_singleton]
+    simp [projectSet, translateSet, translateVertex, projectVertex, su, u,
+      ZMod.natCast_zmod_val]
+  · change
+      projectSet n
+        (translateSet (Certificate.shape ⟨1, by decide⟩) (i.val : ℤ)) =
+        {(Layer.inner, i)}
+    rw [Certificate.inner_singleton]
+    simp [projectSet, translateSet, translateVertex, projectVertex, sv, v,
+      ZMod.natCast_zmod_val]
 
 def initialBlockFamily
     (n : Nat) [NeZero n] (S : Finset (Vertex n)) :
@@ -43,14 +55,23 @@ theorem initialBlockFamily_weight_le_card
   calc
     blockFamilyWeight (initialBlockFamily n S)
         = (initialBlockFamily n S).card := by
-            simp [blockFamilyWeight]
+            unfold blockFamilyWeight
+            calc
+              (∑ b ∈ initialBlockFamily n S, CertifiedBlock.weight b)
+                  = ∑ _b ∈ initialBlockFamily n S, 1 := by
+                    apply Finset.sum_congr rfl
+                    intro b hb
+                    rcases Finset.mem_image.mp hb with ⟨p, hp, rfl⟩
+                    simp
+              _ = (initialBlockFamily n S).card := by simp
     _ ≤ S.card := by
-      simpa [initialBlockFamily] using
-        Finset.card_image_le (singletonBlock n) S
+      change (S.image (singletonBlock n)).card ≤ S.card
+      exact Finset.card_image_le
 
 theorem vertex_card (n : Nat) [NeZero n] :
     Fintype.card (Vertex n) = 2 * n := by
-  simp [Vertex]
+  have hLayer : Fintype.card Layer = 2 := by decide
+  simp [Vertex, hLayer, NeZero.ne n]
 
 theorem lower_bound_large
     (n : Nat) [NeZero n] (hn : 22 ≤ n) :
