@@ -16,15 +16,15 @@ permissions:
   actions: read
 
 jobs:
-  finite15-half-shards:
-    name: finite15-${{ matrix.pair.name }}-${{ matrix.octant }}-h${{ matrix.half }}
+  finite15-shards:
+    name: finite15-${{ matrix.pair.name }}-${{ matrix.octant }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       LEAN_NUM_THREADS: 1
     strategy:
       fail-fast: false
-      max-parallel: 8
+      max-parallel: 4
       matrix:
         pair:
           - name: outer-pair0
@@ -40,31 +40,30 @@ jobs:
           - name: inner-pair2
             stem: InnerPair2
         octant: ["000", "001", "010", "011", "100", "101", "110", "111"]
-        half: ["0", "1"]
     steps:
       - uses: actions/checkout@v4
-      - name: Kernel-check finite half-shard
+      - name: Kernel-check finite shard
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.FiniteScanCheck15${{ matrix.pair.stem }}O${{ matrix.octant }}H${{ matrix.half }}
+          build-args: PetersenZeroForcing.FiniteScanCheck15${{ matrix.pair.stem }}O${{ matrix.octant }}
           test: false
           lint: false
           use-github-cache: false
-      - name: Save checked half-module
+      - name: Save checked module
         uses: actions/upload-artifact@v4
         with:
-          name: finite15-${{ matrix.pair.name }}-${{ matrix.octant }}-h${{ matrix.half }}
+          name: finite15-${{ matrix.pair.name }}-${{ matrix.octant }}
           path: |
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15${{ matrix.pair.stem }}O${{ matrix.octant }}H${{ matrix.half }}.olean
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15${{ matrix.pair.stem }}O${{ matrix.octant }}H${{ matrix.half }}.ilean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15${{ matrix.pair.stem }}O${{ matrix.octant }}.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15${{ matrix.pair.stem }}O${{ matrix.octant }}.ilean
           if-no-files-found: error
-          retention-days: 2
+          retention-days: 1
 
   assemble:
     name: assemble
-    needs: finite15-half-shards
+    needs: finite15-shards
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -87,13 +86,13 @@ jobs:
           path: .lake/build/lib/lean/PetersenZeroForcing
           github-token: ${{ github.token }}
           run-id: 36018908671
-      - name: Restore n=15 checked half-shards
+      - name: Restore n=15 checked shards
         uses: actions/download-artifact@v5
         with:
           pattern: finite15-*
           path: .lake/build/lib/lean/PetersenZeroForcing
           merge-multiple: true
-      - name: Reconstruct exact n=15 octants and assemble root
+      - name: Assemble n=15 and root module
         shell: bash
         run: |
           set -euo pipefail
@@ -105,12 +104,6 @@ jobs:
             InnerPair1 \
             InnerPair2
           do
-            for octant in 000 001 010 011 100 101 110 111
-            do
-              stem="FiniteScanCheck15${suffix}O${octant}"
-              lake env lean "PetersenZeroForcing/${stem}.lean" \
-                -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
-            done
             stem="FiniteScanCheck15${suffix}"
             lake env lean "PetersenZeroForcing/${stem}.lean" \
               -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
