@@ -3,6 +3,7 @@ import PetersenZeroForcing.Strip
 import PetersenZeroForcing.CertificateData
 import PetersenZeroForcing.Certificate
 import PetersenZeroForcing.Forcing
+import PetersenZeroForcing.ForcingMonotone
 import PetersenZeroForcing.CertificateLemmas
 import PetersenZeroForcing.Projection
 import PetersenZeroForcing.Contact
