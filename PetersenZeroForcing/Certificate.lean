@@ -81,8 +81,46 @@ def expectedKeysForLeft (a : Nat) : List MergeKey :=
       else
         []
 
-def expectedKeyGroups : List (List MergeKey) :=
-  (List.range 38).map expectedKeysForLeft
+def expectedKeyGroups : List (List MergeKey) := [
+  expectedKeysForLeft 0,
+  expectedKeysForLeft 1,
+  expectedKeysForLeft 2,
+  expectedKeysForLeft 3,
+  expectedKeysForLeft 4,
+  expectedKeysForLeft 5,
+  expectedKeysForLeft 6,
+  expectedKeysForLeft 7,
+  expectedKeysForLeft 8,
+  expectedKeysForLeft 9,
+  expectedKeysForLeft 10,
+  expectedKeysForLeft 11,
+  expectedKeysForLeft 12,
+  expectedKeysForLeft 13,
+  expectedKeysForLeft 14,
+  expectedKeysForLeft 15,
+  expectedKeysForLeft 16,
+  expectedKeysForLeft 17,
+  expectedKeysForLeft 18,
+  expectedKeysForLeft 19,
+  expectedKeysForLeft 20,
+  expectedKeysForLeft 21,
+  expectedKeysForLeft 22,
+  expectedKeysForLeft 23,
+  expectedKeysForLeft 24,
+  expectedKeysForLeft 25,
+  expectedKeysForLeft 26,
+  expectedKeysForLeft 27,
+  expectedKeysForLeft 28,
+  expectedKeysForLeft 29,
+  expectedKeysForLeft 30,
+  expectedKeysForLeft 31,
+  expectedKeysForLeft 32,
+  expectedKeysForLeft 33,
+  expectedKeysForLeft 34,
+  expectedKeysForLeft 35,
+  expectedKeysForLeft 36,
+  expectedKeysForLeft 37
+]
 
 def expectedKeys : List MergeKey :=
   expectedKeyGroups.flatten
