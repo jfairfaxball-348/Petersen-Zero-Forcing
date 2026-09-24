@@ -49,9 +49,15 @@ theorem shape_card_le_sizeBound (i : ShapeId) :
 
 theorem merge_row_checked (m : CertificateData.MergeDatum)
     (hm : m ∈ CertificateData.merges) : mergeRowOKB m = true := by
-  have h : ∀ r ∈ CertificateData.merges, mergeRowOKB r = true := by
+  have hm' : m ∈ CertificateData.mergeGroups.flatten := by
+    simpa [CertificateData.merges] using hm
+  rcases List.mem_flatten.mp hm' with ⟨group, hgroup, hmgroup⟩
+  have hgroups : ∀ g ∈ CertificateData.mergeGroups, g.all mergeRowOKB = true := by
     simpa [certificateMergeRowsOKB] using certificate_merge_rows_checked
-  exact h m hm
+  have hgroupAll := hgroups group hgroup
+  have hrows : ∀ r ∈ group, mergeRowOKB r = true := by
+    simpa using hgroupAll
+  exact hrows m hmgroup
 
 theorem merge_row_properties (m : CertificateData.MergeDatum)
     (hm : m ∈ CertificateData.merges) :
@@ -65,15 +71,17 @@ theorem merge_row_properties (m : CertificateData.MergeDatum)
   have h := merge_row_checked m hm
   simpa [mergeRowOKB] using h
 
-theorem certificate_keys_eq_expected : certificateKeys = expectedKeys := by
-  have h : certificateKeys = expectedKeys ∧ certificateKeys.Nodup := by
+theorem certificate_key_groups_eq_expected :
+    certificateKeyGroups = expectedKeyGroups := by
+  have h :
+      certificateKeyGroups = expectedKeyGroups ∧
+      certificateKeyGroups.all keyGroupNodupB = true := by
     simpa [certificateKeysOKB] using certificate_keys_checked
   exact h.1
 
-theorem certificate_keys_nodup : certificateKeys.Nodup := by
-  have h : certificateKeys = expectedKeys ∧ certificateKeys.Nodup := by
-    simpa [certificateKeysOKB] using certificate_keys_checked
-  exact h.2
+theorem certificate_keys_eq_expected : certificateKeys = expectedKeys := by
+  have h := congrArg List.flatten certificate_key_groups_eq_expected
+  simpa [certificateKeys, expectedKeys] using h
 
 theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
     (htouch : StripTouches (shape a) (translateSet (shape b) t)) :
