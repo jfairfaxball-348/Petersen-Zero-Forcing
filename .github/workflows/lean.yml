@@ -28,7 +28,7 @@ jobs:
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound PetersenZeroForcing.FiniteScanOctantSplit
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound PetersenZeroForcing.FiniteScanOctantSplit PetersenZeroForcing.FiniteScanEighthSplit PetersenZeroForcing.FiniteScanCheck17OuterPair0O000H0Q0E0
           test: false
           lint: false
           use-github-cache: false
