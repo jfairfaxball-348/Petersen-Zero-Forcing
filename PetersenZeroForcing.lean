@@ -10,3 +10,4 @@ import PetersenZeroForcing.FiniteScan
 import PetersenZeroForcing.Rotation
 import PetersenZeroForcing.ProjectedBlocks
 import PetersenZeroForcing.BlockContact
+import PetersenZeroForcing.BlockMerge
