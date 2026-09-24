@@ -11,3 +11,4 @@ import PetersenZeroForcing.Rotation
 import PetersenZeroForcing.ProjectedBlocks
 import PetersenZeroForcing.BlockContact
 import PetersenZeroForcing.BlockMerge
+import PetersenZeroForcing.BlockFamily
