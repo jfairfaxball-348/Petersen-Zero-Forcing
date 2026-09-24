@@ -16,7 +16,7 @@ permissions:
   actions: read
 
 jobs:
-  finite15-leaves:
+  finite15-quarter-shards:
     name: ${{ matrix.artifact }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -24,118 +24,16 @@ jobs:
       LEAN_NUM_THREADS: 1
     strategy:
       fail-fast: false
-      max-parallel: 8
+      max-parallel: 2
       matrix:
         include:
-          - artifact: finite15-outer-pair2-110-h1
-            module: FiniteScanCheck15OuterPair2O110H1
-          - artifact: finite15-outer-pair2-111-h0
-            module: FiniteScanCheck15OuterPair2O111H0
-          - artifact: finite15-outer-pair2-111-h1
-            module: FiniteScanCheck15OuterPair2O111H1
-          - artifact: finite15-inner-pair0-000-h0
-            module: FiniteScanCheck15InnerPair0O000H0
-          - artifact: finite15-inner-pair0-000-h1
-            module: FiniteScanCheck15InnerPair0O000H1
-          - artifact: finite15-inner-pair0-001-h0
-            module: FiniteScanCheck15InnerPair0O001H0
-          - artifact: finite15-inner-pair0-001-h1
-            module: FiniteScanCheck15InnerPair0O001H1
-          - artifact: finite15-inner-pair0-010-h0
-            module: FiniteScanCheck15InnerPair0O010H0
-          - artifact: finite15-inner-pair0-010-h1
-            module: FiniteScanCheck15InnerPair0O010H1
-          - artifact: finite15-inner-pair0-011-h0
-            module: FiniteScanCheck15InnerPair0O011H0
-          - artifact: finite15-inner-pair0-011-h1
-            module: FiniteScanCheck15InnerPair0O011H1
-          - artifact: finite15-inner-pair0-100-h0
-            module: FiniteScanCheck15InnerPair0O100H0
-          - artifact: finite15-inner-pair0-100-h1
-            module: FiniteScanCheck15InnerPair0O100H1
-          - artifact: finite15-inner-pair0-101-h0
-            module: FiniteScanCheck15InnerPair0O101H0
-          - artifact: finite15-inner-pair0-101-h1
-            module: FiniteScanCheck15InnerPair0O101H1
-          - artifact: finite15-inner-pair0-110-h0
-            module: FiniteScanCheck15InnerPair0O110H0
-          - artifact: finite15-inner-pair0-110-h1
-            module: FiniteScanCheck15InnerPair0O110H1
-          - artifact: finite15-inner-pair0-111-h0
-            module: FiniteScanCheck15InnerPair0O111H0
-          - artifact: finite15-inner-pair0-111-h1
-            module: FiniteScanCheck15InnerPair0O111H1
-          - artifact: finite15-inner-pair1-000-h0
-            module: FiniteScanCheck15InnerPair1O000H0
-          - artifact: finite15-inner-pair1-000-h1
-            module: FiniteScanCheck15InnerPair1O000H1
-          - artifact: finite15-inner-pair1-001-h0
-            module: FiniteScanCheck15InnerPair1O001H0
-          - artifact: finite15-inner-pair1-001-h1
-            module: FiniteScanCheck15InnerPair1O001H1
-          - artifact: finite15-inner-pair1-010-h0
-            module: FiniteScanCheck15InnerPair1O010H0
-          - artifact: finite15-inner-pair1-010-h1
-            module: FiniteScanCheck15InnerPair1O010H1
-          - artifact: finite15-inner-pair1-011-h0
-            module: FiniteScanCheck15InnerPair1O011H0
-          - artifact: finite15-inner-pair1-011-h1
-            module: FiniteScanCheck15InnerPair1O011H1
-          - artifact: finite15-inner-pair1-100-h0
-            module: FiniteScanCheck15InnerPair1O100H0
-          - artifact: finite15-inner-pair1-100-h1
-            module: FiniteScanCheck15InnerPair1O100H1
-          - artifact: finite15-inner-pair1-101-h0
-            module: FiniteScanCheck15InnerPair1O101H0
-          - artifact: finite15-inner-pair1-101-h1
-            module: FiniteScanCheck15InnerPair1O101H1
-          - artifact: finite15-inner-pair1-110-h0
-            module: FiniteScanCheck15InnerPair1O110H0
-          - artifact: finite15-inner-pair1-110-h1
-            module: FiniteScanCheck15InnerPair1O110H1
-          - artifact: finite15-inner-pair1-111-h0
-            module: FiniteScanCheck15InnerPair1O111H0
-          - artifact: finite15-inner-pair1-111-h1
-            module: FiniteScanCheck15InnerPair1O111H1
-          - artifact: finite15-inner-pair2-000-h0
-            module: FiniteScanCheck15InnerPair2O000H0
-          - artifact: finite15-inner-pair2-000-h1
-            module: FiniteScanCheck15InnerPair2O000H1
-          - artifact: finite15-inner-pair2-001-h0
-            module: FiniteScanCheck15InnerPair2O001H0
-          - artifact: finite15-inner-pair2-001-h1
-            module: FiniteScanCheck15InnerPair2O001H1
-          - artifact: finite15-inner-pair2-010-h0
-            module: FiniteScanCheck15InnerPair2O010H0
-          - artifact: finite15-inner-pair2-010-h1
-            module: FiniteScanCheck15InnerPair2O010H1
-          - artifact: finite15-inner-pair2-011-h0
-            module: FiniteScanCheck15InnerPair2O011H0
-          - artifact: finite15-inner-pair2-011-h1
-            module: FiniteScanCheck15InnerPair2O011H1
-          - artifact: finite15-inner-pair2-100-h0
-            module: FiniteScanCheck15InnerPair2O100H0
-          - artifact: finite15-inner-pair2-100-h1
-            module: FiniteScanCheck15InnerPair2O100H1
-          - artifact: finite15-inner-pair2-101-h0
-            module: FiniteScanCheck15InnerPair2O101H0
-          - artifact: finite15-inner-pair2-101-h1
-            module: FiniteScanCheck15InnerPair2O101H1
-          - artifact: finite15-inner-pair2-110-h0
-            module: FiniteScanCheck15InnerPair2O110H0
-          - artifact: finite15-inner-pair2-110-h1
-            module: FiniteScanCheck15InnerPair2O110H1
-          - artifact: finite15-inner-pair2-111-h0
-            module: FiniteScanCheck15InnerPair2O111H0
-          - artifact: finite15-inner-pair2-111-h1
-            module: FiniteScanCheck15InnerPair2O111H1
           - artifact: finite15-outer-pair1-111-h1-q0
             module: FiniteScanCheck15OuterPair1O111H1Q0
           - artifact: finite15-outer-pair1-111-h1-q1
             module: FiniteScanCheck15OuterPair1O111H1Q1
     steps:
       - uses: actions/checkout@v4
-      - name: Kernel-check finite subdivision leaf
+      - name: Kernel-check recursive quarter leaf
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
@@ -144,7 +42,7 @@ jobs:
           test: false
           lint: false
           use-github-cache: false
-      - name: Save checked subdivision leaf
+      - name: Save checked quarter leaf
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
@@ -153,91 +51,3 @@ jobs:
             .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.ilean
           if-no-files-found: error
           retention-days: 2
-
-  assemble:
-    name: assemble
-    needs: finite15-leaves
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      LEAN_NUM_THREADS: 1
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build non-computational Lean core
-        uses: leanprover/lean-action@v1
-        with:
-          auto-config: false
-          build: true
-          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound
-          test: false
-          lint: false
-          use-github-cache: false
-      - name: Restore checked finite modules through n=14
-        uses: actions/download-artifact@v5
-        with:
-          name: finite-checked-through-14
-          path: .lake/build/lib/lean/PetersenZeroForcing
-          github-token: ${{ github.token }}
-          run-id: 36018908671
-      - name: Restore successful n=15 leaves from run 142
-        uses: actions/download-artifact@v5
-        with:
-          pattern: finite15-*
-          path: .lake/build/lib/lean/PetersenZeroForcing
-          merge-multiple: true
-          github-token: ${{ github.token }}
-          run-id: 36028350728
-      - name: Restore newly checked n=15 leaves
-        uses: actions/download-artifact@v5
-        with:
-          pattern: finite15-*
-          path: .lake/build/lib/lean/PetersenZeroForcing
-          merge-multiple: true
-      - name: Reconstruct deeper-split half
-        shell: bash
-        run: |
-          set -euo pipefail
-          stem="FiniteScanCheck15OuterPair1O111H1"
-          lake env lean "PetersenZeroForcing/${stem}.lean" \
-            -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
-      - name: Reconstruct exact n=15 octants and assemble root
-        shell: bash
-        run: |
-          set -euo pipefail
-          for suffix in \
-            OuterPair0 \
-            OuterPair1 \
-            OuterPair2 \
-            InnerPair0 \
-            InnerPair1 \
-            InnerPair2
-          do
-            for octant in 000 001 010 011 100 101 110 111
-            do
-              stem="FiniteScanCheck15${suffix}O${octant}"
-              lake env lean "PetersenZeroForcing/${stem}.lean" \
-                -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
-            done
-            stem="FiniteScanCheck15${suffix}"
-            lake env lean "PetersenZeroForcing/${stem}.lean" \
-              -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
-          done
-          lake env lean PetersenZeroForcing/FiniteScanChecked15.lean \
-            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked15.olean
-          lake env lean PetersenZeroForcing/FiniteLowerBound.lean \
-            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
-          lake env lean PetersenZeroForcing.lean \
-            -o .lake/build/lib/lean/PetersenZeroForcing.olean
-      - name: Save cumulative finite checked modules
-        uses: actions/upload-artifact@v4
-        with:
-          name: finite-checked-through-15
-          path: |
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15*.olean
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
-          if-no-files-found: error
-          retention-days: 90
