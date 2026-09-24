@@ -157,17 +157,28 @@ def maskOfSet {n : Nat} (s : Finset (Vertex n)) : Nat :=
 def maskHas {n : Nat} (mask : Nat) (x : Vertex n) : Bool :=
   mask.testBit (vertexBitIndex x)
 
+def maskNeighborMask (n : Nat) [NeZero n] : Vertex n → Nat
+  | (Layer.outer, i) =>
+      vertexBit (u (i - 1)) ||| vertexBit (u (i + 1)) ||| vertexBit (v i)
+  | (Layer.inner, i) =>
+      vertexBit (v (i - 3)) ||| vertexBit (v (i + 3)) ||| vertexBit (u i)
+
 def maskForceVertex (n : Nat) [NeZero n]
     (mask : Nat) (x : Vertex n) : Nat :=
   if maskHas mask x = true then
-    let white := (neighbors n x).filter fun y => maskHas mask y = false
-    if white.card = 1 then mask ||| maskOfSet white else mask
+    let neighborMask := maskNeighborMask n x
+    let white := neighborMask ^^^ (neighborMask &&& mask)
+    if white ≠ 0 ∧ (white &&& (white - 1)) = 0 then
+      mask ||| white
+    else
+      mask
   else
     mask
 
 /-- Fast sequential witness generator.  Its operational behavior is deliberately
 not trusted: `candidateCertB` re-checks the resulting set in the original
-`Finset` semantics before any mathematical conclusion is used. -/
+`Finset` semantics before any mathematical conclusion is used.  In particular,
+the bit-level neighbour computation below is only a proposal mechanism. -/
 def maskForceSweep (n : Nat) [NeZero n] (mask : Nat) : Nat :=
   let afterOuter :=
     (List.range n).foldl
