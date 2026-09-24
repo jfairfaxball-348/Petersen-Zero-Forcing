@@ -15,15 +15,113 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  finite13-shards:
+    name: finite13-${{ matrix.name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
+    env:
+      LEAN_NUM_THREADS: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: outer-pair0-even
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0Even
+            stem: FiniteScanCheck13OuterPair0Even
+          - name: outer-pair0-odd
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0Odd
+            stem: FiniteScanCheck13OuterPair0Odd
+          - name: outer-pair1-even
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1Even
+            stem: FiniteScanCheck13OuterPair1Even
+          - name: outer-pair1-odd
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1Odd
+            stem: FiniteScanCheck13OuterPair1Odd
+          - name: outer-pair2-even
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2Even
+            stem: FiniteScanCheck13OuterPair2Even
+          - name: outer-pair2-odd
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2Odd
+            stem: FiniteScanCheck13OuterPair2Odd
+          - name: inner-pair0-even
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0Even
+            stem: FiniteScanCheck13InnerPair0Even
+          - name: inner-pair0-odd
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0Odd
+            stem: FiniteScanCheck13InnerPair0Odd
+          - name: inner-pair1-even
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1Even
+            stem: FiniteScanCheck13InnerPair1Even
+          - name: inner-pair1-odd
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1Odd
+            stem: FiniteScanCheck13InnerPair1Odd
+          - name: inner-pair2-even
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2Even
+            stem: FiniteScanCheck13InnerPair2Even
+          - name: inner-pair2-odd
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2Odd
+            stem: FiniteScanCheck13InnerPair2Odd
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kernel-check finite shard
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: ${{ matrix.module }}
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Save checked module
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite13-${{ matrix.name }}
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.stem }}.olean
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.stem }}.ilean
+          if-no-files-found: error
+          retention-days: 1
+
+  assemble:
+    name: assemble
+    needs: finite13-shards
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       LEAN_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Lean build
+      - name: Build non-computational Lean core
         uses: leanprover/lean-action@v1
         with:
+          auto-config: false
           build: true
-          use-github-cache: true
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Restore checked finite shards
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite13-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+      - name: Assemble n=13 scan and root module
+        shell: bash
+        run: |
+          set -euo pipefail
+          for stem in \
+            FiniteScanCheck13OuterPair0 \
+            FiniteScanCheck13OuterPair1 \
+            FiniteScanCheck13OuterPair2 \
+            FiniteScanCheck13InnerPair0 \
+            FiniteScanCheck13InnerPair1 \
+            FiniteScanCheck13InnerPair2
+          do
+            lake env lean "PetersenZeroForcing/${stem}.lean" \
+              -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
+          done
+          lake env lean PetersenZeroForcing/FiniteScanChecked.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked.olean
+          lake env lean PetersenZeroForcing.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing.olean
