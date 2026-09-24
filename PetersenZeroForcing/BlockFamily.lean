@@ -36,7 +36,7 @@ theorem terminalize_block_family
       blockFamilyUnion n F ⊆ blockFamilyUnion n G := by
   classical
   by_cases hterm : TerminalBlockFamily n F
-  · exact ⟨F, hterm, le_rfl, Subset.rfl⟩
+  · exact ⟨F, hterm, le_rfl, fun _ hx => hx⟩
   · simp only [TerminalBlockFamily] at hterm
     push_neg at hterm
     rcases hterm with ⟨a, ha, b, hb, hab, htouch⟩
