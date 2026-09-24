@@ -14,10 +14,17 @@ jobs:
   cancel:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel redundant run 2
+      - name: Cancel obsolete finite runs
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          curl -fsSL -X POST             -H "Authorization: Bearer ${GH_TOKEN}"             -H "Accept: application/vnd.github+json"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/36066509290/cancel"
+          for run_id in 36070959552 36071813171; do
+            echo "Cancelling stale run ${run_id}"
+            code="$(curl -sS -o /tmp/cancel-${run_id}.json -w '%{http_code}' -X POST               -H "Authorization: Bearer ${GH_TOKEN}"               -H "Accept: application/vnd.github+json"               -H "X-GitHub-Api-Version: 2022-11-28"               "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel")"
+            if [[ "${code}" != "202" && "${code}" != "409" ]]; then
+              cat "/tmp/cancel-${run_id}.json" >&2
+              exit 1
+            fi
+          done
