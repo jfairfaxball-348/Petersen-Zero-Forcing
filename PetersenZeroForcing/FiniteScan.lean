@@ -27,6 +27,31 @@ def reducedScanB (n : Nat) [NeZero n] : Bool :=
     allB ((Finset.univ \ base).powersetCard 4) fun extra =>
       decide (closure n (base ∪ extra) ≠ Finset.univ)
 
+def sourceScanB (n : Nat) [NeZero n] (source : Vertex n) : Bool :=
+  allB ((neighbors n source).powersetCard 2) fun pair =>
+    allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
+      decide (closure n (insert source pair ∪ extra) ≠ Finset.univ)
+
+theorem reducedScanB_of_source_scans
+    (n : Nat) [NeZero n]
+    (houter : sourceScanB n (u 0) = true)
+    (hinner : sourceScanB n (v 0) = true) :
+    reducedScanB n = true := by
+  unfold reducedScanB
+  apply (allB_eq_true (bases n) _).2
+  intro base hbase
+  rcases Finset.mem_biUnion.mp hbase with ⟨source, hsource, hbase⟩
+  rcases Finset.mem_image.mp hbase with ⟨pair, hpair, rfl⟩
+  have hsourceCases : source = u 0 ∨ source = v 0 := by
+    simpa [sources] using hsource
+  rcases hsourceCases with rfl | rfl
+  · unfold sourceScanB at houter
+    exact (allB_eq_true ((neighbors n (u 0)).powersetCard 2) _).mp
+      houter pair hpair
+  · unfold sourceScanB at hinner
+    exact (allB_eq_true ((neighbors n (v 0)).powersetCard 2) _).mp
+      hinner pair hpair
+
 theorem reducedScanB_spec (n : Nat) [NeZero n]
     (h : reducedScanB n = true)
     {base extra : Finset (Vertex n)}
