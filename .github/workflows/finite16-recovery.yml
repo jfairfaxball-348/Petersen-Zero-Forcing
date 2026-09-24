@@ -95,7 +95,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: finite-checked-through-15
-          path: .lake/build/lib/lean/PetersenZeroForcing
+          path: .lake/build/lib/lean
           github-token: ${{ github.token }}
           run-id: ${{ env.FINITE15_RUN_ID }}
 
