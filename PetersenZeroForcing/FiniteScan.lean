@@ -294,6 +294,50 @@ Every extra set lies in exactly one Boolean parity shard. -/
 def extraOuterEvenB {n : Nat} (extra : Finset (Vertex n)) : Bool :=
   decide (((extra.filter fun x => x.1 = Layer.outer).card % 2) = 0)
 
+
+/-- Second balanced classifier for finite scan sharding.  Together with
+`extraOuterEvenB`, this partitions every four-extra set into one of four
+exhaustive buckets. -/
+def extraIndexEvenB {n : Nat} (extra : Finset (Vertex n)) : Bool :=
+  decide (((extra.sum (fun x => vertexBitIndex x)) % 2) = 0)
+
+def pairCertScanQuarterB (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n))
+    (wantOuterEven wantIndexEven : Bool) : Bool :=
+  allB
+    ((((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4).filter
+      (fun extra =>
+        extraOuterEvenB extra = wantOuterEven ∧
+          extraIndexEvenB extra = wantIndexEven))
+    fun extra =>
+      candidateCertB n (insert source pair ∪ extra)
+
+theorem pairCertScanB_of_quarters
+    (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n))
+    (h00 : pairCertScanQuarterB n source pair false false = true)
+    (h01 : pairCertScanQuarterB n source pair false true = true)
+    (h10 : pairCertScanQuarterB n source pair true false = true)
+    (h11 : pairCertScanQuarterB n source pair true true = true) :
+    pairCertScanB n source pair = true := by
+  unfold pairCertScanQuarterB at h00 h01 h10 h11
+  unfold pairCertScanB
+  apply (allB_eq_true _ _).2
+  intro extra hextra
+  cases hout : extraOuterEvenB extra with
+  | false =>
+      cases hidx : extraIndexEvenB extra with
+      | false =>
+          exact (allB_eq_true _ _).mp h00 extra (by simp [hextra, hout, hidx])
+      | true =>
+          exact (allB_eq_true _ _).mp h01 extra (by simp [hextra, hout, hidx])
+  | true =>
+      cases hidx : extraIndexEvenB extra with
+      | false =>
+          exact (allB_eq_true _ _).mp h10 extra (by simp [hextra, hout, hidx])
+      | true =>
+          exact (allB_eq_true _ _).mp h11 extra (by simp [hextra, hout, hidx])
+
 /-- One half of a pair scan, selected by the parity of the number of outer
 vertices among the four extras.  The checked proposition is unchanged. -/
 def pairScanParityB (n : Nat) [NeZero n]

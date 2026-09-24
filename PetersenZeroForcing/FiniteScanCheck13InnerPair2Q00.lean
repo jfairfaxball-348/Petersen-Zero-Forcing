@@ -5,8 +5,8 @@ namespace FiniteScan
 
 set_option maxHeartbeats 0 in
 set_option maxRecDepth 1000000 in
-theorem scan13_inner_pair2_even_cert_checked :
-    pairCertScanParityB 13 (v 0) (innerPair2 13) true = true := by decide
+theorem scan13_inner_pair2_q00_cert_checked :
+    pairCertScanQuarterB 13 (v 0) (innerPair2 13) false false = true := by decide
 
 end FiniteScan
 end PetersenZeroForcing

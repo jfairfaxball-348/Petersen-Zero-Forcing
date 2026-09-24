@@ -1,13 +1,18 @@
-import PetersenZeroForcing.FiniteScanCheck13InnerPair2Even
-import PetersenZeroForcing.FiniteScanCheck13InnerPair2Odd
+import PetersenZeroForcing.FiniteScanCheck13InnerPair2Q00
+import PetersenZeroForcing.FiniteScanCheck13InnerPair2Q01
+import PetersenZeroForcing.FiniteScanCheck13InnerPair2Q10
+import PetersenZeroForcing.FiniteScanCheck13InnerPair2Q11
 
 namespace PetersenZeroForcing
 namespace FiniteScan
 
 theorem scan13_inner_pair2_cert_checked :
     pairCertScanB 13 (v 0) (innerPair2 13) = true :=
-  pairCertScanB_of_parity 13 (v 0) (innerPair2 13)
-    scan13_inner_pair2_even_cert_checked scan13_inner_pair2_odd_cert_checked
+  pairCertScanB_of_quarters 13 (v 0) (innerPair2 13)
+    scan13_inner_pair2_q00_cert_checked
+    scan13_inner_pair2_q01_cert_checked
+    scan13_inner_pair2_q10_cert_checked
+    scan13_inner_pair2_q11_cert_checked
 
 theorem scan13_inner_pair2_checked :
     pairScanB 13 (v 0) (innerPair2 13) = true :=
