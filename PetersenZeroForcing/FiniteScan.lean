@@ -152,21 +152,22 @@ def vertexBit {n : Nat} (x : Vertex n) : Nat :=
   2 ^ vertexBitIndex x
 
 def maskOfSet {n : Nat} (s : Finset (Vertex n)) : Nat :=
-  s.toList.foldl (fun mask x => mask ||| vertexBit x) 0
+  s.sum vertexBit
 
 def maskHas {n : Nat} (mask : Nat) (x : Vertex n) : Bool :=
   mask.testBit (vertexBitIndex x)
 
-def maskForceVertex (n : Nat) [NeZero n]
-    (mask : Nat) (x : Vertex n) : Nat :=
-  if maskHas mask x = true then
-    let white := (neighbors n x).filter fun y => maskHas mask y = false
-    if white.card = 1 then mask ||| maskOfSet white else mask
-  else
-    mask
+def maskForcedSet (n : Nat) [NeZero n]
+    (mask : Nat) : Finset (Vertex n) :=
+  (Finset.univ : Finset (Vertex n)).biUnion fun x =>
+    if maskHas mask x = true then
+      let white := (neighbors n x).filter fun y => maskHas mask y = false
+      if white.card = 1 then white else ∅
+    else
+      ∅
 
 def maskForceSweep (n : Nat) [NeZero n] (mask : Nat) : Nat :=
-  (Finset.univ : Finset (Vertex n)).toList.foldl (maskForceVertex n) mask
+  mask ||| maskOfSet (maskForcedSet n mask)
 
 def maskClosureAux (n : Nat) [NeZero n] : Nat → Nat → Nat
   | 0, mask => mask
@@ -179,6 +180,36 @@ def maskCandidateSet (n : Nat) [NeZero n]
   let mask := maskClosureAux n (2 * n) (maskOfSet seed)
   (Finset.univ : Finset (Vertex n)).filter fun x => maskHas mask x = true
 
+def subsetB {α : Type*} [DecidableEq α]
+    (s t : Finset α) : Bool :=
+  allB s fun x => decide (x ∈ t)
+
+theorem subsetB_eq_true {α : Type*} [DecidableEq α]
+    (s t : Finset α) :
+    subsetB s t = true ↔ s ⊆ t := by
+  unfold subsetB
+  rw [allB_eq_true]
+  constructor
+  · intro h x hx
+    exact of_decide_eq_true (h x hx)
+  · intro h x hx
+    exact (decide_eq_true_iff).2 (h hx)
+
+def closedB (n : Nat) [NeZero n]
+    (U : Finset (Vertex n)) : Bool :=
+  allB U fun x => decide ((neighbors n x \ U).card ≠ 1)
+
+theorem closedB_eq_true (n : Nat) [NeZero n]
+    (U : Finset (Vertex n)) :
+    closedB n U = true ↔ Closed n U := by
+  unfold closedB Closed
+  rw [allB_eq_true]
+  constructor
+  · intro h x hx
+    exact of_decide_eq_true (h x hx)
+  · intro h x hx
+    exact (decide_eq_true_iff).2 (h x hx)
+
 /-- This is the trusted mathematical proposition checked by the optimized
 finite computation.  The mask code merely proposes `U`; the kernel verifies
 that `U` contains the seed, is closed in the original graph semantics, and
@@ -186,25 +217,27 @@ is a proper subset of the vertex set. -/
 def candidateCertB (n : Nat) [NeZero n]
     (seed : Finset (Vertex n)) : Bool :=
   let U := maskCandidateSet n seed
-  decide (seed ⊆ U ∧ Closed n U ∧ U ≠ Finset.univ)
+  subsetB seed U && (closedB n U && decide (U ≠ Finset.univ))
 
 theorem candidateCertB_spec (n : Nat) [NeZero n]
     (seed : Finset (Vertex n))
     (h : candidateCertB n seed = true) :
     closure n seed ≠ Finset.univ := by
   unfold candidateCertB at h
-  have hc :
-      seed ⊆ maskCandidateSet n seed ∧
-        Closed n (maskCandidateSet n seed) ∧
-        maskCandidateSet n seed ≠ Finset.univ :=
-    of_decide_eq_true h
+  simp only [Bool.and_eq_true] at h
+  have hsub : seed ⊆ maskCandidateSet n seed :=
+    (subsetB_eq_true seed (maskCandidateSet n seed)).1 h.1
+  have hclosed : Closed n (maskCandidateSet n seed) :=
+    (closedB_eq_true n (maskCandidateSet n seed)).1 h.2.1
+  have hproper : maskCandidateSet n seed ≠ (Finset.univ : Finset (Vertex n)) :=
+    of_decide_eq_true h.2.2
   intro hfull
-  have hsub :=
-    closure_subset_of_closed n hc.1 hc.2.1
+  have hclsub :=
+    closure_subset_of_closed n hsub hclosed
   have hunivSub :
       (Finset.univ : Finset (Vertex n)) ⊆ maskCandidateSet n seed := by
-    simpa [hfull] using hsub
-  apply hc.2.2
+    simpa [hfull] using hclsub
+  apply hproper
   exact Finset.Subset.antisymm (Finset.subset_univ _) hunivSub
 
 def sources (n : Nat) [NeZero n] : Finset (Vertex n) := {u 0, v 0}
