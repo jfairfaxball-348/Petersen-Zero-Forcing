@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: lean-halves-v2-${{ github.workflow }}-${{ github.ref }}
+  group: lean-outer-assembly-v1-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -16,38 +16,64 @@ permissions:
   actions: read
 
 jobs:
-  finite15-quarter-shards:
-    name: ${{ matrix.artifact }}
+  outer-reconstruction:
+    name: reconstruct-n15-outer-parents
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       LEAN_NUM_THREADS: 1
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        include:
-          - artifact: finite15-outer-pair1-111-h1-q0
-            module: FiniteScanCheck15OuterPair1O111H1Q0
-          - artifact: finite15-outer-pair1-111-h1-q1
-            module: FiniteScanCheck15OuterPair1O111H1Q1
     steps:
       - uses: actions/checkout@v4
-      - name: Kernel-check recursive quarter leaf
+      - name: Build finite-scan reconstruction core
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.${{ matrix.module }}
+          build-args: PetersenZeroForcing.FiniteScanOctantSplit
           test: false
           lint: false
           use-github-cache: false
-      - name: Save checked quarter leaf
+      - name: Restore successful outer half-shards from run 142
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite15-outer-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: 36028350728
+      - name: Restore recursive quarter leaves from run 144
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite15-outer-pair1-111-h1-q*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: 36034025662
+      - name: Reconstruct timed-out half and exact outer parents
+        shell: bash
+        run: |
+          set -euo pipefail
+          stem="FiniteScanCheck15OuterPair1O111H1"
+          lake env lean "PetersenZeroForcing/${stem}.lean" \
+            -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
+
+          for suffix in OuterPair0 OuterPair1 OuterPair2
+          do
+            for octant in 000 001 010 011 100 101 110 111
+            do
+              stem="FiniteScanCheck15${suffix}O${octant}"
+              lake env lean "PetersenZeroForcing/${stem}.lean" \
+                -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
+            done
+            stem="FiniteScanCheck15${suffix}"
+            lake env lean "PetersenZeroForcing/${stem}.lean" \
+              -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
+          done
+      - name: Save reconstructed outer modules
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
+          name: finite15-outer-reconstructed
           path: |
-            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.olean
-            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.ilean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15OuterPair*.olean
           if-no-files-found: error
           retention-days: 2
