@@ -39,7 +39,7 @@ theorem vertex_not_mem_neighbors
       calc
         ((1 : Nat) : ZMod n) = (i + 1) - i := by ring
         _ = 0 := by rw [h]; ring
-    simp [neighbors, u, v, hm, hp]
+    simp [neighbors, u, v, hm, hp, Ne.symm hm, Ne.symm hp, h1]
   · have h3 : ((3 : Nat) : ZMod n) ≠ 0 :=
       zmod_natCast_ne_zero_of_pos_of_lt n 3 (by omega) (by omega)
     have hm : i - 3 ≠ i := by
@@ -54,7 +54,7 @@ theorem vertex_not_mem_neighbors
       calc
         ((3 : Nat) : ZMod n) = (i + 3) - i := by ring
         _ = 0 := by rw [h]; ring
-    simp [neighbors, u, v, hm, hp]
+    simp [neighbors, u, v, hm, hp, Ne.symm hm, Ne.symm hp, h3]
 
 theorem neighbors_card_three
     (n : Nat) [NeZero n] (hn : 13 ≤ n) (x : Vertex n) :
