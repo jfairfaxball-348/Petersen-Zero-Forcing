@@ -1,12 +1,13 @@
-import PetersenZeroForcing.FiniteScan
+import PetersenZeroForcing.FiniteScanCheck13InnerPair2Even
+import PetersenZeroForcing.FiniteScanCheck13InnerPair2Odd
 
 namespace PetersenZeroForcing
 namespace FiniteScan
 
-set_option maxHeartbeats 0 in
-set_option maxRecDepth 1000000 in
 theorem scan13_inner_pair2_checked :
-    pairScanB 13 (v 0) (innerPair2 13) = true := by decide
+    pairScanB 13 (v 0) (innerPair2 13) = true :=
+  pairScanB_of_parity 13 (v 0) (innerPair2 13)
+    scan13_inner_pair2_even_checked scan13_inner_pair2_odd_checked
 
 end FiniteScan
 end PetersenZeroForcing
