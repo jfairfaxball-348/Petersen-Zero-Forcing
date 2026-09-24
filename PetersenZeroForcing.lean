@@ -11,6 +11,8 @@ import PetersenZeroForcing.FiniteScan
 import PetersenZeroForcing.Rotation
 import PetersenZeroForcing.FiniteReduction
 import PetersenZeroForcing.FiniteScanChecked
+import PetersenZeroForcing.FiniteScanChecked14
+import PetersenZeroForcing.FiniteLowerBound
 import PetersenZeroForcing.ProjectedBlocks
 import PetersenZeroForcing.BlockContact
 import PetersenZeroForcing.BlockMerge

@@ -13,10 +13,11 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
-  finite13-shards:
-    name: finite13-${{ matrix.name }}
+  finite14-shards:
+    name: finite14-${{ matrix.pair.name }}-${{ matrix.octant }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
@@ -25,151 +26,20 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        include:
-          - name: outer-pair0-000
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O000
-            stem: FiniteScanCheck13OuterPair0O000
-          - name: outer-pair0-001
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O001
-            stem: FiniteScanCheck13OuterPair0O001
-          - name: outer-pair0-010
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O010
-            stem: FiniteScanCheck13OuterPair0O010
-          - name: outer-pair0-011
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O011
-            stem: FiniteScanCheck13OuterPair0O011
-          - name: outer-pair0-100
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O100
-            stem: FiniteScanCheck13OuterPair0O100
-          - name: outer-pair0-101
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O101
-            stem: FiniteScanCheck13OuterPair0O101
-          - name: outer-pair0-110
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O110
-            stem: FiniteScanCheck13OuterPair0O110
-          - name: outer-pair0-111
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O111
-            stem: FiniteScanCheck13OuterPair0O111
-          - name: outer-pair1-000
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O000
-            stem: FiniteScanCheck13OuterPair1O000
-          - name: outer-pair1-001
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O001
-            stem: FiniteScanCheck13OuterPair1O001
-          - name: outer-pair1-010
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O010
-            stem: FiniteScanCheck13OuterPair1O010
-          - name: outer-pair1-011
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O011
-            stem: FiniteScanCheck13OuterPair1O011
-          - name: outer-pair1-100
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O100
-            stem: FiniteScanCheck13OuterPair1O100
-          - name: outer-pair1-101
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O101
-            stem: FiniteScanCheck13OuterPair1O101
-          - name: outer-pair1-110
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O110
-            stem: FiniteScanCheck13OuterPair1O110
-          - name: outer-pair1-111
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O111
-            stem: FiniteScanCheck13OuterPair1O111
-          - name: outer-pair2-000
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O000
-            stem: FiniteScanCheck13OuterPair2O000
-          - name: outer-pair2-001
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O001
-            stem: FiniteScanCheck13OuterPair2O001
-          - name: outer-pair2-010
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O010
-            stem: FiniteScanCheck13OuterPair2O010
-          - name: outer-pair2-011
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O011
-            stem: FiniteScanCheck13OuterPair2O011
-          - name: outer-pair2-100
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O100
-            stem: FiniteScanCheck13OuterPair2O100
-          - name: outer-pair2-101
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O101
-            stem: FiniteScanCheck13OuterPair2O101
-          - name: outer-pair2-110
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O110
-            stem: FiniteScanCheck13OuterPair2O110
-          - name: outer-pair2-111
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O111
-            stem: FiniteScanCheck13OuterPair2O111
-          - name: inner-pair0-000
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O000
-            stem: FiniteScanCheck13InnerPair0O000
-          - name: inner-pair0-001
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O001
-            stem: FiniteScanCheck13InnerPair0O001
-          - name: inner-pair0-010
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O010
-            stem: FiniteScanCheck13InnerPair0O010
-          - name: inner-pair0-011
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O011
-            stem: FiniteScanCheck13InnerPair0O011
-          - name: inner-pair0-100
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O100
-            stem: FiniteScanCheck13InnerPair0O100
-          - name: inner-pair0-101
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O101
-            stem: FiniteScanCheck13InnerPair0O101
-          - name: inner-pair0-110
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O110
-            stem: FiniteScanCheck13InnerPair0O110
-          - name: inner-pair0-111
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O111
-            stem: FiniteScanCheck13InnerPair0O111
-          - name: inner-pair1-000
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O000
-            stem: FiniteScanCheck13InnerPair1O000
-          - name: inner-pair1-001
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O001
-            stem: FiniteScanCheck13InnerPair1O001
-          - name: inner-pair1-010
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O010
-            stem: FiniteScanCheck13InnerPair1O010
-          - name: inner-pair1-011
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O011
-            stem: FiniteScanCheck13InnerPair1O011
-          - name: inner-pair1-100
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O100
-            stem: FiniteScanCheck13InnerPair1O100
-          - name: inner-pair1-101
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O101
-            stem: FiniteScanCheck13InnerPair1O101
-          - name: inner-pair1-110
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O110
-            stem: FiniteScanCheck13InnerPair1O110
-          - name: inner-pair1-111
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O111
-            stem: FiniteScanCheck13InnerPair1O111
-          - name: inner-pair2-000
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O000
-            stem: FiniteScanCheck13InnerPair2O000
-          - name: inner-pair2-001
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O001
-            stem: FiniteScanCheck13InnerPair2O001
-          - name: inner-pair2-010
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O010
-            stem: FiniteScanCheck13InnerPair2O010
-          - name: inner-pair2-011
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O011
-            stem: FiniteScanCheck13InnerPair2O011
-          - name: inner-pair2-100
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O100
-            stem: FiniteScanCheck13InnerPair2O100
-          - name: inner-pair2-101
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O101
-            stem: FiniteScanCheck13InnerPair2O101
-          - name: inner-pair2-110
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O110
-            stem: FiniteScanCheck13InnerPair2O110
-          - name: inner-pair2-111
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O111
-            stem: FiniteScanCheck13InnerPair2O111
+        pair:
+          - name: outer-pair0
+            stem: OuterPair0
+          - name: outer-pair1
+            stem: OuterPair1
+          - name: outer-pair2
+            stem: OuterPair2
+          - name: inner-pair0
+            stem: InnerPair0
+          - name: inner-pair1
+            stem: InnerPair1
+          - name: inner-pair2
+            stem: InnerPair2
+        octant: ["000", "001", "010", "011", "100", "101", "110", "111"]
     steps:
       - uses: actions/checkout@v4
       - name: Kernel-check finite shard
@@ -177,25 +47,25 @@ jobs:
         with:
           auto-config: false
           build: true
-          build-args: ${{ matrix.module }}
+          build-args: PetersenZeroForcing.FiniteScanCheck14${{ matrix.pair.stem }}O${{ matrix.octant }}
           test: false
           lint: false
           use-github-cache: false
       - name: Save checked module
         uses: actions/upload-artifact@v4
         with:
-          name: finite13-${{ matrix.name }}
+          name: finite14-${{ matrix.pair.name }}-${{ matrix.octant }}
           path: |
-            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.stem }}.olean
-            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.stem }}.ilean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14${{ matrix.pair.stem }}O${{ matrix.octant }}.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14${{ matrix.pair.stem }}O${{ matrix.octant }}.ilean
           if-no-files-found: error
           retention-days: 1
 
   assemble:
     name: assemble
-    needs: finite13-shards
+    needs: finite14-shards
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       LEAN_NUM_THREADS: 1
     steps:
@@ -209,28 +79,55 @@ jobs:
           test: false
           lint: false
           use-github-cache: false
-      - name: Restore checked finite shards
+      - name: Restore n=13 checked shards
         uses: actions/download-artifact@v5
         with:
           pattern: finite13-*
           path: .lake/build/lib/lean/PetersenZeroForcing
           merge-multiple: true
-      - name: Assemble n=13 scan and root module
+          github-token: ${{ github.token }}
+          run-id: 35996619272
+      - name: Restore n=14 checked shards
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite14-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+      - name: Assemble finite scans through n=14 and root module
         shell: bash
         run: |
           set -euo pipefail
-          for stem in \
-            FiniteScanCheck13OuterPair0 \
-            FiniteScanCheck13OuterPair1 \
-            FiniteScanCheck13OuterPair2 \
-            FiniteScanCheck13InnerPair0 \
-            FiniteScanCheck13InnerPair1 \
-            FiniteScanCheck13InnerPair2
+          for n in 13 14
           do
-            lake env lean "PetersenZeroForcing/${stem}.lean" \
-              -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
+            for suffix in \
+              OuterPair0 \
+              OuterPair1 \
+              OuterPair2 \
+              InnerPair0 \
+              InnerPair1 \
+              InnerPair2
+            do
+              stem="FiniteScanCheck${n}${suffix}"
+              lake env lean "PetersenZeroForcing/${stem}.lean" \
+                -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
+            done
           done
           lake env lean PetersenZeroForcing/FiniteScanChecked.lean \
             -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked.olean
+          lake env lean PetersenZeroForcing/FiniteScanChecked14.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked14.olean
+          lake env lean PetersenZeroForcing/FiniteLowerBound.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
           lake env lean PetersenZeroForcing.lean \
             -o .lake/build/lib/lean/PetersenZeroForcing.olean
+      - name: Save cumulative finite checked modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-checked-through-14
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
+          if-no-files-found: error
+          retention-days: 90
