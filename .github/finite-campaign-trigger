@@ -1,0 +1,5 @@
+campaign: n16-resume-v1
+source_head: 7b0546d511195ac728164fcbf33e2f2cb1d83a45
+prior_leaf_run: 36044673586
+finite_through_15_run: 36041865953
+policy: 8 workers; exact unchanged quarter leaves; 35m shell timeout per missing leaf; no cancel-in-progress

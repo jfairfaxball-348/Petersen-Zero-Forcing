@@ -1,0 +1,238 @@
+name: Finite lower-bound campaign
+
+on:
+  push:
+    branches: [lean-formalisation]
+    paths:
+      - ".github/workflows/finite-campaign.yml"
+      - ".github/finite-campaign-trigger"
+  workflow_dispatch:
+
+concurrency:
+  group: finite-lower-bound-campaign-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  LEAN_NUM_THREADS: 1
+  N16_SOURCE_HEAD: 7b0546d511195ac728164fcbf33e2f2cb1d83a45
+  N16_PRIOR_RUN_ID: "36044673586"
+  FINITE15_RUN_ID: "36041865953"
+  LEAF_TIMEOUT: 35m
+
+jobs:
+  n16-workers:
+    name: n16-worker-${{ matrix.worker }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        worker: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify n=16 proposition sources are unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --quiet "${N16_SOURCE_HEAD}" HEAD -- PetersenZeroForcing
+          test "$(git rev-parse "${N16_SOURCE_HEAD}:PetersenZeroForcing/FiniteScanOctantSplit.lean")" =                "$(git rev-parse HEAD:PetersenZeroForcing/FiniteScanOctantSplit.lean)"
+
+      - name: Set up Lean and current structural module
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteScanOctantSplit
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Restore all successful n=16 leaves from run #149
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite16-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: ${{ env.N16_PRIOR_RUN_ID }}
+
+      - name: Check assigned missing n=16 leaves
+        id: check
+        shell: bash
+        env:
+          WORKER: ${{ matrix.worker }}
+        run: |
+          set -u -o pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          stage="worker-out"
+          mkdir -p "$outdir" "$stage"
+          manifest="$stage/manifest-n16-worker-${WORKER}.tsv"
+          printf "module\tstatus\tsource_sha256\tshared_sha256\n" > "$manifest"
+          shared_sha="$(sha256sum PetersenZeroForcing/FiniteScanOctantSplit.lean | awk '{print $1}')"
+          hard_fail=0
+          ordinal=0
+
+          for family in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+            for octant in 000 001 010 011 100 101 110 111; do
+              for half in 0 1; do
+                for quarter in 0 1; do
+                  module="FiniteScanCheck16${family}O${octant}H${half}Q${quarter}"
+                  if (( ordinal % 8 == WORKER )); then
+                    src="PetersenZeroForcing/${module}.lean"
+                    src_sha="$(sha256sum "$src" | awk '{print $1}')"
+                    olean="$outdir/${module}.olean"
+                    if [[ -s "$olean" ]]; then
+                      status="reused-run149"
+                    else
+                      echo "Checking ${module} with per-leaf timeout ${LEAF_TIMEOUT}"
+                      set +e
+                      timeout --signal=TERM --kill-after=30s "${LEAF_TIMEOUT}"                         lake env lean "$src" -o "$olean"
+                      rc=$?
+                      set -e
+                      if [[ $rc -eq 0 && -s "$olean" ]]; then
+                        status="success"
+                        cp "$olean" "$stage/${module}.olean"
+                      elif [[ $rc -eq 124 || $rc -eq 137 || $rc -eq 143 ]]; then
+                        status="timeout"
+                        rm -f "$olean"
+                      else
+                        status="lean-failure-${rc}"
+                        rm -f "$olean"
+                        hard_fail=1
+                      fi
+                    fi
+                    printf "%s\t%s\t%s\t%s\n" "$module" "$status" "$src_sha" "$shared_sha" >> "$manifest"
+                  fi
+                  ordinal=$((ordinal + 1))
+                done
+              done
+            done
+          done
+
+          exit "$hard_fail"
+
+      - name: Upload resumable worker results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: n16-worker-${{ matrix.worker }}-source-7b0546d5
+          path: worker-out/
+          if-no-files-found: error
+          retention-days: 14
+
+  assemble16:
+    name: assemble-n16
+    if: always()
+    needs: n16-workers
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Lean and cheap core
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Restore checked finite modules through n=15
+        uses: actions/download-artifact@v5
+        with:
+          name: finite-checked-through-15
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          github-token: ${{ github.token }}
+          run-id: ${{ env.FINITE15_RUN_ID }}
+
+      - name: Restore successful n=16 leaves from run #149
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite16-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: ${{ env.N16_PRIOR_RUN_ID }}
+
+      - name: Restore newly checked n=16 leaves
+        uses: actions/download-artifact@v5
+        with:
+          pattern: n16-worker-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+
+      - name: Rebuild current shared subdivision module after artifact restore
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean PetersenZeroForcing/FiniteScanOctantSplit.lean             -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
+
+      - name: Require complete exact n=16 leaf coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          missing=0
+          count=0
+          for family in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+            for octant in 000 001 010 011 100 101 110 111; do
+              for half in 0 1; do
+                for quarter in 0 1; do
+                  module="FiniteScanCheck16${family}O${octant}H${half}Q${quarter}"
+                  count=$((count + 1))
+                  if [[ ! -s "$outdir/${module}.olean" ]]; then
+                    echo "MISSING ${module}"
+                    missing=$((missing + 1))
+                  fi
+                done
+              done
+            done
+          done
+          echo "Required leaves: ${count}; missing: ${missing}"
+          test "$count" -eq 192
+          test "$missing" -eq 0
+
+      - name: Reconstruct exact n=16 parents and theorem
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          for suffix in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+            for octant in 000 001 010 011 100 101 110 111; do
+              for half in 0 1; do
+                stem="FiniteScanCheck16${suffix}O${octant}H${half}"
+                lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+              done
+              stem="FiniteScanCheck16${suffix}O${octant}"
+              lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+            done
+            stem="FiniteScanCheck16${suffix}"
+            lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+          done
+          lake env lean PetersenZeroForcing/FiniteScanChecked16.lean             -o "$outdir/FiniteScanChecked16.olean"
+          lake env lean PetersenZeroForcing/FiniteLowerBound.lean             -o "$outdir/FiniteLowerBound.olean"
+          lake env lean PetersenZeroForcing.lean             -o .lake/build/lib/lean/PetersenZeroForcing.olean
+
+      - name: Save cumulative finite checked modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-checked-through-16
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck16*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
+            .lake/build/lib/lean/PetersenZeroForcing.olean
+          if-no-files-found: error
+          retention-days: 90
