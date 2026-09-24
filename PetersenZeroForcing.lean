@@ -14,6 +14,11 @@ import PetersenZeroForcing.FiniteScanChecked
 import PetersenZeroForcing.FiniteScanChecked14
 import PetersenZeroForcing.FiniteScanChecked15
 import PetersenZeroForcing.FiniteScanChecked16
+import PetersenZeroForcing.FiniteScanChecked21
+import PetersenZeroForcing.FiniteScanChecked20
+import PetersenZeroForcing.FiniteScanChecked19
+import PetersenZeroForcing.FiniteScanChecked18
+import PetersenZeroForcing.FiniteScanChecked17
 import PetersenZeroForcing.FiniteLowerBound
 import PetersenZeroForcing.ProjectedBlocks
 import PetersenZeroForcing.BlockContact

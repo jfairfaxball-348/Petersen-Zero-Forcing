@@ -1,0 +1,535 @@
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O000H1Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O001H1Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O010H1Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O011H1Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O100H1Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O101H1Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O110H1Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H0Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H0Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H0Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H0Q1E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H1Q0E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H1Q0E1
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H1Q1E0
+import PetersenZeroForcing.FiniteScanCheck21InnerPair2O111H1Q1E1
+
+namespace PetersenZeroForcing
+namespace FiniteScan
+
+theorem scan21_inner_pair2_o000_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false false false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false false false false
+    scan21_inner_pair2_o000_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o000_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o000_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false false false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false false false true
+    scan21_inner_pair2_o000_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o000_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o000_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false false false false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false false false false
+    scan21_inner_pair2_o000_h0_q0_cert_checked
+    scan21_inner_pair2_o000_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o000_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false false true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false false true false
+    scan21_inner_pair2_o000_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o000_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o000_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false false true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false false true true
+    scan21_inner_pair2_o000_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o000_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o000_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false false false true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false false false true
+    scan21_inner_pair2_o000_h1_q0_cert_checked
+    scan21_inner_pair2_o000_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o000_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      false false false = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    false false false
+    scan21_inner_pair2_o000_h0_cert_checked
+    scan21_inner_pair2_o000_h1_cert_checked
+
+theorem scan21_inner_pair2_o001_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false true false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false true false false
+    scan21_inner_pair2_o001_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o001_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o001_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false true false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false true false true
+    scan21_inner_pair2_o001_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o001_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o001_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false false true false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false false true false
+    scan21_inner_pair2_o001_h0_q0_cert_checked
+    scan21_inner_pair2_o001_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o001_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false true true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false true true false
+    scan21_inner_pair2_o001_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o001_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o001_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false false true true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false false true true true
+    scan21_inner_pair2_o001_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o001_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o001_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false false true true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false false true true
+    scan21_inner_pair2_o001_h1_q0_cert_checked
+    scan21_inner_pair2_o001_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o001_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      false false true = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    false false true
+    scan21_inner_pair2_o001_h0_cert_checked
+    scan21_inner_pair2_o001_h1_cert_checked
+
+theorem scan21_inner_pair2_o010_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true false false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true false false false
+    scan21_inner_pair2_o010_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o010_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o010_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true false false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true false false true
+    scan21_inner_pair2_o010_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o010_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o010_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false true false false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false true false false
+    scan21_inner_pair2_o010_h0_q0_cert_checked
+    scan21_inner_pair2_o010_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o010_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true false true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true false true false
+    scan21_inner_pair2_o010_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o010_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o010_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true false true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true false true true
+    scan21_inner_pair2_o010_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o010_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o010_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false true false true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false true false true
+    scan21_inner_pair2_o010_h1_q0_cert_checked
+    scan21_inner_pair2_o010_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o010_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      false true false = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    false true false
+    scan21_inner_pair2_o010_h0_cert_checked
+    scan21_inner_pair2_o010_h1_cert_checked
+
+theorem scan21_inner_pair2_o011_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true true false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true true false false
+    scan21_inner_pair2_o011_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o011_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o011_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true true false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true true false true
+    scan21_inner_pair2_o011_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o011_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o011_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false true true false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false true true false
+    scan21_inner_pair2_o011_h0_q0_cert_checked
+    scan21_inner_pair2_o011_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o011_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true true true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true true true false
+    scan21_inner_pair2_o011_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o011_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o011_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      false true true true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    false true true true true
+    scan21_inner_pair2_o011_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o011_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o011_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      false true true true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    false true true true
+    scan21_inner_pair2_o011_h1_q0_cert_checked
+    scan21_inner_pair2_o011_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o011_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      false true true = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    false true true
+    scan21_inner_pair2_o011_h0_cert_checked
+    scan21_inner_pair2_o011_h1_cert_checked
+
+theorem scan21_inner_pair2_o100_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false false false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false false false false
+    scan21_inner_pair2_o100_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o100_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o100_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false false false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false false false true
+    scan21_inner_pair2_o100_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o100_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o100_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true false false false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true false false false
+    scan21_inner_pair2_o100_h0_q0_cert_checked
+    scan21_inner_pair2_o100_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o100_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false false true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false false true false
+    scan21_inner_pair2_o100_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o100_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o100_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false false true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false false true true
+    scan21_inner_pair2_o100_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o100_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o100_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true false false true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true false false true
+    scan21_inner_pair2_o100_h1_q0_cert_checked
+    scan21_inner_pair2_o100_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o100_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      true false false = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    true false false
+    scan21_inner_pair2_o100_h0_cert_checked
+    scan21_inner_pair2_o100_h1_cert_checked
+
+theorem scan21_inner_pair2_o101_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false true false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false true false false
+    scan21_inner_pair2_o101_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o101_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o101_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false true false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false true false true
+    scan21_inner_pair2_o101_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o101_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o101_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true false true false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true false true false
+    scan21_inner_pair2_o101_h0_q0_cert_checked
+    scan21_inner_pair2_o101_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o101_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false true true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false true true false
+    scan21_inner_pair2_o101_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o101_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o101_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true false true true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true false true true true
+    scan21_inner_pair2_o101_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o101_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o101_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true false true true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true false true true
+    scan21_inner_pair2_o101_h1_q0_cert_checked
+    scan21_inner_pair2_o101_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o101_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      true false true = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    true false true
+    scan21_inner_pair2_o101_h0_cert_checked
+    scan21_inner_pair2_o101_h1_cert_checked
+
+theorem scan21_inner_pair2_o110_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true false false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true false false false
+    scan21_inner_pair2_o110_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o110_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o110_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true false false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true false false true
+    scan21_inner_pair2_o110_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o110_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o110_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true true false false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true true false false
+    scan21_inner_pair2_o110_h0_q0_cert_checked
+    scan21_inner_pair2_o110_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o110_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true false true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true false true false
+    scan21_inner_pair2_o110_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o110_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o110_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true false true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true false true true
+    scan21_inner_pair2_o110_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o110_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o110_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true true false true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true true false true
+    scan21_inner_pair2_o110_h1_q0_cert_checked
+    scan21_inner_pair2_o110_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o110_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      true true false = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    true true false
+    scan21_inner_pair2_o110_h0_cert_checked
+    scan21_inner_pair2_o110_h1_cert_checked
+
+theorem scan21_inner_pair2_o111_h0_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true true false false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true true false false
+    scan21_inner_pair2_o111_h0_q0_e0_cert_checked
+    scan21_inner_pair2_o111_h0_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o111_h0_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true true false true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true true false true
+    scan21_inner_pair2_o111_h0_q1_e0_cert_checked
+    scan21_inner_pair2_o111_h0_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o111_h0_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true true true false = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true true true false
+    scan21_inner_pair2_o111_h0_q0_cert_checked
+    scan21_inner_pair2_o111_h0_q1_cert_checked
+
+theorem scan21_inner_pair2_o111_h1_q0_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true true true false = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true true true false
+    scan21_inner_pair2_o111_h1_q0_e0_cert_checked
+    scan21_inner_pair2_o111_h1_q0_e1_cert_checked
+
+theorem scan21_inner_pair2_o111_h1_q1_cert_checked :
+    pairCertScanOctantQuarterB 21 (v 0) (innerPair2 21)
+      true true true true true = true :=
+  pairCertScanOctantQuarterB_of_eighths 21 (v 0) (innerPair2 21)
+    true true true true true
+    scan21_inner_pair2_o111_h1_q1_e0_cert_checked
+    scan21_inner_pair2_o111_h1_q1_e1_cert_checked
+
+theorem scan21_inner_pair2_o111_h1_cert_checked :
+    pairCertScanOctantHalfB 21 (v 0) (innerPair2 21)
+      true true true true = true :=
+  pairCertScanOctantHalfB_of_quarters 21 (v 0) (innerPair2 21)
+    true true true true
+    scan21_inner_pair2_o111_h1_q0_cert_checked
+    scan21_inner_pair2_o111_h1_q1_cert_checked
+
+theorem scan21_inner_pair2_o111_cert_checked :
+    pairCertScanOctantB 21 (v 0) (innerPair2 21)
+      true true true = true :=
+  pairCertScanOctantB_of_halves 21 (v 0) (innerPair2 21)
+    true true true
+    scan21_inner_pair2_o111_h0_cert_checked
+    scan21_inner_pair2_o111_h1_cert_checked
+
+theorem scan21_inner_pair2_cert_checked :
+    pairCertScanB 21 (v 0) (innerPair2 21) = true :=
+  pairCertScanB_of_octants 21 (v 0) (innerPair2 21)
+    scan21_inner_pair2_o000_cert_checked
+    scan21_inner_pair2_o001_cert_checked
+    scan21_inner_pair2_o010_cert_checked
+    scan21_inner_pair2_o011_cert_checked
+    scan21_inner_pair2_o100_cert_checked
+    scan21_inner_pair2_o101_cert_checked
+    scan21_inner_pair2_o110_cert_checked
+    scan21_inner_pair2_o111_cert_checked
+
+theorem scan21_inner_pair2_checked :
+    pairScanB 21 (v 0) (innerPair2 21) = true :=
+  pairScanB_of_certScan 21 (v 0) (innerPair2 21)
+    scan21_inner_pair2_cert_checked
+
+end FiniteScan
+end PetersenZeroForcing
