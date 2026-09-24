@@ -16,6 +16,53 @@ theorem allB_eq_true {α : Type*} (s : Finset α) (p : α → Bool) :
       change ((p a && allB s p) = true ↔ ∀ x ∈ insert a s, p x = true)
       simp [ih, ha]
 
+/-- Kernel-reducible forcing closure with an early fixed-point exit.
+The proof below identifies it exactly with the mathematical bounded iterate
+used by `closure`; this is only a computational optimization. -/
+def closureEarlyAux (n : Nat) [NeZero n] :
+    Nat → Finset (Vertex n) → Finset (Vertex n)
+  | 0, blue => blue
+  | k + 1, blue =>
+      let next := forceStep n blue
+      if next = blue then blue else closureEarlyAux n k next
+
+theorem iterate_forceStep_eq_of_fixed
+    (n : Nat) [NeZero n] {blue : Finset (Vertex n)}
+    (hfixed : forceStep n blue = blue) :
+    ∀ k : Nat, (forceStep n)^[k] blue = blue := by
+  intro k
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+      rw [Function.iterate_succ_apply', ih, hfixed]
+
+theorem closureEarlyAux_eq_iterate
+    (n : Nat) [NeZero n] :
+    ∀ (k : Nat) (blue : Finset (Vertex n)),
+      closureEarlyAux n k blue = (forceStep n)^[k] blue := by
+  intro k
+  induction k with
+  | zero =>
+      intro blue
+      rfl
+  | succ k ih =>
+      intro blue
+      rw [closureEarlyAux]
+      by_cases hfixed : forceStep n blue = blue
+      · rw [if_pos hfixed]
+        exact (iterate_forceStep_eq_of_fixed n hfixed (k + 1)).symm
+      · rw [if_neg hfixed, ih]
+        rw [Function.iterate_succ_apply]
+
+def closureEarly (n : Nat) [NeZero n]
+    (blue : Finset (Vertex n)) : Finset (Vertex n) :=
+  closureEarlyAux n (Fintype.card (Vertex n)) blue
+
+theorem closureEarly_eq_closure
+    (n : Nat) [NeZero n] (blue : Finset (Vertex n)) :
+    closureEarly n blue = closure n blue := by
+  rw [closureEarly, closure, closureEarlyAux_eq_iterate]
+
 def sources (n : Nat) [NeZero n] : Finset (Vertex n) := {u 0, v 0}
 
 def bases (n : Nat) [NeZero n] : Finset (Finset (Vertex n)) :=
@@ -25,12 +72,12 @@ def bases (n : Nat) [NeZero n] : Finset (Finset (Vertex n)) :=
 def reducedScanB (n : Nat) [NeZero n] : Bool :=
   allB (bases n) fun base =>
     allB ((Finset.univ \ base).powersetCard 4) fun extra =>
-      decide (closure n (base ∪ extra) ≠ Finset.univ)
+      decide (closureEarly n (base ∪ extra) ≠ Finset.univ)
 
 def sourceScanB (n : Nat) [NeZero n] (source : Vertex n) : Bool :=
   allB ((neighbors n source).powersetCard 2) fun pair =>
     allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
-      decide (closure n (insert source pair ∪ extra) ≠ Finset.univ)
+      decide (closureEarly n (insert source pair ∪ extra) ≠ Finset.univ)
 
 theorem reducedScanB_of_source_scans
     (n : Nat) [NeZero n]
@@ -60,11 +107,10 @@ theorem reducedScanB_spec (n : Nat) [NeZero n]
     closure n (base ∪ extra) ≠ Finset.univ := by
   have hb := (allB_eq_true (bases n) _).mp h base hbase
   have he := (allB_eq_true ((Finset.univ \ base).powersetCard 4) _).mp hb extra hextra
-  simpa using of_decide_eq_true he
-
-/- The finite cases are checked in `FiniteScanChecked.lean` once the reduced scanner is
-implemented efficiently enough for kernel reduction.  The checked cases will be restored
-against this exact specification after the foundational clean build is established; no finite-case theorem is claimed here. -/
+  have hfast : closureEarly n (base ∪ extra) ≠ Finset.univ :=
+    of_decide_eq_true he
+  rw [closureEarly_eq_closure] at hfast
+  exact hfast
 
 end FiniteScan
 end PetersenZeroForcing
