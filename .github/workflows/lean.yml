@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: lean-n15-assembly-v2-${{ github.workflow }}-${{ github.ref }}
+  group: lean-n16-halves-v1-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -16,8 +16,233 @@ permissions:
   actions: read
 
 jobs:
-  assemble15:
-    name: assemble-n15
+  finite16-halves:
+    name: ${{ matrix.artifact }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LEAN_NUM_THREADS: 1
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        include:
+          - artifact: finite16-outer-pair0-000-h0
+            module: FiniteScanCheck16OuterPair0O000H0
+          - artifact: finite16-outer-pair0-000-h1
+            module: FiniteScanCheck16OuterPair0O000H1
+          - artifact: finite16-outer-pair0-001-h0
+            module: FiniteScanCheck16OuterPair0O001H0
+          - artifact: finite16-outer-pair0-001-h1
+            module: FiniteScanCheck16OuterPair0O001H1
+          - artifact: finite16-outer-pair0-010-h0
+            module: FiniteScanCheck16OuterPair0O010H0
+          - artifact: finite16-outer-pair0-010-h1
+            module: FiniteScanCheck16OuterPair0O010H1
+          - artifact: finite16-outer-pair0-011-h0
+            module: FiniteScanCheck16OuterPair0O011H0
+          - artifact: finite16-outer-pair0-011-h1
+            module: FiniteScanCheck16OuterPair0O011H1
+          - artifact: finite16-outer-pair0-100-h0
+            module: FiniteScanCheck16OuterPair0O100H0
+          - artifact: finite16-outer-pair0-100-h1
+            module: FiniteScanCheck16OuterPair0O100H1
+          - artifact: finite16-outer-pair0-101-h0
+            module: FiniteScanCheck16OuterPair0O101H0
+          - artifact: finite16-outer-pair0-101-h1
+            module: FiniteScanCheck16OuterPair0O101H1
+          - artifact: finite16-outer-pair0-110-h0
+            module: FiniteScanCheck16OuterPair0O110H0
+          - artifact: finite16-outer-pair0-110-h1
+            module: FiniteScanCheck16OuterPair0O110H1
+          - artifact: finite16-outer-pair0-111-h0
+            module: FiniteScanCheck16OuterPair0O111H0
+          - artifact: finite16-outer-pair0-111-h1
+            module: FiniteScanCheck16OuterPair0O111H1
+          - artifact: finite16-outer-pair1-000-h0
+            module: FiniteScanCheck16OuterPair1O000H0
+          - artifact: finite16-outer-pair1-000-h1
+            module: FiniteScanCheck16OuterPair1O000H1
+          - artifact: finite16-outer-pair1-001-h0
+            module: FiniteScanCheck16OuterPair1O001H0
+          - artifact: finite16-outer-pair1-001-h1
+            module: FiniteScanCheck16OuterPair1O001H1
+          - artifact: finite16-outer-pair1-010-h0
+            module: FiniteScanCheck16OuterPair1O010H0
+          - artifact: finite16-outer-pair1-010-h1
+            module: FiniteScanCheck16OuterPair1O010H1
+          - artifact: finite16-outer-pair1-011-h0
+            module: FiniteScanCheck16OuterPair1O011H0
+          - artifact: finite16-outer-pair1-011-h1
+            module: FiniteScanCheck16OuterPair1O011H1
+          - artifact: finite16-outer-pair1-100-h0
+            module: FiniteScanCheck16OuterPair1O100H0
+          - artifact: finite16-outer-pair1-100-h1
+            module: FiniteScanCheck16OuterPair1O100H1
+          - artifact: finite16-outer-pair1-101-h0
+            module: FiniteScanCheck16OuterPair1O101H0
+          - artifact: finite16-outer-pair1-101-h1
+            module: FiniteScanCheck16OuterPair1O101H1
+          - artifact: finite16-outer-pair1-110-h0
+            module: FiniteScanCheck16OuterPair1O110H0
+          - artifact: finite16-outer-pair1-110-h1
+            module: FiniteScanCheck16OuterPair1O110H1
+          - artifact: finite16-outer-pair1-111-h0
+            module: FiniteScanCheck16OuterPair1O111H0
+          - artifact: finite16-outer-pair1-111-h1
+            module: FiniteScanCheck16OuterPair1O111H1
+          - artifact: finite16-outer-pair2-000-h0
+            module: FiniteScanCheck16OuterPair2O000H0
+          - artifact: finite16-outer-pair2-000-h1
+            module: FiniteScanCheck16OuterPair2O000H1
+          - artifact: finite16-outer-pair2-001-h0
+            module: FiniteScanCheck16OuterPair2O001H0
+          - artifact: finite16-outer-pair2-001-h1
+            module: FiniteScanCheck16OuterPair2O001H1
+          - artifact: finite16-outer-pair2-010-h0
+            module: FiniteScanCheck16OuterPair2O010H0
+          - artifact: finite16-outer-pair2-010-h1
+            module: FiniteScanCheck16OuterPair2O010H1
+          - artifact: finite16-outer-pair2-011-h0
+            module: FiniteScanCheck16OuterPair2O011H0
+          - artifact: finite16-outer-pair2-011-h1
+            module: FiniteScanCheck16OuterPair2O011H1
+          - artifact: finite16-outer-pair2-100-h0
+            module: FiniteScanCheck16OuterPair2O100H0
+          - artifact: finite16-outer-pair2-100-h1
+            module: FiniteScanCheck16OuterPair2O100H1
+          - artifact: finite16-outer-pair2-101-h0
+            module: FiniteScanCheck16OuterPair2O101H0
+          - artifact: finite16-outer-pair2-101-h1
+            module: FiniteScanCheck16OuterPair2O101H1
+          - artifact: finite16-outer-pair2-110-h0
+            module: FiniteScanCheck16OuterPair2O110H0
+          - artifact: finite16-outer-pair2-110-h1
+            module: FiniteScanCheck16OuterPair2O110H1
+          - artifact: finite16-outer-pair2-111-h0
+            module: FiniteScanCheck16OuterPair2O111H0
+          - artifact: finite16-outer-pair2-111-h1
+            module: FiniteScanCheck16OuterPair2O111H1
+          - artifact: finite16-inner-pair0-000-h0
+            module: FiniteScanCheck16InnerPair0O000H0
+          - artifact: finite16-inner-pair0-000-h1
+            module: FiniteScanCheck16InnerPair0O000H1
+          - artifact: finite16-inner-pair0-001-h0
+            module: FiniteScanCheck16InnerPair0O001H0
+          - artifact: finite16-inner-pair0-001-h1
+            module: FiniteScanCheck16InnerPair0O001H1
+          - artifact: finite16-inner-pair0-010-h0
+            module: FiniteScanCheck16InnerPair0O010H0
+          - artifact: finite16-inner-pair0-010-h1
+            module: FiniteScanCheck16InnerPair0O010H1
+          - artifact: finite16-inner-pair0-011-h0
+            module: FiniteScanCheck16InnerPair0O011H0
+          - artifact: finite16-inner-pair0-011-h1
+            module: FiniteScanCheck16InnerPair0O011H1
+          - artifact: finite16-inner-pair0-100-h0
+            module: FiniteScanCheck16InnerPair0O100H0
+          - artifact: finite16-inner-pair0-100-h1
+            module: FiniteScanCheck16InnerPair0O100H1
+          - artifact: finite16-inner-pair0-101-h0
+            module: FiniteScanCheck16InnerPair0O101H0
+          - artifact: finite16-inner-pair0-101-h1
+            module: FiniteScanCheck16InnerPair0O101H1
+          - artifact: finite16-inner-pair0-110-h0
+            module: FiniteScanCheck16InnerPair0O110H0
+          - artifact: finite16-inner-pair0-110-h1
+            module: FiniteScanCheck16InnerPair0O110H1
+          - artifact: finite16-inner-pair0-111-h0
+            module: FiniteScanCheck16InnerPair0O111H0
+          - artifact: finite16-inner-pair0-111-h1
+            module: FiniteScanCheck16InnerPair0O111H1
+          - artifact: finite16-inner-pair1-000-h0
+            module: FiniteScanCheck16InnerPair1O000H0
+          - artifact: finite16-inner-pair1-000-h1
+            module: FiniteScanCheck16InnerPair1O000H1
+          - artifact: finite16-inner-pair1-001-h0
+            module: FiniteScanCheck16InnerPair1O001H0
+          - artifact: finite16-inner-pair1-001-h1
+            module: FiniteScanCheck16InnerPair1O001H1
+          - artifact: finite16-inner-pair1-010-h0
+            module: FiniteScanCheck16InnerPair1O010H0
+          - artifact: finite16-inner-pair1-010-h1
+            module: FiniteScanCheck16InnerPair1O010H1
+          - artifact: finite16-inner-pair1-011-h0
+            module: FiniteScanCheck16InnerPair1O011H0
+          - artifact: finite16-inner-pair1-011-h1
+            module: FiniteScanCheck16InnerPair1O011H1
+          - artifact: finite16-inner-pair1-100-h0
+            module: FiniteScanCheck16InnerPair1O100H0
+          - artifact: finite16-inner-pair1-100-h1
+            module: FiniteScanCheck16InnerPair1O100H1
+          - artifact: finite16-inner-pair1-101-h0
+            module: FiniteScanCheck16InnerPair1O101H0
+          - artifact: finite16-inner-pair1-101-h1
+            module: FiniteScanCheck16InnerPair1O101H1
+          - artifact: finite16-inner-pair1-110-h0
+            module: FiniteScanCheck16InnerPair1O110H0
+          - artifact: finite16-inner-pair1-110-h1
+            module: FiniteScanCheck16InnerPair1O110H1
+          - artifact: finite16-inner-pair1-111-h0
+            module: FiniteScanCheck16InnerPair1O111H0
+          - artifact: finite16-inner-pair1-111-h1
+            module: FiniteScanCheck16InnerPair1O111H1
+          - artifact: finite16-inner-pair2-000-h0
+            module: FiniteScanCheck16InnerPair2O000H0
+          - artifact: finite16-inner-pair2-000-h1
+            module: FiniteScanCheck16InnerPair2O000H1
+          - artifact: finite16-inner-pair2-001-h0
+            module: FiniteScanCheck16InnerPair2O001H0
+          - artifact: finite16-inner-pair2-001-h1
+            module: FiniteScanCheck16InnerPair2O001H1
+          - artifact: finite16-inner-pair2-010-h0
+            module: FiniteScanCheck16InnerPair2O010H0
+          - artifact: finite16-inner-pair2-010-h1
+            module: FiniteScanCheck16InnerPair2O010H1
+          - artifact: finite16-inner-pair2-011-h0
+            module: FiniteScanCheck16InnerPair2O011H0
+          - artifact: finite16-inner-pair2-011-h1
+            module: FiniteScanCheck16InnerPair2O011H1
+          - artifact: finite16-inner-pair2-100-h0
+            module: FiniteScanCheck16InnerPair2O100H0
+          - artifact: finite16-inner-pair2-100-h1
+            module: FiniteScanCheck16InnerPair2O100H1
+          - artifact: finite16-inner-pair2-101-h0
+            module: FiniteScanCheck16InnerPair2O101H0
+          - artifact: finite16-inner-pair2-101-h1
+            module: FiniteScanCheck16InnerPair2O101H1
+          - artifact: finite16-inner-pair2-110-h0
+            module: FiniteScanCheck16InnerPair2O110H0
+          - artifact: finite16-inner-pair2-110-h1
+            module: FiniteScanCheck16InnerPair2O110H1
+          - artifact: finite16-inner-pair2-111-h0
+            module: FiniteScanCheck16InnerPair2O111H0
+          - artifact: finite16-inner-pair2-111-h1
+            module: FiniteScanCheck16InnerPair2O111H1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kernel-check n=16 half-shard
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.${{ matrix.module }}
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Save checked n=16 half-module
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.olean
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.ilean
+          if-no-files-found: error
+          retention-days: 2
+
+  assemble16:
+    name: assemble-n16
+    needs: finite16-halves
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -33,66 +258,43 @@ jobs:
           test: false
           lint: false
           use-github-cache: false
-      - name: Restore checked finite modules through n=14
+      - name: Restore checked finite modules through n=15
         uses: actions/download-artifact@v5
         with:
-          name: finite-checked-through-14
+          name: finite-checked-through-15
           path: .lake/build/lib/lean/PetersenZeroForcing
           github-token: ${{ github.token }}
-          run-id: 36018908671
-      - name: Restore reconstructed n=15 outer modules
+          run-id: 36041865953
+      - name: Restore checked n=16 half-shards
         uses: actions/download-artifact@v5
         with:
-          name: finite15-outer-reconstructed
-          path: .lake/build/lib/lean/PetersenZeroForcing
-          github-token: ${{ github.token }}
-          run-id: 36034954236
-      - name: Restore successful n=15 inner half-shards
-        uses: actions/download-artifact@v5
-        with:
-          pattern: finite15-inner-*
+          pattern: finite16-*
           path: .lake/build/lib/lean/PetersenZeroForcing
           merge-multiple: true
-          github-token: ${{ github.token }}
-          run-id: 36028350728
-      - name: Restore repaired inner quarter leaves
-        uses: actions/download-artifact@v5
-        with:
-          pattern: finite15-inner-pair2-101-h0-q*
-          path: .lake/build/lib/lean/PetersenZeroForcing
-          merge-multiple: true
-          github-token: ${{ github.token }}
-          run-id: 36040171218
-      - name: Restore current split module after legacy artifact
+      - name: Reconstruct exact n=16 octants and assemble theorem
         shell: bash
         run: |
           set -euo pipefail
-          lake env lean PetersenZeroForcing/FiniteScanOctantSplit.lean \
-            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
-      - name: Reconstruct exact n=15 inner parents and assemble theorem
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          stem="FiniteScanCheck15InnerPair2O101H0"
-          lake env lean "PetersenZeroForcing/${stem}.lean" \
-            -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
-
-          for suffix in InnerPair0 InnerPair1 InnerPair2
+          for suffix in \
+            OuterPair0 \
+            OuterPair1 \
+            OuterPair2 \
+            InnerPair0 \
+            InnerPair1 \
+            InnerPair2
           do
             for octant in 000 001 010 011 100 101 110 111
             do
-              stem="FiniteScanCheck15${suffix}O${octant}"
+              stem="FiniteScanCheck16${suffix}O${octant}"
               lake env lean "PetersenZeroForcing/${stem}.lean" \
                 -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
             done
-            stem="FiniteScanCheck15${suffix}"
+            stem="FiniteScanCheck16${suffix}"
             lake env lean "PetersenZeroForcing/${stem}.lean" \
               -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
           done
-
-          lake env lean PetersenZeroForcing/FiniteScanChecked15.lean \
-            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked15.olean
+          lake env lean PetersenZeroForcing/FiniteScanChecked16.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked16.olean
           lake env lean PetersenZeroForcing/FiniteLowerBound.lean \
             -o .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
           lake env lean PetersenZeroForcing.lean \
@@ -100,12 +302,13 @@ jobs:
       - name: Save cumulative finite checked modules
         uses: actions/upload-artifact@v4
         with:
-          name: finite-checked-through-15
+          name: finite-checked-through-16
           path: |
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck16*.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
             .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
             .lake/build/lib/lean/PetersenZeroForcing.olean
