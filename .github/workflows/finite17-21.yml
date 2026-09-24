@@ -1,0 +1,378 @@
+name: Finite n=17-21 campaign
+
+on:
+  push:
+    branches: [lean-formalisation]
+    paths:
+      - ".github/workflows/finite17-21.yml"
+      - ".github/finite17-21-trigger"
+  workflow_dispatch:
+
+concurrency:
+  group: finite17-21-v1-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  LEAN_NUM_THREADS: 1
+  LEAF_TIMEOUT: 45m
+  WORKER_COUNT: "10"
+  LANES_PER_WORKER: "4"
+
+jobs:
+  preflight:
+    name: finite17-21-preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build exact eighth subdivision infrastructure
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteScanEighthSplit
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Kernel-check one representative exact n=17 leaf
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          timeout --signal=TERM --kill-after=30s "$LEAF_TIMEOUT"             lake env lean PetersenZeroForcing/FiniteScanCheck17OuterPair0O000H0Q0E0.lean               -o "$outdir/FiniteScanCheck17OuterPair0O000H0Q0E0.olean"
+          test -s "$outdir/FiniteScanCheck17OuterPair0O000H0Q0E0.olean"
+
+  leaves:
+    name: finite17-21-worker-${{ matrix.worker }}
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        worker: [0,1,2,3,4,5,6,7,8,9]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Lean structural dependencies
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteScanEighthSplit
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Compute compatible source fingerprint
+        id: fp
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="$(
+            {
+              sha256sum lean-toolchain lake-manifest.json
+              sha256sum PetersenZeroForcing/FiniteScan.lean
+              sha256sum PetersenZeroForcing/FiniteScanOctantSplit.lean
+              sha256sum PetersenZeroForcing/FiniteScanEighthSplit.lean
+              find PetersenZeroForcing -maxdepth 1 -type f                 \( -name 'FiniteScanCheck17*E[01].lean'                 -o -name 'FiniteScanCheck18*E[01].lean'                 -o -name 'FiniteScanCheck19*E[01].lean'                 -o -name 'FiniteScanCheck20*E[01].lean'                 -o -name 'FiniteScanCheck21*E[01].lean' \)                 -print0 | sort -z | xargs -0 sha256sum
+            } | sha256sum | cut -c1-20
+          )"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "source fingerprint: $tag"
+
+      - name: Restore compatible worker bundle if available
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WORKER: ${{ matrix.worker }}
+          TAG: ${{ steps.fp.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p worker-out .lake/build/lib/lean/PetersenZeroForcing
+          artifact_name="finite1721-worker-$WORKER-$TAG"
+          json="$(mktemp)"
+          trap 'rm -f "$json"' EXIT
+          curl -fsSL             -H "Authorization: Bearer $GH_TOKEN"             -H "Accept: application/vnd.github+json"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100&name=$artifact_name"             -o "$json"
+          artifact_id="$(
+            jq -r '[.artifacts[] | select(.expired == false)]
+              | sort_by(.created_at) | reverse | .[0].id // empty' "$json"
+          )"
+          if [[ -n "$artifact_id" ]]; then
+            zip="$(mktemp)"
+            curl -fsSL -L               -H "Authorization: Bearer $GH_TOKEN"               -H "Accept: application/vnd.github+json"               -H "X-GitHub-Api-Version: 2022-11-28"               "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip"               -o "$zip"
+            unzip -oq "$zip" -d worker-out
+            rm -f "$zip"
+            echo "Restored compatible artifact $artifact_id"
+          else
+            echo "No compatible prior worker artifact found."
+          fi
+          shopt -s nullglob
+          for f in worker-out/*.olean; do
+            cp "$f" .lake/build/lib/lean/PetersenZeroForcing/
+          done
+
+      - name: Kernel-check assigned exact eighth leaves
+        shell: bash
+        env:
+          WORKER: ${{ matrix.worker }}
+          TAG: ${{ steps.fp.outputs.tag }}
+        run: |
+          set -u -o pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          mkdir -p worker-out "$outdir"
+          echo "$TAG" > worker-out/source-tag.txt
+
+          mapfile -t sources < <(
+            find PetersenZeroForcing -maxdepth 1 -type f               \( -name 'FiniteScanCheck17*E[01].lean'               -o -name 'FiniteScanCheck18*E[01].lean'               -o -name 'FiniteScanCheck19*E[01].lean'               -o -name 'FiniteScanCheck20*E[01].lean'               -o -name 'FiniteScanCheck21*E[01].lean' \)               -print | sort
+          )
+          if [[ "${#sources[@]}" -ne 1920 ]]; then
+            echo "Expected 1920 exact leaf sources, found ${#sources[@]}" >&2
+            exit 1
+          fi
+
+          stripes=$((WORKER_COUNT * LANES_PER_WORKER))
+
+          run_lane() {
+            local lane="$1"
+            local stripe=$((WORKER * LANES_PER_WORKER + lane))
+            local manifest="worker-out/manifest-w$WORKER-lane$lane.tsv"
+            local hard="worker-out/hardfail-w$WORKER-lane$lane"
+            rm -f "$hard"
+            printf "module\tstatus\trc\tseconds\tsource_sha256\n" > "$manifest"
+            local ordinal=0
+            local src module sha sidecar status rc start end seconds
+
+            for src in "${sources[@]}"; do
+              if (( ordinal % stripes == stripe )); then
+                module="$(basename "$src" .lean)"
+                sha="$(sha256sum "$src" | awk '{print $1}')"
+                sidecar="worker-out/$module.source.sha256"
+                status=""
+                rc=0
+                start="$(date +%s)"
+
+                if [[ -s "worker-out/$module.olean" && -s "$sidecar" && "$(cat "$sidecar")" == "$sha" ]]; then
+                  cp "worker-out/$module.olean" "$outdir/$module.olean"
+                  status="reused"
+                else
+                  rm -f "$outdir/$module.olean"
+                  echo "worker=$WORKER lane=$lane checking $module"
+                  if timeout --signal=TERM --kill-after=30s "$LEAF_TIMEOUT"                       lake env lean "$src" -o "$outdir/$module.olean"; then
+                    if [[ -s "$outdir/$module.olean" ]]; then
+                      cp "$outdir/$module.olean" "worker-out/$module.olean"
+                      printf "%s\n" "$sha" > "$sidecar"
+                      status="success"
+                    else
+                      status="lean-failure-no-olean"
+                      rc=97
+                      touch "$hard"
+                    fi
+                  else
+                    rc=$?
+                    rm -f "$outdir/$module.olean"
+                    if [[ $rc -eq 124 || $rc -eq 137 || $rc -eq 143 ]]; then
+                      status="timeout"
+                    else
+                      status="lean-failure-$rc"
+                      touch "$hard"
+                    fi
+                  fi
+                fi
+
+                end="$(date +%s)"
+                seconds=$((end - start))
+                printf "%s\t%s\t%s\t%s\t%s\n"                   "$module" "$status" "$rc" "$seconds" "$sha" >> "$manifest"
+              fi
+              ordinal=$((ordinal + 1))
+            done
+          }
+
+          pids=()
+          for lane in 0 1 2 3; do
+            run_lane "$lane" &
+            pids+=("$!")
+          done
+
+          lane_process_failure=0
+          for pid in "${pids[@]}"; do
+            wait "$pid" || lane_process_failure=1
+          done
+
+          hard_fail=0
+          shopt -s nullglob
+          hard_files=(worker-out/hardfail-w$WORKER-lane*)
+          if (( ${#hard_files[@]} > 0 )); then
+            hard_fail=1
+          fi
+          if (( lane_process_failure != 0 )); then
+            hard_fail=1
+          fi
+          exit "$hard_fail"
+
+      - name: Upload resumable checked worker bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite1721-worker-${{ matrix.worker }}-${{ steps.fp.outputs.tag }}
+          path: worker-out/
+          if-no-files-found: error
+          retention-days: 90
+
+  assemble:
+    name: assemble-finite-through-21
+    if: always()
+    needs: leaves
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Lean and current structural modules
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound PetersenZeroForcing.FiniteScanEighthSplit
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Restore latest cumulative artifact through n=16
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          json="$(mktemp)"
+          zip="$(mktemp)"
+          trap 'rm -f "$json" "$zip"' EXIT
+          curl -fsSL             -H "Authorization: Bearer $GH_TOKEN"             -H "Accept: application/vnd.github+json"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100&name=finite-checked-through-16"             -o "$json"
+          artifact_id="$(
+            jq -r '[.artifacts[] | select(.expired == false)]
+              | sort_by(.created_at) | reverse | .[0].id // empty' "$json"
+          )"
+          if [[ -z "$artifact_id" ]]; then
+            echo "No non-expired finite-checked-through-16 artifact exists." >&2
+            exit 1
+          fi
+          curl -fsSL -L             -H "Authorization: Bearer $GH_TOKEN"             -H "Accept: application/vnd.github+json"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip"             -o "$zip"
+          unzip -oq "$zip" -d .lake/build/lib/lean
+          echo "Restored finite-checked-through-16 artifact $artifact_id"
+
+      - name: Restore current worker bundles
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite1721-worker-*
+          path: worker-bundles
+          merge-multiple: true
+
+      - name: Install checked n=17-21 leaf oleans
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          mkdir -p "$outdir"
+          shopt -s nullglob
+          files=(worker-bundles/*.olean)
+          echo "Worker leaf oleans restored: ${#files[@]}"
+          for f in "${files[@]}"; do
+            cp "$f" "$outdir/"
+          done
+
+      - name: Rebuild current shared finite structures after all restores
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          lake env lean PetersenZeroForcing/FiniteScanOctantSplit.lean             -o "$outdir/FiniteScanOctantSplit.olean"
+          lake env lean PetersenZeroForcing/FiniteScanEighthSplit.lean             -o "$outdir/FiniteScanEighthSplit.olean"
+
+      - name: Require all 1920 exact eighth leaves
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          missing=0
+          required=0
+          for src in $(
+            find PetersenZeroForcing -maxdepth 1 -type f               \( -name 'FiniteScanCheck17*E[01].lean'               -o -name 'FiniteScanCheck18*E[01].lean'               -o -name 'FiniteScanCheck19*E[01].lean'               -o -name 'FiniteScanCheck20*E[01].lean'               -o -name 'FiniteScanCheck21*E[01].lean' \)               -print | sort
+          ); do
+            module="$(basename "$src" .lean)"
+            required=$((required + 1))
+            if [[ ! -s "$outdir/$module.olean" ]]; then
+              echo "MISSING $module"
+              missing=$((missing + 1))
+            fi
+          done
+          echo "Required later leaves: $required; missing: $missing"
+          test "$required" -eq 1920
+          test "$missing" -eq 0
+
+      - name: Summarize worker manifests
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p finite-status
+          cp worker-bundles/manifest-w*-lane*.tsv finite-status/ 2>/dev/null || true
+          if compgen -G 'worker-bundles/manifest-w*-lane*.tsv' > /dev/null; then
+            awk -F '\t' 'FNR>1 {count[$2]++} END {for (k in count) print k, count[k]}'               worker-bundles/manifest-w*-lane*.tsv | sort | tee finite-status/status-counts.txt
+          fi
+
+      - name: Reconstruct all later parents and scan theorems
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          for n in 17 18 19 20 21; do
+            for suffix in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+              stem="FiniteScanCheck$n$suffix"
+              lake env lean "PetersenZeroForcing/$stem.lean" -o "$outdir/$stem.olean"
+            done
+            lake env lean "PetersenZeroForcing/FiniteScanChecked$n.lean"               -o "$outdir/FiniteScanChecked$n.olean"
+          done
+
+      - name: Compile final finite theorem and root
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          lake env lean PetersenZeroForcing/FiniteLowerBound.lean             -o "$outdir/FiniteLowerBound.olean"
+          lake env lean PetersenZeroForcing.lean             -o .lake/build/lib/lean/PetersenZeroForcing.olean
+
+      - name: Upload status manifests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite17-21-status-${{ github.run_id }}
+          path: finite-status/
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Save cumulative finite checked modules through n=21
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-checked-through-21
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanEighthSplit.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck16*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck17*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck18*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck19*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck20*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck21*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
+            .lake/build/lib/lean/PetersenZeroForcing.olean
+          if-no-files-found: error
+          retention-days: 90
