@@ -157,17 +157,23 @@ def maskOfSet {n : Nat} (s : Finset (Vertex n)) : Nat :=
 def maskHas {n : Nat} (mask : Nat) (x : Vertex n) : Bool :=
   mask.testBit (vertexBitIndex x)
 
-def maskForcedSet (n : Nat) [NeZero n]
-    (mask : Nat) : Finset (Vertex n) :=
-  (Finset.univ : Finset (Vertex n)).biUnion fun x =>
-    if maskHas mask x = true then
-      let white := (neighbors n x).filter fun y => maskHas mask y = false
-      if white.card = 1 then white else ∅
-    else
-      ∅
+def maskForceVertex (n : Nat) [NeZero n]
+    (mask : Nat) (x : Vertex n) : Nat :=
+  if maskHas mask x = true then
+    let white := (neighbors n x).filter fun y => maskHas mask y = false
+    if white.card = 1 then mask ||| maskOfSet white else mask
+  else
+    mask
 
+/-- Fast sequential witness generator.  Its operational behavior is deliberately
+not trusted: `candidateCertB` re-checks the resulting set in the original
+`Finset` semantics before any mathematical conclusion is used. -/
 def maskForceSweep (n : Nat) [NeZero n] (mask : Nat) : Nat :=
-  mask ||| maskOfSet (maskForcedSet n mask)
+  let afterOuter :=
+    (List.range n).foldl
+      (fun m i => maskForceVertex n m (u (i : ZMod n))) mask
+  (List.range n).foldl
+    (fun m i => maskForceVertex n m (v (i : ZMod n))) afterOuter
 
 def maskClosureAux (n : Nat) [NeZero n] : Nat → Nat → Nat
   | 0, mask => mask
