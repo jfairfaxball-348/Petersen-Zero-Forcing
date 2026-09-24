@@ -140,6 +140,73 @@ theorem closureFast_eq_closure
     closureFast n blue = closure n blue := by
   rw [closureFast, closure, closureFastAux_eq_iterate]
 
+/-- Compact internal representation used only to *construct* candidate closed
+supersets for the finite kernel checks.  Soundness does not trust this
+representation: `candidateCertB` below re-checks containment, `Closed`, and
+properness in the original `Finset (Vertex n)` semantics. -/
+def vertexBitIndex {n : Nat} : Vertex n → Nat
+  | (Layer.outer, i) => i.val
+  | (Layer.inner, i) => n + i.val
+
+def vertexBit {n : Nat} (x : Vertex n) : Nat :=
+  2 ^ vertexBitIndex x
+
+def maskOfSet {n : Nat} (s : Finset (Vertex n)) : Nat :=
+  s.toList.foldl (fun mask x => mask ||| vertexBit x) 0
+
+def maskHas {n : Nat} (mask : Nat) (x : Vertex n) : Bool :=
+  mask.testBit (vertexBitIndex x)
+
+def maskForceVertex (n : Nat) [NeZero n]
+    (mask : Nat) (x : Vertex n) : Nat :=
+  if maskHas mask x = true then
+    let white := (neighbors n x).filter fun y => maskHas mask y = false
+    if white.card = 1 then mask ||| maskOfSet white else mask
+  else
+    mask
+
+def maskForceSweep (n : Nat) [NeZero n] (mask : Nat) : Nat :=
+  (Finset.univ : Finset (Vertex n)).toList.foldl (maskForceVertex n) mask
+
+def maskClosureAux (n : Nat) [NeZero n] : Nat → Nat → Nat
+  | 0, mask => mask
+  | k + 1, mask =>
+      let next := maskForceSweep n mask
+      if next = mask then mask else maskClosureAux n k next
+
+def maskCandidateSet (n : Nat) [NeZero n]
+    (seed : Finset (Vertex n)) : Finset (Vertex n) :=
+  let mask := maskClosureAux n (2 * n) (maskOfSet seed)
+  (Finset.univ : Finset (Vertex n)).filter fun x => maskHas mask x = true
+
+/-- This is the trusted mathematical proposition checked by the optimized
+finite computation.  The mask code merely proposes `U`; the kernel verifies
+that `U` contains the seed, is closed in the original graph semantics, and
+is a proper subset of the vertex set. -/
+def candidateCertB (n : Nat) [NeZero n]
+    (seed : Finset (Vertex n)) : Bool :=
+  let U := maskCandidateSet n seed
+  decide (seed ⊆ U ∧ Closed n U ∧ U ≠ Finset.univ)
+
+theorem candidateCertB_spec (n : Nat) [NeZero n]
+    (seed : Finset (Vertex n))
+    (h : candidateCertB n seed = true) :
+    closure n seed ≠ Finset.univ := by
+  unfold candidateCertB at h
+  have hc :
+      seed ⊆ maskCandidateSet n seed ∧
+        Closed n (maskCandidateSet n seed) ∧
+        maskCandidateSet n seed ≠ Finset.univ :=
+    of_decide_eq_true h
+  intro hfull
+  have hsub :=
+    closure_subset_of_closed n hc.1 hc.2.1
+  have hunivSub :
+      (Finset.univ : Finset (Vertex n)) ⊆ maskCandidateSet n seed := by
+    simpa [hfull] using hsub
+  apply hc.2.2
+  exact Finset.Subset.antisymm (Finset.subset_univ _) hunivSub
+
 def sources (n : Nat) [NeZero n] : Finset (Vertex n) := {u 0, v 0}
 
 def bases (n : Nat) [NeZero n] : Finset (Finset (Vertex n)) :=
@@ -150,6 +217,27 @@ def pairScanB (n : Nat) [NeZero n]
     (source : Vertex n) (pair : Finset (Vertex n)) : Bool :=
   allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
     decide (closureFast n (insert source pair ∪ extra) ≠ Finset.univ)
+
+/-- Certificate-producing counterpart of `pairScanB`.  It checks a stronger
+closed-superset witness for every represented seed. -/
+def pairCertScanB (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n)) : Bool :=
+  allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
+    candidateCertB n (insert source pair ∪ extra)
+
+theorem pairScanB_of_certScan
+    (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n))
+    (hcert : pairCertScanB n source pair = true) :
+    pairScanB n source pair = true := by
+  unfold pairCertScanB at hcert
+  unfold pairScanB
+  apply (allB_eq_true _ _).2
+  intro extra hextra
+  have hc := (allB_eq_true _ _).mp hcert extra hextra
+  rw [decide_eq_true_iff]
+  rw [closureFast_eq_closure]
+  exact candidateCertB_spec n (insert source pair ∪ extra) hc
 
 /-- Balanced classifier used only to split the exact four-extra kernel scan.
 Every extra set lies in exactly one Boolean parity shard. -/
@@ -165,6 +253,30 @@ def pairScanParityB (n : Nat) [NeZero n]
       (fun extra => extraOuterEvenB extra = wantEven))
     fun extra =>
       decide (closureFast n (insert source pair ∪ extra) ≠ Finset.univ)
+
+def pairCertScanParityB (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n)) (wantEven : Bool) : Bool :=
+  allB
+    ((((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4).filter
+      (fun extra => extraOuterEvenB extra = wantEven))
+    fun extra =>
+      candidateCertB n (insert source pair ∪ extra)
+
+theorem pairCertScanB_of_parity
+    (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n))
+    (heven : pairCertScanParityB n source pair true = true)
+    (hodd : pairCertScanParityB n source pair false = true) :
+    pairCertScanB n source pair = true := by
+  unfold pairCertScanParityB at heven hodd
+  unfold pairCertScanB
+  apply (allB_eq_true _ _).2
+  intro extra hextra
+  cases hpar : extraOuterEvenB extra with
+  | false =>
+      exact (allB_eq_true _ _).mp hodd extra (by simp [hextra, hpar])
+  | true =>
+      exact (allB_eq_true _ _).mp heven extra (by simp [hextra, hpar])
 
 theorem pairScanB_of_parity
     (n : Nat) [NeZero n]
