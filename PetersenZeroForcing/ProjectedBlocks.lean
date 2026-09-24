@@ -23,8 +23,11 @@ theorem project_translateSet (n : Nat) [NeZero n] (C : Finset StripVertex) (t : 
   · intro hp
     rcases Finset.mem_map.mp hp with ⟨q, hq, hqp⟩
     rcases Finset.mem_image.mp hq with ⟨x, hx, rfl⟩
-    rw [← project_translateVertex] at hqp
-    rw [← hqp]
+    have hqp' : rotateEquiv n (t : ZMod n) (projectVertex n x) = p := hqp
+    have hproject :
+        projectVertex n (translateVertex t x) = p :=
+      (project_translateVertex n t x).trans hqp'
+    rw [← hproject]
     exact Finset.mem_image.mpr
       ⟨translateVertex t x, Finset.mem_image.mpr ⟨x, hx, rfl⟩, rfl⟩
 
@@ -38,6 +41,8 @@ theorem closed_rotate (n : Nat) [NeZero n] (r : ZMod n)
         (neighbors n (rotateEquiv n r x) \ rotateSet n r C).card := by
     simpa [whiteNeighbors] using
       congrArg Finset.card (whiteNeighbors_rotate n r C x)
+  change
+    (neighbors n (rotateEquiv n r x) \ rotateSet n r C).card ≠ 1
   rw [← hcard]
   exact hC x hx
 
