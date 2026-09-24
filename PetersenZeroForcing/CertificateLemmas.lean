@@ -116,7 +116,9 @@ theorem expected_key_mem_of_touch (a b : ShapeId) (s : ShiftId)
       simpa [weight, weightNat, datum] using hweight
     have ht : touchesNatB a.1 b.1 (shiftValueNat s.1) = true := by
       simpa [shiftValue] using htb
-    simp [shiftValue, shiftValueNat, hw, ht]
+    have ht' : touchesNatB a.1 b.1 ((s.1 : ℤ) - 21) = true := by
+      simpa [shiftValueNat] using ht
+    simp [shiftValue, shiftValueNat, hw, ht']
   have hgroup : expectedKeysForLeft a.1 ∈ expectedKeyGroups := by
     fin_cases a <;> simp [expectedKeyGroups]
   exact List.mem_flatten.mpr ⟨expectedKeysForLeft a.1, hgroup, hlocal⟩
