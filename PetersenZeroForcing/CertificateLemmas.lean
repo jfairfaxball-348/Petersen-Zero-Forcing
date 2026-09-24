@@ -1,4 +1,5 @@
-import PetersenZeroForcing.Certificate
+import PetersenZeroForcing.CertificateMergeChecks
+import PetersenZeroForcing.CertificateKeyChecks
 
 namespace PetersenZeroForcing
 namespace Certificate
@@ -70,18 +71,6 @@ theorem merge_row_properties (m : CertificateData.MergeDatum)
       translateSet (shapeNat m.target) m.targetShift := by
   have h := merge_row_checked m hm
   simpa [mergeRowOKB] using h
-
-theorem certificate_key_groups_eq_expected :
-    certificateKeyGroups = expectedKeyGroups := by
-  have h :
-      certificateKeyGroups = expectedKeyGroups ∧
-      certificateKeyGroups.all keyGroupNodupB = true := by
-    simpa [certificateKeysOKB] using certificate_keys_checked
-  exact h.1
-
-theorem certificate_keys_eq_expected : certificateKeys = expectedKeys := by
-  have h := congrArg List.flatten certificate_key_groups_eq_expected
-  simpa [certificateKeys, expectedKeys] using h
 
 theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
     (htouch : StripTouches (shape a) (translateSet (shape b) t)) :
