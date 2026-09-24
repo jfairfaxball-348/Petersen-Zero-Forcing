@@ -34,7 +34,9 @@ theorem exists_certificate_merge_for_touch
   have hlt : (t + 21).toNat < 43 := by omega
   let s : Certificate.ShiftId := ⟨(t + 21).toNat, hlt⟩
   have hs : Certificate.shiftValue s = t := by
-    simp [Certificate.shiftValue, s, Int.toNat_of_nonneg hnon]
+    change (((t + 21).toNat : Nat) : ℤ) - 21 = t
+    rw [hnat]
+    omega
   have h :=
     Certificate.exists_merge_witness a b s hweight
       (by simpa [hs] using htouch)
