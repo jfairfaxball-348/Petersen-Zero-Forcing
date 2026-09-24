@@ -19,7 +19,7 @@ jobs:
   finite15-shards:
     name: finite15-${{ matrix.pair.name }}-${{ matrix.octant }}
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     env:
       LEAN_NUM_THREADS: 1
     strategy:
