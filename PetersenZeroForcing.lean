@@ -8,3 +8,4 @@ import PetersenZeroForcing.Projection
 import PetersenZeroForcing.Contact
 import PetersenZeroForcing.FiniteScan
 import PetersenZeroForcing.Rotation
+import PetersenZeroForcing.ProjectedBlocks
