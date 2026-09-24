@@ -22,8 +22,7 @@ theorem shape_row_properties (i : ShapeId) :
         (1 ≤ weight i ∧ weight i ≤ 7)) ∧
       (shape i).card ≤ sizeBound (weight i) := by
     simpa [shapeRowNatB, shape, weight, datum, shapeNat, weightNat] using h
-  rcases h' with ⟨⟨⟨hclosed, hcoords⟩, hnodup⟩, hweight, hcard⟩
-  exact ⟨hclosed, hcoords, hnodup, hweight, hcard⟩
+  exact ⟨h'.1.1.1.1, h'.1.1.1.2, h'.1.1.2, h'.1.2, h'.2⟩
 
 theorem shape_closed (i : ShapeId) : StripClosed (shape i) := by
   intro x hx
@@ -86,8 +85,7 @@ theorem merge_row_properties (m : CertificateData.MergeDatum)
       translateSet (shapeNat m.right) m.shift ⊆
         translateSet (shapeNat m.target) m.targetShift := by
     simpa [mergeRowOKB] using h
-  rcases h' with ⟨⟨⟨⟨hidx, hweight⟩, htouch⟩, htarget⟩, hleft, hright⟩
-  exact ⟨hidx, hweight, htouch, htarget, hleft, hright⟩
+  exact ⟨h'.1.1.1.1.1, h'.1.1.1.1.2, h'.1.1.1.2, h'.1.1.2, h'.1.2, h'.2⟩
 
 theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
     (htouch : StripTouches (shape a) (translateSet (shape b) t)) :
@@ -114,7 +112,11 @@ theorem expected_key_mem_of_touch (a b : ShapeId) (s : ShiftId)
     simp only [expectedKeysForLeft, List.mem_flatMap]
     refine ⟨b.1, List.mem_range.mpr b.2, ?_⟩
     refine ⟨s.1, List.mem_range.mpr s.2, ?_⟩
-    simp [shiftValue, shiftValueNat, weight, weightNat, datum, hweight, htb]
+    have hw : weightNat a.1 + weightNat b.1 ≤ 7 := by
+      simpa [weight, weightNat, datum] using hweight
+    have ht : touchesNatB a.1 b.1 (shiftValueNat s.1) = true := by
+      simpa [shiftValue] using htb
+    simp [shiftValue, shiftValueNat, hw, ht]
   have hgroup : expectedKeysForLeft a.1 ∈ expectedKeyGroups := by
     fin_cases a <;> simp [expectedKeyGroups]
   exact List.mem_flatten.mpr ⟨expectedKeysForLeft a.1, hgroup, hlocal⟩
