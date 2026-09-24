@@ -19,8 +19,8 @@ permissions:
 env:
   LEAN_NUM_THREADS: 1
   LEAF_TIMEOUT: 45m
-  WORKER_COUNT: "10"
-  LANES_PER_WORKER: "4"
+  WORKER_COUNT: "12"
+  LANES_PER_WORKER: "2"
 
 jobs:
   preflight:
@@ -53,9 +53,9 @@ jobs:
     timeout-minutes: 355
     strategy:
       fail-fast: false
-      max-parallel: 10
+      max-parallel: 12
       matrix:
-        worker: [0,1,2,3,4,5,6,7,8,9]
+        worker: [0,1,2,3,4,5,6,7,8,9,10,11]
     steps:
       - uses: actions/checkout@v4
 
@@ -194,7 +194,7 @@ jobs:
           }
 
           pids=()
-          for lane in 0 1 2 3; do
+          for lane in 0 1; do
             run_lane "$lane" &
             pids+=("$!")
           done
