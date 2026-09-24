@@ -1,0 +1,167 @@
+name: n=16 assembly only
+
+on:
+  push:
+    branches: [lean-formalisation]
+    paths:
+      - ".github/workflows/finite16-assemble.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: finite16-assemble-v1-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  LEAN_NUM_THREADS: 1
+  N16_SOURCE_HEAD: 7b0546d511195ac728164fcbf33e2f2cb1d83a45
+  N16_PRIOR_RUN_ID: "36044673586"
+  N16_RECOVERY_RUN_ID: "36067499518"
+  FINITE15_RUN_ID: "36041865953"
+
+jobs:
+  assemble16:
+    name: assemble-n16-final
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact n=16 source is unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --quiet "${N16_SOURCE_HEAD}" HEAD -- PetersenZeroForcing
+
+      - name: Set up Lean and cheap core
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Restore checked finite modules through n=15
+        uses: actions/download-artifact@v5
+        with:
+          name: finite-checked-through-15
+          path: .lake/build/lib/lean
+          github-token: ${{ github.token }}
+          run-id: ${{ env.FINITE15_RUN_ID }}
+
+      - name: Restore all 190 successful n=16 leaves from run 149
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          tmpdir="$(mktemp -d)"
+          trap 'rm -rf "$tmpdir"' EXIT
+          restored=0
+          for page in 1 2; do
+            json="$tmpdir/page-${page}.json"
+            curl -fsSL               -H "Authorization: Bearer ${GH_TOKEN}"               -H "Accept: application/vnd.github+json"               -H "X-GitHub-Api-Version: 2022-11-28"               "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${N16_PRIOR_RUN_ID}/artifacts?per_page=100&page=${page}"               -o "$json"
+            while IFS=$'\t' read -r artifact_id artifact_name; do
+              [[ -n "$artifact_id" ]] || continue
+              zip="$tmpdir/${artifact_id}.zip"
+              curl -fsSL -L                 -H "Authorization: Bearer ${GH_TOKEN}"                 -H "Accept: application/vnd.github+json"                 -H "X-GitHub-Api-Version: 2022-11-28"                 "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip"                 -o "$zip"
+              unzip -oq "$zip" -d "$outdir"
+              restored=$((restored + 1))
+            done < <(jq -r '.artifacts[]
+              | select(.expired == false)
+              | select(.name | startswith("finite16-"))
+              | [.id, .name] | @tsv' "$json")
+          done
+          echo "Restored n=16 run-149 artifacts: ${restored}"
+          test "$restored" -eq 190
+
+      - name: Restore the two green recovery leaves
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite16-recovery-*
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: ${{ env.N16_RECOVERY_RUN_ID }}
+
+      - name: Rebuild current shared subdivision module after restores
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean PetersenZeroForcing/FiniteScanOctantSplit.lean             -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
+
+      - name: Require all 192 exact n=16 quarter leaves
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          missing=0
+          count=0
+          for family in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+            for octant in 000 001 010 011 100 101 110 111; do
+              for half in 0 1; do
+                for quarter in 0 1; do
+                  module="FiniteScanCheck16${family}O${octant}H${half}Q${quarter}"
+                  count=$((count + 1))
+                  if [[ ! -s "$outdir/${module}.olean" ]]; then
+                    echo "MISSING ${module}"
+                    missing=$((missing + 1))
+                  fi
+                done
+              done
+            done
+          done
+          echo "Required leaves: ${count}; missing: ${missing}"
+          test "$count" -eq 192
+          test "$missing" -eq 0
+
+      - name: Reconstruct all exact n=16 parents
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          for suffix in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+            for octant in 000 001 010 011 100 101 110 111; do
+              for half in 0 1; do
+                stem="FiniteScanCheck16${suffix}O${octant}H${half}"
+                lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+              done
+              stem="FiniteScanCheck16${suffix}O${octant}"
+              lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+            done
+            stem="FiniteScanCheck16${suffix}"
+            lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+          done
+
+      - name: Compile scan16_checked, lower_bound_finite, and root
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          lake env lean PetersenZeroForcing/FiniteScanChecked16.lean             -o "$outdir/FiniteScanChecked16.olean"
+          lake env lean PetersenZeroForcing/FiniteLowerBound.lean             -o "$outdir/FiniteLowerBound.olean"
+          lake env lean PetersenZeroForcing.lean             -o .lake/build/lib/lean/PetersenZeroForcing.olean
+
+      - name: Save cumulative finite checked modules through n=16
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-checked-through-16
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck16*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
+            .lake/build/lib/lean/PetersenZeroForcing.olean
+          if-no-files-found: error
+          retention-days: 90
