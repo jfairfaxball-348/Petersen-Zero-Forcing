@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: lean-${{ github.workflow }}-${{ github.ref }}
+  group: lean-sharded-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
