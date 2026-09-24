@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: lean-n15-final-v1-${{ github.workflow }}-${{ github.ref }}
+  group: lean-n15-assembly-v2-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -16,45 +16,8 @@ permissions:
   actions: read
 
 jobs:
-  finite15-inner-o101-quarters:
-    name: ${{ matrix.artifact }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      LEAN_NUM_THREADS: 1
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        include:
-          - artifact: finite15-inner-pair2-101-h0-q0
-            module: FiniteScanCheck15InnerPair2O101H0Q0
-          - artifact: finite15-inner-pair2-101-h0-q1
-            module: FiniteScanCheck15InnerPair2O101H0Q1
-    steps:
-      - uses: actions/checkout@v4
-      - name: Kernel-check recursive quarter leaf
-        uses: leanprover/lean-action@v1
-        with:
-          auto-config: false
-          build: true
-          build-args: PetersenZeroForcing.${{ matrix.module }}
-          test: false
-          lint: false
-          use-github-cache: false
-      - name: Save checked quarter leaf
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact }}
-          path: |
-            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.olean
-            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.ilean
-          if-no-files-found: error
-          retention-days: 2
-
   assemble15:
     name: assemble-n15
-    needs: finite15-inner-o101-quarters
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -98,6 +61,14 @@ jobs:
           pattern: finite15-inner-pair2-101-h0-q*
           path: .lake/build/lib/lean/PetersenZeroForcing
           merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: 36040171218
+      - name: Restore current split module after legacy artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean PetersenZeroForcing/FiniteScanOctantSplit.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
       - name: Reconstruct exact n=15 inner parents and assemble theorem
         shell: bash
         run: |
