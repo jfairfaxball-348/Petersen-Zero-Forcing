@@ -1,10 +1,6 @@
 name: Finite n=17-21 worker 6 recovery
 
 on:
-  push:
-    branches: [lean-formalisation]
-    paths:
-      - ".github/workflows/finite17-21-worker6-recovery.yml"
   workflow_dispatch:
 
 concurrency:
