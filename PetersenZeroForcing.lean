@@ -10,6 +10,7 @@ import PetersenZeroForcing.Contact
 import PetersenZeroForcing.FiniteScan
 import PetersenZeroForcing.Rotation
 import PetersenZeroForcing.FiniteReduction
+import PetersenZeroForcing.FiniteScanChecked
 import PetersenZeroForcing.ProjectedBlocks
 import PetersenZeroForcing.BlockContact
 import PetersenZeroForcing.BlockMerge
