@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: lean-outer-assembly-v1-${{ github.workflow }}-${{ github.ref }}
+  group: lean-n15-final-v1-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -16,48 +16,98 @@ permissions:
   actions: read
 
 jobs:
-  outer-reconstruction:
-    name: reconstruct-n15-outer-parents
+  finite15-inner-o101-quarters:
+    name: ${{ matrix.artifact }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     env:
       LEAN_NUM_THREADS: 1
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - artifact: finite15-inner-pair2-101-h0-q0
+            module: FiniteScanCheck15InnerPair2O101H0Q0
+          - artifact: finite15-inner-pair2-101-h0-q1
+            module: FiniteScanCheck15InnerPair2O101H0Q1
     steps:
       - uses: actions/checkout@v4
-      - name: Build finite-scan reconstruction core
+      - name: Kernel-check recursive quarter leaf
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.FiniteScanOctantSplit
+          build-args: PetersenZeroForcing.${{ matrix.module }}
           test: false
           lint: false
           use-github-cache: false
-      - name: Restore successful outer half-shards from run 142
+      - name: Save checked quarter leaf
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.olean
+            .lake/build/lib/lean/PetersenZeroForcing/${{ matrix.module }}.ilean
+          if-no-files-found: error
+          retention-days: 2
+
+  assemble15:
+    name: assemble-n15
+    needs: finite15-inner-o101-quarters
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build non-computational Lean core
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.LargeLowerBound PetersenZeroForcing.FiniteScanOctantSplit
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Restore checked finite modules through n=14
         uses: actions/download-artifact@v5
         with:
-          pattern: finite15-outer-*
+          name: finite-checked-through-14
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          github-token: ${{ github.token }}
+          run-id: 36018908671
+      - name: Restore reconstructed n=15 outer modules
+        uses: actions/download-artifact@v5
+        with:
+          name: finite15-outer-reconstructed
+          path: .lake/build/lib/lean/PetersenZeroForcing
+          github-token: ${{ github.token }}
+          run-id: 36034954236
+      - name: Restore successful n=15 inner half-shards
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite15-inner-*
           path: .lake/build/lib/lean/PetersenZeroForcing
           merge-multiple: true
           github-token: ${{ github.token }}
           run-id: 36028350728
-      - name: Restore recursive quarter leaves from run 144
+      - name: Restore repaired inner quarter leaves
         uses: actions/download-artifact@v5
         with:
-          pattern: finite15-outer-pair1-111-h1-q*
+          pattern: finite15-inner-pair2-101-h0-q*
           path: .lake/build/lib/lean/PetersenZeroForcing
           merge-multiple: true
-          github-token: ${{ github.token }}
-          run-id: 36034025662
-      - name: Reconstruct timed-out half and exact outer parents
+      - name: Reconstruct exact n=15 inner parents and assemble theorem
         shell: bash
         run: |
           set -euo pipefail
-          stem="FiniteScanCheck15OuterPair1O111H1"
+
+          stem="FiniteScanCheck15InnerPair2O101H0"
           lake env lean "PetersenZeroForcing/${stem}.lean" \
             -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
 
-          for suffix in OuterPair0 OuterPair1 OuterPair2
+          for suffix in InnerPair0 InnerPair1 InnerPair2
           do
             for octant in 000 001 010 011 100 101 110 111
             do
@@ -69,11 +119,24 @@ jobs:
             lake env lean "PetersenZeroForcing/${stem}.lean" \
               -o ".lake/build/lib/lean/PetersenZeroForcing/${stem}.olean"
           done
-      - name: Save reconstructed outer modules
+
+          lake env lean PetersenZeroForcing/FiniteScanChecked15.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked15.olean
+          lake env lean PetersenZeroForcing/FiniteLowerBound.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
+          lake env lean PetersenZeroForcing.lean \
+            -o .lake/build/lib/lean/PetersenZeroForcing.olean
+      - name: Save cumulative finite checked modules
         uses: actions/upload-artifact@v4
         with:
-          name: finite15-outer-reconstructed
+          name: finite-checked-through-15
           path: |
-            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15OuterPair*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanOctantSplit.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck13*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck14*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck15*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteLowerBound.olean
+            .lake/build/lib/lean/PetersenZeroForcing.olean
           if-no-files-found: error
-          retention-days: 2
+          retention-days: 90
