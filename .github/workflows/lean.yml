@@ -18,86 +18,158 @@ jobs:
   finite13-shards:
     name: finite13-${{ matrix.name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
     env:
       LEAN_NUM_THREADS: 1
     strategy:
       fail-fast: false
-      max-parallel: 6
+      max-parallel: 4
       matrix:
         include:
-          - name: outer-pair0-00
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0Q00
-            stem: FiniteScanCheck13OuterPair0Q00
-          - name: outer-pair0-01
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0Q01
-            stem: FiniteScanCheck13OuterPair0Q01
-          - name: outer-pair0-10
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0Q10
-            stem: FiniteScanCheck13OuterPair0Q10
-          - name: outer-pair0-11
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0Q11
-            stem: FiniteScanCheck13OuterPair0Q11
-          - name: outer-pair1-00
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1Q00
-            stem: FiniteScanCheck13OuterPair1Q00
-          - name: outer-pair1-01
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1Q01
-            stem: FiniteScanCheck13OuterPair1Q01
-          - name: outer-pair1-10
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1Q10
-            stem: FiniteScanCheck13OuterPair1Q10
-          - name: outer-pair1-11
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1Q11
-            stem: FiniteScanCheck13OuterPair1Q11
-          - name: outer-pair2-00
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2Q00
-            stem: FiniteScanCheck13OuterPair2Q00
-          - name: outer-pair2-01
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2Q01
-            stem: FiniteScanCheck13OuterPair2Q01
-          - name: outer-pair2-10
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2Q10
-            stem: FiniteScanCheck13OuterPair2Q10
-          - name: outer-pair2-11
-            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2Q11
-            stem: FiniteScanCheck13OuterPair2Q11
-          - name: inner-pair0-00
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0Q00
-            stem: FiniteScanCheck13InnerPair0Q00
-          - name: inner-pair0-01
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0Q01
-            stem: FiniteScanCheck13InnerPair0Q01
-          - name: inner-pair0-10
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0Q10
-            stem: FiniteScanCheck13InnerPair0Q10
-          - name: inner-pair0-11
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0Q11
-            stem: FiniteScanCheck13InnerPair0Q11
-          - name: inner-pair1-00
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1Q00
-            stem: FiniteScanCheck13InnerPair1Q00
-          - name: inner-pair1-01
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1Q01
-            stem: FiniteScanCheck13InnerPair1Q01
-          - name: inner-pair1-10
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1Q10
-            stem: FiniteScanCheck13InnerPair1Q10
-          - name: inner-pair1-11
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1Q11
-            stem: FiniteScanCheck13InnerPair1Q11
-          - name: inner-pair2-00
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2Q00
-            stem: FiniteScanCheck13InnerPair2Q00
-          - name: inner-pair2-01
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2Q01
-            stem: FiniteScanCheck13InnerPair2Q01
-          - name: inner-pair2-10
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2Q10
-            stem: FiniteScanCheck13InnerPair2Q10
-          - name: inner-pair2-11
-            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2Q11
-            stem: FiniteScanCheck13InnerPair2Q11
+          - name: outer-pair0-000
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O000
+            stem: FiniteScanCheck13OuterPair0O000
+          - name: outer-pair0-001
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O001
+            stem: FiniteScanCheck13OuterPair0O001
+          - name: outer-pair0-010
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O010
+            stem: FiniteScanCheck13OuterPair0O010
+          - name: outer-pair0-011
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O011
+            stem: FiniteScanCheck13OuterPair0O011
+          - name: outer-pair0-100
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O100
+            stem: FiniteScanCheck13OuterPair0O100
+          - name: outer-pair0-101
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O101
+            stem: FiniteScanCheck13OuterPair0O101
+          - name: outer-pair0-110
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O110
+            stem: FiniteScanCheck13OuterPair0O110
+          - name: outer-pair0-111
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair0O111
+            stem: FiniteScanCheck13OuterPair0O111
+          - name: outer-pair1-000
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O000
+            stem: FiniteScanCheck13OuterPair1O000
+          - name: outer-pair1-001
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O001
+            stem: FiniteScanCheck13OuterPair1O001
+          - name: outer-pair1-010
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O010
+            stem: FiniteScanCheck13OuterPair1O010
+          - name: outer-pair1-011
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O011
+            stem: FiniteScanCheck13OuterPair1O011
+          - name: outer-pair1-100
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O100
+            stem: FiniteScanCheck13OuterPair1O100
+          - name: outer-pair1-101
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O101
+            stem: FiniteScanCheck13OuterPair1O101
+          - name: outer-pair1-110
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O110
+            stem: FiniteScanCheck13OuterPair1O110
+          - name: outer-pair1-111
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair1O111
+            stem: FiniteScanCheck13OuterPair1O111
+          - name: outer-pair2-000
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O000
+            stem: FiniteScanCheck13OuterPair2O000
+          - name: outer-pair2-001
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O001
+            stem: FiniteScanCheck13OuterPair2O001
+          - name: outer-pair2-010
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O010
+            stem: FiniteScanCheck13OuterPair2O010
+          - name: outer-pair2-011
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O011
+            stem: FiniteScanCheck13OuterPair2O011
+          - name: outer-pair2-100
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O100
+            stem: FiniteScanCheck13OuterPair2O100
+          - name: outer-pair2-101
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O101
+            stem: FiniteScanCheck13OuterPair2O101
+          - name: outer-pair2-110
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O110
+            stem: FiniteScanCheck13OuterPair2O110
+          - name: outer-pair2-111
+            module: PetersenZeroForcing.FiniteScanCheck13OuterPair2O111
+            stem: FiniteScanCheck13OuterPair2O111
+          - name: inner-pair0-000
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O000
+            stem: FiniteScanCheck13InnerPair0O000
+          - name: inner-pair0-001
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O001
+            stem: FiniteScanCheck13InnerPair0O001
+          - name: inner-pair0-010
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O010
+            stem: FiniteScanCheck13InnerPair0O010
+          - name: inner-pair0-011
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O011
+            stem: FiniteScanCheck13InnerPair0O011
+          - name: inner-pair0-100
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O100
+            stem: FiniteScanCheck13InnerPair0O100
+          - name: inner-pair0-101
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O101
+            stem: FiniteScanCheck13InnerPair0O101
+          - name: inner-pair0-110
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O110
+            stem: FiniteScanCheck13InnerPair0O110
+          - name: inner-pair0-111
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair0O111
+            stem: FiniteScanCheck13InnerPair0O111
+          - name: inner-pair1-000
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O000
+            stem: FiniteScanCheck13InnerPair1O000
+          - name: inner-pair1-001
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O001
+            stem: FiniteScanCheck13InnerPair1O001
+          - name: inner-pair1-010
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O010
+            stem: FiniteScanCheck13InnerPair1O010
+          - name: inner-pair1-011
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O011
+            stem: FiniteScanCheck13InnerPair1O011
+          - name: inner-pair1-100
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O100
+            stem: FiniteScanCheck13InnerPair1O100
+          - name: inner-pair1-101
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O101
+            stem: FiniteScanCheck13InnerPair1O101
+          - name: inner-pair1-110
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O110
+            stem: FiniteScanCheck13InnerPair1O110
+          - name: inner-pair1-111
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair1O111
+            stem: FiniteScanCheck13InnerPair1O111
+          - name: inner-pair2-000
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O000
+            stem: FiniteScanCheck13InnerPair2O000
+          - name: inner-pair2-001
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O001
+            stem: FiniteScanCheck13InnerPair2O001
+          - name: inner-pair2-010
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O010
+            stem: FiniteScanCheck13InnerPair2O010
+          - name: inner-pair2-011
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O011
+            stem: FiniteScanCheck13InnerPair2O011
+          - name: inner-pair2-100
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O100
+            stem: FiniteScanCheck13InnerPair2O100
+          - name: inner-pair2-101
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O101
+            stem: FiniteScanCheck13InnerPair2O101
+          - name: inner-pair2-110
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O110
+            stem: FiniteScanCheck13InnerPair2O110
+          - name: inner-pair2-111
+            module: PetersenZeroForcing.FiniteScanCheck13InnerPair2O111
+            stem: FiniteScanCheck13InnerPair2O111
     steps:
       - uses: actions/checkout@v4
       - name: Kernel-check finite shard
