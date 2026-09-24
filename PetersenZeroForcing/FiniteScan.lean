@@ -69,15 +69,45 @@ def bases (n : Nat) [NeZero n] : Finset (Finset (Vertex n)) :=
   (sources n).biUnion fun source =>
     ((neighbors n source).powersetCard 2).image fun pair => insert source pair
 
+def pairScanB (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n)) : Bool :=
+  allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
+    decide (closureEarly n (insert source pair ∪ extra) ≠ Finset.univ)
+
+def sourceScanB (n : Nat) [NeZero n] (source : Vertex n) : Bool :=
+  allB ((neighbors n source).powersetCard 2) (pairScanB n source)
+
 def reducedScanB (n : Nat) [NeZero n] : Bool :=
   allB (bases n) fun base =>
     allB ((Finset.univ \ base).powersetCard 4) fun extra =>
       decide (closureEarly n (base ∪ extra) ≠ Finset.univ)
 
-def sourceScanB (n : Nat) [NeZero n] (source : Vertex n) : Bool :=
-  allB ((neighbors n source).powersetCard 2) fun pair =>
-    allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
-      decide (closureEarly n (insert source pair ∪ extra) ≠ Finset.univ)
+def outerPair0 (n : Nat) [NeZero n] : Finset (Vertex n) := {u (-1), u 1}
+def outerPair1 (n : Nat) [NeZero n] : Finset (Vertex n) := {u (-1), v 0}
+def outerPair2 (n : Nat) [NeZero n] : Finset (Vertex n) := {u 1, v 0}
+
+def innerPair0 (n : Nat) [NeZero n] : Finset (Vertex n) := {v (-3), v 3}
+def innerPair1 (n : Nat) [NeZero n] : Finset (Vertex n) := {v (-3), u 0}
+def innerPair2 (n : Nat) [NeZero n] : Finset (Vertex n) := {v 3, u 0}
+
+theorem sourceScanB_of_three_pairs
+    (n : Nat) [NeZero n] (source : Vertex n)
+    (p0 p1 p2 : Finset (Vertex n))
+    (hpairs :
+      (neighbors n source).powersetCard 2 = {p0, p1, p2})
+    (h0 : pairScanB n source p0 = true)
+    (h1 : pairScanB n source p1 = true)
+    (h2 : pairScanB n source p2 = true) :
+    sourceScanB n source = true := by
+  unfold sourceScanB
+  apply (allB_eq_true ((neighbors n source).powersetCard 2) _).2
+  intro pair hpair
+  rw [hpairs] at hpair
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hpair
+  rcases hpair with h | h | h
+  · simpa [h] using h0
+  · simpa [h] using h1
+  · simpa [h] using h2
 
 theorem reducedScanB_of_source_scans
     (n : Nat) [NeZero n]
