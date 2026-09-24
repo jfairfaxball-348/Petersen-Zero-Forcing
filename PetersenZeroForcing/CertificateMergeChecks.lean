@@ -35,7 +35,20 @@ theorem certificate_merge_rows_checked : certificateMergeRowsOKB = true := by
     merge_group_21_checked,
     merge_group_22_checked,
     merge_group_23_checked,
-    merge_group_24_checked]
+    merge_group_24_checked,
+    CertificateData.mergeGroup25,
+    CertificateData.mergeGroup26,
+    CertificateData.mergeGroup27,
+    CertificateData.mergeGroup28,
+    CertificateData.mergeGroup29,
+    CertificateData.mergeGroup30,
+    CertificateData.mergeGroup31,
+    CertificateData.mergeGroup32,
+    CertificateData.mergeGroup33,
+    CertificateData.mergeGroup34,
+    CertificateData.mergeGroup35,
+    CertificateData.mergeGroup36,
+    CertificateData.mergeGroup37]
 
 end Certificate
 end PetersenZeroForcing
