@@ -16,7 +16,14 @@ theorem shape_row_properties (i : ShapeId) :
     (1 ≤ weight i ∧ weight i ≤ 7) ∧
     (shape i).card ≤ sizeBound (weight i) := by
   have h := shape_row_checked i
-  simpa [shapeRowNatB, shape, weight, datum, shapeNat, weightNat] using h
+  have h' :
+      (((shapeClosedNatB i.1 = true ∧ coordsOKNatB i.1 = true) ∧
+          (CertificateData.shapeByNat i.1).vertices.Nodup) ∧
+        (1 ≤ weight i ∧ weight i ≤ 7)) ∧
+      (shape i).card ≤ sizeBound (weight i) := by
+    simpa [shapeRowNatB, shape, weight, datum, shapeNat, weightNat] using h
+  rcases h' with ⟨⟨⟨hclosed, hcoords⟩, hnodup⟩, hweight, hcard⟩
+  exact ⟨hclosed, hcoords, hnodup, hweight, hcard⟩
 
 theorem shape_closed (i : ShapeId) : StripClosed (shape i) := by
   intro x hx
@@ -70,7 +77,17 @@ theorem merge_row_properties (m : CertificateData.MergeDatum)
     translateSet (shapeNat m.right) m.shift ⊆
       translateSet (shapeNat m.target) m.targetShift := by
   have h := merge_row_checked m hm
-  simpa [mergeRowOKB] using h
+  have h' :
+      (((((m.left < 38 ∧ m.right < 38 ∧ m.target < 38) ∧
+            weightNat m.left + weightNat m.right ≤ 7) ∧
+          touchesNatB m.left m.right m.shift = true) ∧
+        weightNat m.target ≤ weightNat m.left + weightNat m.right) ∧
+      shapeNat m.left ⊆ translateSet (shapeNat m.target) m.targetShift) ∧
+      translateSet (shapeNat m.right) m.shift ⊆
+        translateSet (shapeNat m.target) m.targetShift := by
+    simpa [mergeRowOKB] using h
+  rcases h' with ⟨⟨⟨⟨hidx, hweight⟩, htouch⟩, htarget⟩, hleft, hright⟩
+  exact ⟨hidx, hweight, htouch, htarget, hleft, hright⟩
 
 theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
     (htouch : StripTouches (shape a) (translateSet (shape b) t)) :
@@ -84,7 +101,7 @@ theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
   simp only [touchesNatB, List.any_eq_true]
   refine ⟨x, hxl, ?_⟩
   refine ⟨translateVertex t y0, ?_, ?_⟩
-  · simp [translatedVerticesNat, datum, hy0l]
+  · exact List.mem_map.mpr ⟨y0, hy0l, rfl⟩
   · simpa using hxy
 
 theorem expected_key_mem_of_touch (a b : ShapeId) (s : ShiftId)
@@ -92,11 +109,15 @@ theorem expected_key_mem_of_touch (a b : ShapeId) (s : ShiftId)
     (htouch : StripTouches (shape a) (translateSet (shape b) (shiftValue s))) :
     MergeKey.mk a.1 b.1 (shiftValue s) ∈ expectedKeys := by
   have htb := touchesNatB_true_of_touch a b (shiftValue s) htouch
-  simp only [expectedKeys, List.mem_flatMap]
-  refine ⟨a.1, List.mem_range.mpr a.2, ?_⟩
-  refine ⟨b.1, List.mem_range.mpr b.2, ?_⟩
-  refine ⟨s.1, List.mem_range.mpr s.2, ?_⟩
-  simp [shiftValue, shiftValueNat, weight, weightNat, datum, hweight, htb]
+  have hlocal :
+      MergeKey.mk a.1 b.1 (shiftValue s) ∈ expectedKeysForLeft a.1 := by
+    simp only [expectedKeysForLeft, List.mem_flatMap]
+    refine ⟨b.1, List.mem_range.mpr b.2, ?_⟩
+    refine ⟨s.1, List.mem_range.mpr s.2, ?_⟩
+    simp [shiftValue, shiftValueNat, weight, weightNat, datum, hweight, htb]
+  have hgroup : expectedKeysForLeft a.1 ∈ expectedKeyGroups := by
+    fin_cases a <;> simp [expectedKeyGroups]
+  exact List.mem_flatten.mpr ⟨expectedKeysForLeft a.1, hgroup, hlocal⟩
 
 theorem exists_merge_witness (a b : ShapeId) (s : ShiftId)
     (hweight : weight a + weight b ≤ 7)
@@ -111,7 +132,19 @@ theorem exists_merge_witness (a b : ShapeId) (s : ShiftId)
   have hcert : key ∈ certificateKeys := by
     rw [certificate_keys_eq_expected]
     exact hexp
-  rcases List.mem_map.mp hcert with ⟨m, hm, hmk⟩
+  have hcert' : key ∈ certificateKeyGroups.flatten := by
+    simpa [certificateKeys] using hcert
+  rcases List.mem_flatten.mp hcert' with ⟨keyGroup, hkeyGroup, hkey⟩
+  have hkeyGroup' :
+      keyGroup ∈ CertificateData.mergeGroups.map (fun group => group.map mergeKeyOf) := by
+    simpa [certificateKeyGroups] using hkeyGroup
+  rcases List.mem_map.mp hkeyGroup' with ⟨group, hgroup, hgroupEq⟩
+  subst keyGroup
+  rcases List.mem_map.mp hkey with ⟨m, hmgroup, hmk⟩
+  have hm : m ∈ CertificateData.merges := by
+    have : m ∈ CertificateData.mergeGroups.flatten :=
+      List.mem_flatten.mpr ⟨group, hgroup, hmgroup⟩
+    simpa [CertificateData.merges] using this
   have hp := merge_row_properties m hm
   have hleft : m.left = a.1 := by
     have := congrArg MergeKey.left hmk
