@@ -74,6 +74,37 @@ def pairScanB (n : Nat) [NeZero n]
   allB (((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4) fun extra =>
     decide (closureEarly n (insert source pair ∪ extra) ≠ Finset.univ)
 
+/-- Balanced classifier used only to split the exact four-extra kernel scan.
+Every extra set lies in exactly one Boolean parity shard. -/
+def extraOuterEvenB {n : Nat} (extra : Finset (Vertex n)) : Bool :=
+  decide (((extra.filter fun x => x.1 = Layer.outer).card % 2) = 0)
+
+/-- One half of a pair scan, selected by the parity of the number of outer
+vertices among the four extras.  The checked proposition is unchanged. -/
+def pairScanParityB (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n)) (wantEven : Bool) : Bool :=
+  allB
+    ((((Finset.univ : Finset (Vertex n)) \ insert source pair).powersetCard 4).filter
+      (fun extra => extraOuterEvenB extra = wantEven))
+    fun extra =>
+      decide (closureEarly n (insert source pair ∪ extra) ≠ Finset.univ)
+
+theorem pairScanB_of_parity
+    (n : Nat) [NeZero n]
+    (source : Vertex n) (pair : Finset (Vertex n))
+    (heven : pairScanParityB n source pair true = true)
+    (hodd : pairScanParityB n source pair false = true) :
+    pairScanB n source pair = true := by
+  unfold pairScanParityB at heven hodd
+  unfold pairScanB
+  apply (allB_eq_true _ _).2
+  intro extra hextra
+  cases hpar : extraOuterEvenB extra with
+  | false =>
+      exact (allB_eq_true _ _).mp hodd extra (by simp [hextra, hpar])
+  | true =>
+      exact (allB_eq_true _ _).mp heven extra (by simp [hextra, hpar])
+
 def sourceScanB (n : Nat) [NeZero n] (source : Vertex n) : Bool :=
   allB ((neighbors n source).powersetCard 2) (pairScanB n source)
 
