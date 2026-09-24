@@ -22,7 +22,7 @@ theorem project_stripNeighbors (n : Nat) [NeZero n] (x : StripVertex) :
     (stripNeighbors x).image (projectVertex n) = neighbors n (projectVertex n x) := by
   rcases x with ⟨layer, i⟩
   cases layer <;>
-    simp [stripNeighbors, neighbors, projectVertex, su, sv]
+    simp [stripNeighbors, neighbors, projectVertex, su, sv, u, v]
 
 theorem projectVertex_injective_on_stripNeighbors (n : Nat) [NeZero n]
     (hn : 22 ≤ n) (x : StripVertex) :
@@ -37,7 +37,8 @@ theorem projectVertex_injective_on_stripNeighbors (n : Nat) [NeZero n]
     constructor <;> omega
   have heqcoord : y.2 = z.2 :=
     int_eq_of_zmod_eq_of_abs_sub_lt n hcoord hlt
-  have hlayer : y.1 = z.1 := congrArg Prod.fst hproj
+  have hlayer : y.1 = z.1 := by
+    exact congrArg (fun p : Vertex n => p.1) hproj
   exact Prod.ext hlayer heqcoord
 
 theorem projected_neighbor_mem_iff (n : Nat) [NeZero n]
@@ -53,7 +54,8 @@ theorem projected_neighbor_mem_iff (n : Nat) [NeZero n]
     have hyi := stripNeighbor_coord_interval hy
     have hylow : -3 ≤ y.2 := by omega
     have hyhigh : y.2 ≤ 21 := by omega
-    have hlayer : z.1 = y.1 := congrArg Prod.fst hp
+    have hlayer : z.1 = y.1 := by
+      exact congrArg (fun p : Vertex n => p.1) hp
     have hcoord : (z.2 : ZMod n) = (y.2 : ZMod n) := congrArg Prod.snd hp
     have hlt : |y.2 - z.2| < (n : ℤ) := by
       rw [abs_lt]
