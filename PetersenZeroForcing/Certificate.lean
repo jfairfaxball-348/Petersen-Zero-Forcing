@@ -72,48 +72,59 @@ def mergeRowOKB (m : CertificateData.MergeDatum) : Bool :=
   decide (translateSet (shapeNat m.right) m.shift ⊆
     translateSet (shapeNat m.target) m.targetShift)
 
+def expectedKeysForLeft (a : Nat) : List MergeKey :=
+  (List.range 38).flatMap fun b =>
+    (List.range 43).flatMap fun s =>
+      let t := shiftValueNat s
+      if decide (weightNat a + weightNat b ≤ 7) && touchesNatB a b t then
+        [⟨a,b,t⟩]
+      else
+        []
+
+def expectedKeyGroups : List (List MergeKey) :=
+  (List.range 38).map expectedKeysForLeft
+
 def expectedKeys : List MergeKey :=
-  (List.range 38).flatMap fun a =>
-    (List.range 38).flatMap fun b =>
-      (List.range 43).flatMap fun s =>
-        let t := shiftValueNat s
-        if decide (weightNat a + weightNat b ≤ 7) && touchesNatB a b t then
-          [⟨a,b,t⟩]
-        else
-          []
+  expectedKeyGroups.flatten
+
+def certificateKeyGroups : List (List MergeKey) :=
+  CertificateData.mergeGroups.map fun group => group.map mergeKeyOf
 
 def certificateKeys : List MergeKey :=
-  CertificateData.merges.map mergeKeyOf
+  certificateKeyGroups.flatten
 
 def certificateDataOKB : Bool :=
   decide (CertificateData.shapes.length = 38) &&
-  decide (CertificateData.merges.length = 1591)
+  decide (CertificateData.mergeGroups.length = 38) &&
+  decide ((CertificateData.mergeGroups.map (fun group => group.length)).sum = 1591)
 
 def certificateShapesOKB : Bool :=
   (List.range 38).all shapeRowNatB
 
 def certificateMergeRowsOKB : Bool :=
-  CertificateData.merges.all mergeRowOKB
+  CertificateData.mergeGroups.all fun group => group.all mergeRowOKB
+
+def keyGroupNodupB (keys : List MergeKey) : Bool :=
+  decide keys.Nodup
 
 def certificateKeysOKB : Bool :=
-  decide (certificateKeys = expectedKeys) &&
-  decide certificateKeys.Nodup
+  decide (certificateKeyGroups = expectedKeyGroups) &&
+  certificateKeyGroups.all keyGroupNodupB
 
-set_option maxRecDepth 5000 in
+set_option maxRecDepth 2000 in
 theorem certificate_data_checked : certificateDataOKB = true := by decide
 
-set_option maxRecDepth 5000 in
+set_option maxRecDepth 2000 in
 theorem certificate_shapes_checked : certificateShapesOKB = true := by decide
 
 set_option maxHeartbeats 4000000 in
-set_option maxRecDepth 5000 in
+set_option maxRecDepth 2000 in
 theorem certificate_merge_rows_checked : certificateMergeRowsOKB = true := by decide
 
 set_option maxHeartbeats 4000000 in
-set_option maxRecDepth 5000 in
+set_option maxRecDepth 2000 in
 theorem certificate_keys_checked : certificateKeysOKB = true := by decide
 
-set_option maxRecDepth 5000 in
 theorem outer_singleton : shape ⟨0, by decide⟩ = {su 0} := by decide
 
 set_option maxRecDepth 5000 in
