@@ -24,13 +24,15 @@ theorem translateSet_add (C : Finset StripVertex) (s t : ℤ) :
 
 theorem translateSet_mono {A B : Finset StripVertex}
     (h : A ⊆ B) (t : ℤ) :
-    translateSet A t ⊆ translateSet B t :=
-  Finset.image_mono h
+    translateSet A t ⊆ translateSet B t := by
+  simpa [translateSet] using
+    (Finset.image_mono (translateVertex t) h)
 
 theorem projectSet_mono (n : Nat) [NeZero n]
     {A B : Finset StripVertex} (h : A ⊆ B) :
-    projectSet n A ⊆ projectSet n B :=
-  Finset.image_mono h
+    projectSet n A ⊆ projectSet n B := by
+  simpa [projectSet] using
+    (Finset.image_mono (projectVertex n) h)
 
 theorem project_translateSet_eq_of_cast_eq
     (n : Nat) [NeZero n] (C : Finset StripVertex) (s t : ℤ)
@@ -90,8 +92,11 @@ theorem merge_directed_blocks
   refine ⟨c, ?_, ?_, ?_⟩
   · simpa [CertifiedBlock.weight, c] using hweightC
   · simpa [CertifiedBlock.vertices, c] using hAprojected
-  · rw [← hBeq]
-    simpa [CertifiedBlock.vertices, c] using hBprojected
+  · change
+      projectSet n (translateSet (Certificate.shape b.shape) b.shift) ⊆
+        projectSet n (translateSet (Certificate.shape shapeC) (q + a.shift))
+    rw [← hBeq]
+    exact hBprojected
 
 /-- Symmetric cyclic contact can be merged in either orientation. -/
 theorem merge_touching_blocks
