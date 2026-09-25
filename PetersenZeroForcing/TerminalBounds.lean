@@ -76,8 +76,8 @@ theorem terminalBlockFamily_closed_of_blocks_closed
   rcases Finset.mem_biUnion.mp hx with ⟨b, hbF, hxb⟩
   have hbclosed := hblocks b hbF
   have hdiff :
-      neighbors n x \\ blockFamilyUnion n F =
-        neighbors n x \\ CertifiedBlock.vertices n b := by
+      neighbors n x \ blockFamilyUnion n F =
+        neighbors n x \ CertifiedBlock.vertices n b := by
     ext y
     constructor
     · intro hy
