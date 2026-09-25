@@ -45,7 +45,10 @@ jobs:
           SLOT: ${{ matrix.slot }}
         run: |
           set -euo pipefail
-          mapfile -t sources < <(
+          sources=()
+          while IFS= read -r src_path; do
+            sources+=("$src_path")
+          done < <(
             find PetersenZeroForcing -maxdepth 1 -type f \
               \( -name 'FiniteScanCheck17*E[01].lean' \
               -o -name 'FiniteScanCheck18*E[01].lean' \
@@ -192,7 +195,10 @@ jobs:
           manifest="batch-out/manifest-batch-$key.tsv"
           printf "module\tstatus\trc\tseconds\tsource_sha256\n" > "$manifest"
 
-          mapfile -t sources < <(
+          sources=()
+          while IFS= read -r src_path; do
+            sources+=("$src_path")
+          done < <(
             find PetersenZeroForcing -maxdepth 1 -type f \
               \( -name 'FiniteScanCheck17*E[01].lean' \
               -o -name 'FiniteScanCheck18*E[01].lean' \
