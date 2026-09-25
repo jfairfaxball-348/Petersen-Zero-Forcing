@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: finite17-21-microbatch-v3-${{ github.ref }}
+  group: finite17-21-microbatch-v2-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
