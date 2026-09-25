@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   cancel:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Force-cancel stale finite and obsolete leaf runs
         shell: bash
