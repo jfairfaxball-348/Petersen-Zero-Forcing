@@ -7,23 +7,27 @@ on:
       - ".github/workflows/finite19-exact-windows-a.yml"
   workflow_dispatch:
 
+concurrency:
+  group: finite19-exact-windows-a
+  cancel-in-progress: true
+
 permissions:
   contents: read
   actions: read
 
 env:
   LEAN_NUM_THREADS: 1
-  LEAF_TIMEOUT: 45m
+  LEAF_TIMEOUT: 90m
   SOURCE_TAG: "706d96dd43719a88f5f8"
 
 jobs:
   leaf:
     name: recover-b${{ matrix.batch }}-leaf-${{ matrix.slot }}
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 110
     strategy:
       fail-fast: false
-      max-parallel: 10
+      max-parallel: 9
       matrix:
         batch: [77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95]
         slot: [0,1,2,3,4,5,6,7,8,9]
