@@ -14,24 +14,25 @@ jobs:
   cancel:
     runs-on: ubuntu-latest
     steps:
-      - name: Force-cancel drained stale finite campaign
+      - name: Force-cancel stale finite and obsolete leaf runs
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          run_id=36106974169
-          code="$(
-            curl -sS -o /tmp/force-cancel.out -w '%{http_code}' -X POST \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/force-cancel"
-          )"
-          cat /tmp/force-cancel.out || true
-          echo
-          echo "run=$run_id http=$code"
-          case "$code" in
-            202|409) ;;
-            *) echo "Unexpected force-cancel response" >&2; exit 1 ;;
-          esac
+          for run_id in 36106974169 36124737667 36124922957 36131018655 36131172580; do
+            code="$(
+              curl -sS -o /tmp/force-cancel-${run_id}.out -w '%{http_code}' -X POST \
+                -H "Authorization: Bearer ${GH_TOKEN}" \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/force-cancel"
+            )"
+            cat /tmp/force-cancel-${run_id}.out || true
+            echo
+            echo "run=$run_id http=$code"
+            case "$code" in
+              202|409) ;;
+              *) echo "Unexpected force-cancel response for $run_id" >&2; exit 1 ;;
+            esac
+          done
