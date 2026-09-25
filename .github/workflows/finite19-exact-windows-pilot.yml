@@ -26,7 +26,7 @@ jobs:
       max-parallel: 10
       matrix:
         batch: [79]
-        slot: [0,1,2,3,4,5,6,7,8,9]
+        slot: [0]
     steps:
       - uses: actions/checkout@v4
 
@@ -100,6 +100,7 @@ jobs:
               printf '%s\0' "${sources[@]}" | xargs -0 sha256sum
             } | sha256sum | cut -c1-20
           )"
+          echo "computed source fingerprint: $tag (expected $SOURCE_TAG)"
           test "$tag" = "$SOURCE_TAG"
 
           index=$((BATCH * 10 + SLOT))
