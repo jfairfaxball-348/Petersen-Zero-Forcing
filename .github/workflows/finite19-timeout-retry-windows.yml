@@ -30,8 +30,13 @@ jobs:
       max-parallel: 4
       matrix:
         include:
+          - {batch: 80, slot: 0}
+          - {batch: 80, slot: 1}
+          - {batch: 86, slot: 0}
+          - {batch: 86, slot: 3}
           - {batch: 96, slot: 4}
           - {batch: 98, slot: 2}
+          - {batch: 105, slot: 2}
     steps:
       - name: Disable Windows CRLF conversion before checkout
         shell: bash
