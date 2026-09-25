@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: finite17-21-microbatch-v2-${{ github.ref }}
+  group: finite17-21-microbatch-v3-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
@@ -27,17 +27,23 @@ jobs:
   preflight:
     name: finite17-21-preflight
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     outputs:
-      tag: ${{ steps.fp.outputs.tag }}
+      tag: ${{ steps.plan.outputs.tag }}
+      batches: ${{ steps.plan.outputs.batches }}
+      complete_count: ${{ steps.plan.outputs.complete_count }}
+      incomplete_count: ${{ steps.plan.outputs.incomplete_count }}
     steps:
       - uses: actions/checkout@v4
-      - name: Compute exact source fingerprint
-        id: fp
+
+      - name: Fingerprint sources and plan only incomplete batches
+        id: plan
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mapfile -t leaves < <(
+          mapfile -t sources < <(
             find PetersenZeroForcing -maxdepth 1 -type f \
               \( -name 'FiniteScanCheck17*E[01].lean' \
               -o -name 'FiniteScanCheck18*E[01].lean' \
@@ -46,7 +52,8 @@ jobs:
               -o -name 'FiniteScanCheck21*E[01].lean' \) \
               -print | sort
           )
-          test "${#leaves[@]}" -eq 1920
+          test "${#sources[@]}" -eq 1920
+
           tag="$(
             {
               sha256sum lean-toolchain lake-manifest.json
@@ -56,11 +63,94 @@ jobs:
                 PetersenZeroForcing/FiniteScan.lean \
                 PetersenZeroForcing/FiniteScanOctantSplit.lean \
                 PetersenZeroForcing/FiniteScanEighthSplit.lean
-              printf '%s\0' "${leaves[@]}" | xargs -0 sha256sum
+              printf '%s\0' "${sources[@]}" | xargs -0 sha256sum
             } | sha256sum | cut -c1-20
           )"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "source fingerprint: $tag"
+
+          mkdir -p planner
+          : > planner/complete-batches.txt
+          : > planner/incomplete-batches.txt
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+
+          for batch in $(seq 0 191); do
+            artifact_name="finite1721-batch-$batch-$tag"
+            meta="$tmp/meta-$batch.json"
+            curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100&name=$artifact_name" \
+              -o "$meta"
+            artifact_id="$(
+              jq -r '[.artifacts[] | select(.expired == false)]
+                | sort_by(.created_at) | reverse | .[0].id // empty' "$meta"
+            )"
+
+            ok=1
+            if [[ -z "$artifact_id" ]]; then
+              ok=0
+            else
+              zip="$tmp/$batch.zip"
+              dir="$tmp/batch-$batch"
+              mkdir -p "$dir"
+              if ! curl -fsSL -L \
+                    -H "Authorization: Bearer $GH_TOKEN" \
+                    -H "Accept: application/vnd.github+json" \
+                    -H "X-GitHub-Api-Version: 2022-11-28" \
+                    "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip" \
+                    -o "$zip"; then
+                ok=0
+              elif ! unzip -oq "$zip" -d "$dir"; then
+                ok=0
+              elif [[ ! -s "$dir/source-tag.txt" || "$(cat "$dir/source-tag.txt")" != "$tag" ]]; then
+                ok=0
+              else
+                start=$((batch * BATCH_SIZE))
+                for offset in $(seq 0 9); do
+                  src="${sources[start + offset]}"
+                  module="$(basename "$src" .lean)"
+                  sha="$(sha256sum "$src" | awk '{print $1}')"
+                  if [[ ! -s "$dir/$module.olean" \
+                        || ! -s "$dir/$module.source.sha256" \
+                        || "$(cat "$dir/$module.source.sha256")" != "$sha" ]]; then
+                    ok=0
+                    break
+                  fi
+                done
+              fi
+            fi
+
+            if (( ok == 1 )); then
+              echo "$batch" >> planner/complete-batches.txt
+            else
+              echo "$batch" >> planner/incomplete-batches.txt
+            fi
+          done
+
+          complete_count="$(wc -l < planner/complete-batches.txt)"
+          incomplete_count="$(wc -l < planner/incomplete-batches.txt)"
+          echo "compatible complete batches: $complete_count / 192"
+          echo "incomplete batches: $incomplete_count"
+          echo "complete_count=$complete_count" >> "$GITHUB_OUTPUT"
+          echo "incomplete_count=$incomplete_count" >> "$GITHUB_OUTPUT"
+
+          if (( incomplete_count == 0 )); then
+            batches='[192]'
+          else
+            batches="$(jq -Rsc 'split("\n") | map(select(length > 0) | tonumber)' planner/incomplete-batches.txt)"
+          fi
+          echo "batches=$batches" >> "$GITHUB_OUTPUT"
+
+      - name: Upload resume plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite1721-resume-plan-${{ steps.plan.outputs.tag }}-${{ github.run_id }}
+          path: planner/
+          if-no-files-found: error
+          retention-days: 90
 
   batches:
     name: finite17-21-batch-${{ matrix.batch }}
@@ -71,11 +161,18 @@ jobs:
       fail-fast: false
       max-parallel: 32
       matrix:
-        batch: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191]
+        batch: ${{ fromJSON(needs.preflight.outputs.batches) }}
     steps:
+      - name: No incomplete batches remain
+        if: matrix.batch == 192
+        shell: bash
+        run: echo "All 192 source-fingerprinted microbatches are already complete."
+
       - uses: actions/checkout@v4
+        if: matrix.batch < 192
 
       - name: Set up Lean structural dependencies
+        if: matrix.batch < 192
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
@@ -86,6 +183,7 @@ jobs:
           use-github-cache: false
 
       - name: Restore compatible resumable batch bundle
+        if: matrix.batch < 192
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -132,7 +230,7 @@ jobs:
           done
 
       - name: Kernel-check missing exact eighth leaves
-        id: check
+        if: matrix.batch < 192
         shell: bash
         env:
           BATCH: ${{ matrix.batch }}
@@ -145,7 +243,7 @@ jobs:
           key="$(printf '%03d' "$BATCH")"
           manifest="batch-out/manifest-batch-$key.tsv"
           printf "module\tstatus\trc\tseconds\tsource_sha256\n" > "$manifest"
-          rm -f batch-out/hardfail batch-out/timeouts.txt
+          rm -f batch-out/hardfail batch-out/timeouts.txt batch-out/COMPLETE
 
           mapfile -t sources < <(
             find PetersenZeroForcing -maxdepth 1 -type f \
@@ -217,8 +315,29 @@ jobs:
               "$module" "$status" "$rc" "$seconds" "$sha" >> "$manifest"
           done
 
+      - name: Mark complete batch
+        id: completeness
+        if: always() && matrix.batch < 192
+        shell: bash
+        run: |
+          set -euo pipefail
+          complete=true
+          if [[ -f batch-out/hardfail || -s batch-out/timeouts.txt ]]; then
+            complete=false
+          fi
+          count_olean="$(find batch-out -maxdepth 1 -type f -name '*.olean' | wc -l)"
+          count_sha="$(find batch-out -maxdepth 1 -type f -name '*.source.sha256' | wc -l)"
+          if [[ "$count_olean" -ne 10 || "$count_sha" -ne 10 ]]; then
+            complete=false
+          fi
+          if [[ "$complete" == true ]]; then
+            echo "complete" > batch-out/COMPLETE
+          fi
+          echo "complete=$complete" >> "$GITHUB_OUTPUT"
+          echo "batch completeness: $complete"
+
       - name: Upload resumable batch bundle
-        if: always()
+        if: always() && matrix.batch < 192
         uses: actions/upload-artifact@v4
         with:
           name: finite1721-batch-${{ matrix.batch }}-${{ needs.preflight.outputs.tag }}
@@ -226,13 +345,27 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Fail only after preserving hard Lean/source errors
-        if: always()
+      - name: Upload completed-batch marker
+        if: steps.completeness.outputs.complete == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite1721-complete-${{ matrix.batch }}-${{ needs.preflight.outputs.tag }}
+          path: batch-out/COMPLETE
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Fail only after preserving resumable evidence
+        if: always() && matrix.batch < 192
         shell: bash
         run: |
           if [[ -f batch-out/hardfail ]]; then
-            echo "Hard Lean/source failure recorded; successful leaves were uploaded first." >&2
-            exit 1
+            echo "Hard Lean/source failure recorded; successful leaves were preserved." >&2
+            exit 2
+          fi
+          if [[ -s batch-out/timeouts.txt ]]; then
+            echo "One or more exact eighth leaves timed out; successful leaves were preserved." >&2
+            cat batch-out/timeouts.txt >&2
+            exit 3
           fi
 
   assemble:
@@ -240,7 +373,7 @@ jobs:
     if: always()
     needs: [preflight, batches]
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
 
@@ -262,28 +395,59 @@ jobs:
           github-token: ${{ github.token }}
           run-id: ${{ env.FINITE16_RUN_ID }}
 
-      - name: Restore all current microbatch bundles
-        uses: actions/download-artifact@v5
-        with:
-          pattern: finite1721-batch-*
-          path: batch-bundles
-          merge-multiple: true
-
-      - name: Install checked later leaf oleans and summarize manifests
-        if: always()
+      - name: Restore newest compatible bundle for every later microbatch
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.preflight.outputs.tag }}
         run: |
           set -euo pipefail
           outdir=".lake/build/lib/lean/PetersenZeroForcing"
-          mkdir -p "$outdir" finite-status
-          shopt -s nullglob
-          files=(batch-bundles/*.olean)
-          echo "Restored later leaf oleans: ${#files[@]}"
-          for f in "${files[@]}"; do
-            cp "$f" "$outdir/"
+          mkdir -p "$outdir" later-bundles finite-status
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+
+          restored=0
+          for batch in $(seq 0 191); do
+            artifact_name="finite1721-batch-$batch-$TAG"
+            meta="$tmp/meta-$batch.json"
+            curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100&name=$artifact_name" \
+              -o "$meta"
+            artifact_id="$(
+              jq -r '[.artifacts[] | select(.expired == false)]
+                | sort_by(.created_at) | reverse | .[0].id // empty' "$meta"
+            )"
+            if [[ -z "$artifact_id" ]]; then
+              echo "No artifact for batch $batch"
+              continue
+            fi
+            zip="$tmp/$batch.zip"
+            dir="later-bundles/$(printf '%03d' "$batch")"
+            mkdir -p "$dir"
+            curl -fsSL -L \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip" \
+              -o "$zip"
+            unzip -oq "$zip" -d "$dir"
+            if [[ -s "$dir/source-tag.txt" && "$(cat "$dir/source-tag.txt")" == "$TAG" ]]; then
+              shopt -s nullglob
+              for f in "$dir"/*.olean; do
+                cp "$f" "$outdir/"
+              done
+              for f in "$dir"/manifest-batch-*.tsv; do
+                cp "$f" finite-status/
+              done
+              restored=$((restored + 1))
+            fi
           done
-          cp batch-bundles/manifest-batch-*.tsv finite-status/ 2>/dev/null || true
-          cp batch-bundles/timeouts.txt finite-status/ 2>/dev/null || true
+          echo "Compatible batch artifacts restored: $restored / 192" | tee finite-status/restored-batches.txt
+
           if compgen -G 'finite-status/manifest-batch-*.tsv' > /dev/null; then
             awk -F '\t' 'FNR>1 {count[$2]++} END {for (k in count) print k, count[k]}' \
               finite-status/manifest-batch-*.tsv | sort | tee finite-status/status-counts.txt
