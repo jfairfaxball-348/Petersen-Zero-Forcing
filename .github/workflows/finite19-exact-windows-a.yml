@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
+  # artifact-aware 90-minute relaunch after middle-wave isolation
   group: finite19-exact-windows-a
   cancel-in-progress: true
 
