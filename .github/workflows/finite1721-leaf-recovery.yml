@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       max-parallel: 24
       matrix:
-        batch: [86, 88, 91, 92]
+        batch: [80, 89, 93, 94]
         slot: [0,1,2,3,4,5,6,7,8,9]
     steps:
       - uses: actions/checkout@v4
@@ -115,7 +115,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        batch: [86, 88, 91, 92]
+        batch: [80, 89, 93, 94]
     steps:
       - uses: actions/checkout@v4
 
