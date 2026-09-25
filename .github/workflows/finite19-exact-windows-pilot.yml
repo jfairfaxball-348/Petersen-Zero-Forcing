@@ -30,6 +30,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore canonical LF repository bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config core.autocrlf false
+          git checkout-index -a -f
+
       - name: Confirm exact-leaf shell tools
         shell: bash
         run: |
