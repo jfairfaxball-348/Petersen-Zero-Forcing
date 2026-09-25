@@ -24,7 +24,7 @@ jobs:
   leaf:
     # Structural migration supersedes further exact-leaf recovery. Preserve the
     # historical workflow and evidence, but keep this retry matrix dormant.
-    if: \${{ false }}
+    if: ${{ false }}
     name: recover-b${{ matrix.batch }}-leaf-${{ matrix.slot }}
     runs-on: windows-latest
     timeout-minutes: 140
