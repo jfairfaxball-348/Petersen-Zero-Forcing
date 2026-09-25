@@ -41,20 +41,20 @@ jobs:
             exit 1
           fi
 
-  structural19-poc:
-    name: structural-n19-clean-poc
+  structural-fixed-cases:
+    name: structural-fixed-cases-clean
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       LEAN_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Build structural n=19 POC from source
+      - name: Build structural fixed-n cases from source
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.Structural19
+          build-args: PetersenZeroForcing.StructuralFixedCases
           test: false
           lint: false
           use-github-cache: false
