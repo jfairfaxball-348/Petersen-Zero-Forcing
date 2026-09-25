@@ -1,0 +1,179 @@
+name: Progressive n=19 reconstruction
+
+on:
+  push:
+    branches: [lean-formalisation]
+    paths:
+      - ".github/finite19-reconstruct-trigger"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  LEAN_NUM_THREADS: 1
+  SOURCE_TAG: "706d96dd43719a88f5f8"
+
+jobs:
+  reconstruct19:
+    name: reconstruct-n19
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Lean structural dependencies
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteReduction PetersenZeroForcing.FiniteScanEighthSplit
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Restore compatible batch and individual evidence for n=19
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence .lake/build/lib/lean/PetersenZeroForcing progress19
+
+          latest_artifact_id() {
+            local name="$1"
+            curl -fsSL \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100&name=${name}" \
+              | jq -r '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | reverse | .[0].id // empty'
+          }
+
+          restore_artifact() {
+            local artifact_id="$1"
+            local dest="$2"
+            local zip
+            zip="$(mktemp)"
+            curl -fsSL -L \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" \
+              -o "$zip"
+            mkdir -p "$dest"
+            unzip -oq "$zip" -d "$dest"
+            rm -f "$zip"
+          }
+
+          # Prefer compact standard bundles wherever they exist. Every module is
+          # still source-SHA checked below, so partial/stale bundles cannot pass.
+          for batch in $(seq 76 115); do
+            name="finite1721-batch-${batch}-${SOURCE_TAG}"
+            artifact_id="$(latest_artifact_id "$name")"
+            if [[ -n "$artifact_id" ]]; then
+              tmp="$(mktemp -d)"
+              restore_artifact "$artifact_id" "$tmp"
+              if [[ -s "$tmp/source-tag.txt" && "$(cat "$tmp/source-tag.txt")" == "$SOURCE_TAG" ]]; then
+                cp -a "$tmp"/. evidence/
+                echo "restored bundle batch=$batch artifact=$artifact_id"
+              fi
+              rm -rf "$tmp"
+            fi
+          done
+
+          mapfile -t sources < <(
+            find PetersenZeroForcing -maxdepth 1 -type f -name 'FiniteScanCheck19*E[01].lean' -print | sort
+          )
+          test "${#sources[@]}" -eq 384
+
+          # n=19 occupies global later-leaf indices 768..1151.
+          missing=0
+          : > progress19/missing-n19.txt
+          for local_index in $(seq 0 383); do
+            src="${sources[$local_index]}"
+            module="$(basename "$src" .lean)"
+            sha="$(sha256sum "$src" | awk '{print $1}')"
+            global_index=$((768 + local_index))
+            batch=$((global_index / 10))
+            slot=$((global_index % 10))
+
+            valid=false
+            if [[ -s "evidence/$module.olean" \
+                  && -s "evidence/$module.source.sha256" \
+                  && "$(cat "evidence/$module.source.sha256")" == "$sha" ]]; then
+              valid=true
+            fi
+
+            if [[ "$valid" != true ]]; then
+              name="finite1721-leaf-b${batch}-s${slot}-${SOURCE_TAG}"
+              artifact_id="$(latest_artifact_id "$name")"
+              if [[ -n "$artifact_id" ]]; then
+                tmp="$(mktemp -d)"
+                restore_artifact "$artifact_id" "$tmp"
+                if [[ -s "$tmp/source-tag.txt" \
+                      && "$(cat "$tmp/source-tag.txt")" == "$SOURCE_TAG" \
+                      && -s "$tmp/$module.olean" \
+                      && -s "$tmp/$module.source.sha256" \
+                      && "$(cat "$tmp/$module.source.sha256")" == "$sha" ]]; then
+                  cp "$tmp/$module.olean" "evidence/$module.olean"
+                  cp "$tmp/$module.source.sha256" "evidence/$module.source.sha256"
+                  valid=true
+                  echo "restored leaf batch=$batch slot=$slot artifact=$artifact_id module=$module"
+                fi
+                rm -rf "$tmp"
+              fi
+            fi
+
+            if [[ "$valid" == true ]]; then
+              cp "evidence/$module.olean" ".lake/build/lib/lean/PetersenZeroForcing/$module.olean"
+            else
+              echo "$module" >> progress19/missing-n19.txt
+              missing=$((missing + 1))
+            fi
+          done
+
+          printf "required=384\nmissing=%s\n" "$missing" | tee progress19/coverage.txt
+          test "$missing" -eq 0
+
+      - name: Reconstruct all six n=19 pairs and scan19_checked
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          for suffix in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+            stem="FiniteScanCheck19${suffix}"
+            lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+          done
+          lake env lean PetersenZeroForcing/FiniteScanChecked19.lean \
+            -o "$outdir/FiniteScanChecked19.olean"
+
+      - name: Kernel-check the n=19 lower-bound interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > Check19.lean <<'EOF'
+          import PetersenZeroForcing.FiniteReduction
+          import PetersenZeroForcing.FiniteScanChecked19
+
+          namespace PetersenZeroForcing
+
+          example : 8 ≤ Z 19 := by
+            exact lower_bound_of_reducedScan 19 (by omega) FiniteScan.scan19_checked
+
+          end PetersenZeroForcing
+          EOF
+          lake env lean Check19.lean
+
+      - name: Save progressive n=19 reconstruction evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite19-reconstructed-${{ env.SOURCE_TAG }}
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck19OuterPair*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck19InnerPair*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked19.olean
+            progress19/
+          if-no-files-found: error
+          retention-days: 90
