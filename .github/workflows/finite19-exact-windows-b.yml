@@ -47,9 +47,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout --version | head -1
-          sha256sum --version | head -1
-          jq --version
+          command -v timeout
+          command -v sha256sum
+          command -v jq
 
       - name: Identify exact leaf and verify source fingerprint
         id: leafmeta
