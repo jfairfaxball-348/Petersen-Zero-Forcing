@@ -73,8 +73,10 @@ theorem vertex_card (n : Nat) [NeZero n] :
   have hLayer : Fintype.card Layer = 2 := by decide
   simp [Vertex, hLayer, NeZero.ne n]
 
-theorem lower_bound_large
-    (n : Nat) [NeZero n] (hn : 22 ≤ n) :
+theorem lower_bound_of_projected_certificate_closed
+    (n : Nat) [NeZero n] (hn : 9 ≤ n)
+    (hclosed : ∀ i : Certificate.ShapeId,
+      Closed n (projectSet n (Certificate.shape i))) :
     8 ≤ Z n := by
   apply le_Z_of_forcing_card_lower_bound n
   intro S hforce
@@ -90,7 +92,8 @@ theorem lower_bound_large
   have hScover : S ⊆ blockFamilyUnion n G := by
     exact (initialBlockFamily_covers n S).trans hFGcover
   have hGclosed : Closed n (blockFamilyUnion n G) :=
-    terminalBlockFamily_closed n hn G hGterm
+    terminalBlockFamily_closed_of_blocks_closed n G hGterm
+      (fun b _ => CertifiedBlock.closed_of_projected_shape_closed n hclosed b)
   have hclosure :
       closure n S ⊆ blockFamilyUnion n G :=
     closure_subset_of_closed n hScover hGclosed
@@ -108,5 +111,12 @@ theorem lower_bound_large
     simpa using hfullcard.trans hGcard
   rw [vertex_card n] at hvertex
   omega
+
+theorem lower_bound_large
+    (n : Nat) [NeZero n] (hn : 22 ≤ n) :
+    8 ≤ Z n := by
+  exact lower_bound_of_projected_certificate_closed n (by omega)
+    (fun i => projected_certificate_shape_closed n hn i)
+
 
 end PetersenZeroForcing

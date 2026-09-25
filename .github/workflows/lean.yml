@@ -40,3 +40,21 @@ jobs:
             echo "Prohibited proof shortcut found in finite lower-bound sources." >&2
             exit 1
           fi
+
+  structural19-poc:
+    name: structural-n19-clean-poc
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build structural n=19 POC from source
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.Structural19
+          test: false
+          lint: false
+          use-github-cache: false

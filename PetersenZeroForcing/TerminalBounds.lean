@@ -66,17 +66,18 @@ theorem blockFamilyUnion_card_le_sixteen
     _ ≤ 16 :=
       certificate_sizeBound_le_sixteen _ hweight
 
-theorem terminalBlockFamily_closed
-    (n : Nat) [NeZero n] (hn : 22 ≤ n)
+theorem terminalBlockFamily_closed_of_blocks_closed
+    (n : Nat) [NeZero n]
     (F : Finset CertifiedBlock)
-    (hterm : TerminalBlockFamily n F) :
+    (hterm : TerminalBlockFamily n F)
+    (hblocks : ∀ b ∈ F, Closed n (CertifiedBlock.vertices n b)) :
     Closed n (blockFamilyUnion n F) := by
   intro x hx
   rcases Finset.mem_biUnion.mp hx with ⟨b, hbF, hxb⟩
-  have hbclosed := CertifiedBlock.closed n hn b
+  have hbclosed := hblocks b hbF
   have hdiff :
-      neighbors n x \ blockFamilyUnion n F =
-        neighbors n x \ CertifiedBlock.vertices n b := by
+      neighbors n x \\ blockFamilyUnion n F =
+        neighbors n x \\ CertifiedBlock.vertices n b := by
     ext y
     constructor
     · intro hy
@@ -104,5 +105,14 @@ theorem terminalBlockFamily_closed
         exact (hterm b hbF d hdF (Ne.symm hdb)) hcyc
   rw [hdiff]
   exact hbclosed x hxb
+
+theorem terminalBlockFamily_closed
+    (n : Nat) [NeZero n] (hn : 22 ≤ n)
+    (F : Finset CertifiedBlock)
+    (hterm : TerminalBlockFamily n F) :
+    Closed n (blockFamilyUnion n F) := by
+  exact terminalBlockFamily_closed_of_blocks_closed n F hterm
+    (fun b _ => CertifiedBlock.closed n hn b)
+
 
 end PetersenZeroForcing

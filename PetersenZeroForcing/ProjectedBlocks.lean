@@ -64,11 +64,19 @@ theorem vertices_eq_rotate (n : Nat) [NeZero n] (b : CertifiedBlock) :
       rotateSet n (b.shift : ZMod n) (projectSet n (Certificate.shape b.shape)) := by
   exact project_translateSet n (Certificate.shape b.shape) b.shift
 
-theorem closed (n : Nat) [NeZero n] (hn : 22 ≤ n) (b : CertifiedBlock) :
+theorem closed_of_projected_shape_closed
+    (n : Nat) [NeZero n]
+    (hclosed : ∀ i : Certificate.ShapeId,
+      Closed n (projectSet n (Certificate.shape i)))
+    (b : CertifiedBlock) :
     Closed n (vertices n b) := by
   rw [vertices_eq_rotate]
-  exact closed_rotate n (b.shift : ZMod n)
-    (projected_certificate_shape_closed n hn b.shape)
+  exact closed_rotate n (b.shift : ZMod n) (hclosed b.shape)
+
+theorem closed (n : Nat) [NeZero n] (hn : 22 ≤ n) (b : CertifiedBlock) :
+    Closed n (vertices n b) := by
+  exact closed_of_projected_shape_closed n
+    (fun i => projected_certificate_shape_closed n hn i) b
 
 theorem card_le_sizeBound (n : Nat) [NeZero n] (b : CertifiedBlock) :
     (vertices n b).card ≤ Certificate.sizeBound (weight b) := by
