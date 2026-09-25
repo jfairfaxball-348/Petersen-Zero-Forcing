@@ -1,0 +1,146 @@
+name: Progressive n=17 reconstruction
+
+on:
+  push:
+    branches: [lean-formalisation]
+    paths:
+      - ".github/workflows/finite17-reconstruct.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  LEAN_NUM_THREADS: 1
+  SOURCE_TAG: "706d96dd43719a88f5f8"
+  SOURCE_RUN_ID: "36106974169"
+
+jobs:
+  reconstruct17:
+    name: reconstruct-n17
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Lean structural dependencies
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteScanEighthSplit
+          test: false
+          lint: false
+          use-github-cache: false
+
+      - name: Wait for n=17 boundary batch artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          name="finite1721-batch-38-${SOURCE_TAG}"
+          for attempt in $(seq 1 40); do
+            count="$(
+              curl -fsSL \
+                -H "Authorization: Bearer ${GH_TOKEN}" \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100&name=${name}" \
+              | jq '[.artifacts[] | select(.expired == false)] | length'
+            )"
+            if [[ "$count" -gt 0 ]]; then
+              echo "Boundary artifact available: $name"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "Boundary artifact not available within this diagnostic run." >&2
+          exit 1
+
+      - name: Restore run-4 microbatch bundles
+        uses: actions/download-artifact@v5
+        with:
+          pattern: finite1721-batch-*
+          path: batch-bundles
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+
+      - name: Verify exact n=17 leaf coverage and install oleans
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          mkdir -p "$outdir" progress17
+
+          if [[ ! -s batch-bundles/source-tag.txt || "$(cat batch-bundles/source-tag.txt)" != "$SOURCE_TAG" ]]; then
+            echo "Missing or incompatible source tag." >&2
+            exit 1
+          fi
+
+          shopt -s nullglob
+          for f in batch-bundles/FiniteScanCheck17*.olean; do
+            cp "$f" "$outdir/"
+          done
+
+          mapfile -t sources < <(
+            find PetersenZeroForcing -maxdepth 1 -type f -name 'FiniteScanCheck17*E[01].lean' -print | sort
+          )
+          test "${#sources[@]}" -eq 384
+
+          missing=0
+          : > progress17/missing-n17.txt
+          for src in "${sources[@]}"; do
+            module="$(basename "$src" .lean)"
+            if [[ ! -s "$outdir/$module.olean" ]]; then
+              echo "$module" >> progress17/missing-n17.txt
+              missing=$((missing + 1))
+            fi
+          done
+
+          echo "required=384" | tee progress17/coverage.txt
+          echo "missing=$missing" | tee -a progress17/coverage.txt
+          test "$missing" -eq 0
+
+      - name: Reconstruct all six n=17 pairs and scan17_checked
+        shell: bash
+        run: |
+          set -euo pipefail
+          outdir=".lake/build/lib/lean/PetersenZeroForcing"
+          for suffix in OuterPair0 OuterPair1 OuterPair2 InnerPair0 InnerPair1 InnerPair2; do
+            stem="FiniteScanCheck17${suffix}"
+            lake env lean "PetersenZeroForcing/${stem}.lean" -o "$outdir/${stem}.olean"
+          done
+          lake env lean PetersenZeroForcing/FiniteScanChecked17.lean \
+            -o "$outdir/FiniteScanChecked17.olean"
+
+      - name: Kernel-check the n=17 lower-bound interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > Check17.lean <<'EOF'
+          import PetersenZeroForcing.FiniteReduction
+          import PetersenZeroForcing.FiniteScanChecked17
+
+          namespace PetersenZeroForcing
+
+          example : 8 ≤ Z 17 := by
+            exact lower_bound_of_reducedScan 17 (by omega) FiniteScan.scan17_checked
+
+          end PetersenZeroForcing
+          EOF
+          lake env lean Check17.lean
+
+      - name: Save progressive n=17 reconstruction evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite17-reconstructed-${{ env.SOURCE_TAG }}
+          path: |
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck17OuterPair*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanCheck17InnerPair*.olean
+            .lake/build/lib/lean/PetersenZeroForcing/FiniteScanChecked17.olean
+            progress17/
+          if-no-files-found: error
+          retention-days: 90
