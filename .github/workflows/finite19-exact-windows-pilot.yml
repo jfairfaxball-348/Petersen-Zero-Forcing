@@ -30,12 +30,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore canonical LF repository bytes
+      - name: Restore canonical fingerprinted source bytes
         shell: bash
         run: |
           set -euo pipefail
           git config core.autocrlf false
-          git checkout-index -a -f
+          targets=(
+            lean-toolchain
+            lake-manifest.json
+            PetersenZeroForcing/Core.lean
+            PetersenZeroForcing/Forcing.lean
+            PetersenZeroForcing/FiniteScan.lean
+            PetersenZeroForcing/FiniteScanOctantSplit.lean
+            PetersenZeroForcing/FiniteScanEighthSplit.lean
+          )
+          while IFS= read -r src_path; do
+            targets+=("$src_path")
+          done < <(
+            find PetersenZeroForcing -maxdepth 1 -type f \
+              \( -name 'FiniteScanCheck17*E[01].lean' \
+              -o -name 'FiniteScanCheck18*E[01].lean' \
+              -o -name 'FiniteScanCheck19*E[01].lean' \
+              -o -name 'FiniteScanCheck20*E[01].lean' \
+              -o -name 'FiniteScanCheck21*E[01].lean' \) \
+              -print | sort
+          )
+          for path in "${targets[@]}"; do
+            git show "HEAD:$path" > "$path"
+          done
 
       - name: Confirm exact-leaf shell tools
         shell: bash
