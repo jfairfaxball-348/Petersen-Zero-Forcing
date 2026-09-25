@@ -1,4 +1,5 @@
 name: Progressive n=18 reconstruction
+# Recovery gate retriggered for batch-76 completion
 
 on:
   push:
