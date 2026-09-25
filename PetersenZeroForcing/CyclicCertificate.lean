@@ -59,10 +59,24 @@ def properBoundsB (n : Nat) [NeZero n]
   FiniteScan.allB (Finset.range 8) fun a =>
     decide (cert.sizeBound a < 2 * n)
 
+def anyB {α : Type*} (s : Finset α) (p : α → Bool) : Bool :=
+  s.fold (· || ·) false p
+
+theorem anyB_eq_true {α : Type*} (s : Finset α) (p : α → Bool) :
+    anyB s p = true ↔ ∃ x ∈ s, p x = true := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simp [anyB]
+  | @insert a s ha ih =>
+      rw [anyB, Finset.fold_insert ha]
+      change ((p a || anyB s p) = true ↔ ∃ x ∈ insert a s, p x = true)
+      simp [ih, ha]
+
 def directedTouchesB (n : Nat) [NeZero n]
     (A B : Finset (Vertex n)) : Bool :=
-  A.any fun x =>
-    B.any fun y => decide (x = y ∨ y ∈ neighbors n x)
+  anyB A fun x =>
+    anyB B fun y => decide (x = y ∨ y ∈ neighbors n x)
 
 def cyclicTouchesB (n : Nat) [NeZero n]
     (A B : Finset (Vertex n)) : Bool :=
@@ -71,7 +85,17 @@ def cyclicTouchesB (n : Nat) [NeZero n]
 theorem directedTouchesB_eq_true (n : Nat) [NeZero n]
     (A B : Finset (Vertex n)) :
     directedTouchesB n A B = true ↔ DirectedTouches n A B := by
-  simp [directedTouchesB, DirectedTouches]
+  unfold directedTouchesB DirectedTouches
+  rw [anyB_eq_true]
+  constructor
+  · rintro ⟨x, hx, hxb⟩
+    rw [anyB_eq_true] at hxb
+    rcases hxb with ⟨y, hy, hxy⟩
+    exact ⟨x, hx, y, hy, of_decide_eq_true hxy⟩
+  · rintro ⟨x, hx, y, hy, hxy⟩
+    refine ⟨x, hx, ?_⟩
+    exact (anyB_eq_true B _).2
+      ⟨y, hy, (decide_eq_true_iff).2 hxy⟩
 
 theorem cyclicTouchesB_eq_true (n : Nat) [NeZero n]
     (A B : Finset (Vertex n)) :
@@ -185,8 +209,14 @@ theorem mergeRowsB_spec (n : Nat) [NeZero n]
   have htouchB :
       cyclicTouchesB n (cert.shape a) (rotateSet n t (cert.shape b)) = true :=
     (cyclicTouchesB_eq_true n _ _).2 htouch
-  simp [mergeRowB, hweight, htouchB, mergeWitnessB] at ht
-  exact ht
+  have hmw : mergeWitnessB n cert a b t = true := by
+    simpa [mergeRowB, hweight, htouchB] using ht
+  change decide (
+    ∃ c : Fin cert.shapeCount, ∃ q : ZMod n,
+      cert.weight c ≤ cert.weight a + cert.weight b ∧
+      cert.shape a ⊆ rotateSet n q (cert.shape c) ∧
+      rotateSet n t (cert.shape b) ⊆ rotateSet n q (cert.shape c)) = true at hmw
+  exact of_decide_eq_true hmw
 
 theorem checkedB_specs (n : Nat) [NeZero n]
     (cert : CyclicCertificate n)
@@ -212,7 +242,7 @@ theorem rotateSet_add
     (S : Finset (Vertex n)) :
     rotateSet n s (rotateSet n r S) = rotateSet n (r + s) S := by
   ext x
-  simp [rotateSet, rotateEquiv, add_assoc]
+  simp [rotateSet, rotateEquiv, sub_eq_add_neg, add_assoc]
 
 @[simp] theorem rotateSet_zero
     (n : Nat) [NeZero n] (S : Finset (Vertex n)) :
