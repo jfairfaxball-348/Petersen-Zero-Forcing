@@ -1,5 +1,5 @@
 import PetersenZeroForcing.Structural19
-import PetersenZeroForcing.CyclicCertificate
+import PetersenZeroForcing.StructuralCyclicFixed
 
 namespace PetersenZeroForcing
 
@@ -46,9 +46,12 @@ theorem lower_bound_20_structural : 8 ≤ Z 20 := by
   exact lower_bound_of_all_projected_shapes_closed_checked
     20 (by omega) projected_shapes_closed_20_checked
 
+example : 8 ≤ Z 13 := by exact lower_bound_13_structural
 example : 8 ≤ Z 14 := by exact lower_bound_14_structural
+example : 8 ≤ Z 15 := by exact lower_bound_15_structural
 example : 8 ≤ Z 16 := by exact lower_bound_16_structural
 example : 8 ≤ Z 17 := by exact lower_bound_17_structural
+example : 8 ≤ Z 18 := by exact lower_bound_18_structural
 example : 8 ≤ Z 19 := by exact lower_bound_19_structural
 example : 8 ≤ Z 20 := by exact lower_bound_20_structural
 
