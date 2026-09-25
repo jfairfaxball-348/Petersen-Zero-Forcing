@@ -28,36 +28,11 @@ jobs:
         batch: [79]
         slot: [0]
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore canonical fingerprinted source bytes
+      - name: Disable Windows CRLF conversion before checkout
         shell: bash
-        run: |
-          set -euo pipefail
-          git config core.autocrlf false
-          targets=(
-            lean-toolchain
-            lake-manifest.json
-            PetersenZeroForcing/Core.lean
-            PetersenZeroForcing/Forcing.lean
-            PetersenZeroForcing/FiniteScan.lean
-            PetersenZeroForcing/FiniteScanOctantSplit.lean
-            PetersenZeroForcing/FiniteScanEighthSplit.lean
-          )
-          while IFS= read -r src_path; do
-            targets+=("$src_path")
-          done < <(
-            find PetersenZeroForcing -maxdepth 1 -type f \
-              \( -name 'FiniteScanCheck17*E[01].lean' \
-              -o -name 'FiniteScanCheck18*E[01].lean' \
-              -o -name 'FiniteScanCheck19*E[01].lean' \
-              -o -name 'FiniteScanCheck20*E[01].lean' \
-              -o -name 'FiniteScanCheck21*E[01].lean' \) \
-              -print | sort
-          )
-          for path in "${targets[@]}"; do
-            git show "HEAD:$path" > "$path"
-          done
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
 
       - name: Confirm exact-leaf shell tools
         shell: bash
@@ -90,14 +65,14 @@ jobs:
           test "${#sources[@]}" -eq 1920
           tag="$(
             {
-              sha256sum lean-toolchain lake-manifest.json
-              sha256sum \
+              sha256sum --text lean-toolchain lake-manifest.json
+              sha256sum --text \
                 PetersenZeroForcing/Core.lean \
                 PetersenZeroForcing/Forcing.lean \
                 PetersenZeroForcing/FiniteScan.lean \
                 PetersenZeroForcing/FiniteScanOctantSplit.lean \
                 PetersenZeroForcing/FiniteScanEighthSplit.lean
-              printf '%s\0' "${sources[@]}" | xargs -0 sha256sum
+              printf '%s\0' "${sources[@]}" | xargs -0 sha256sum --text
             } | sha256sum | cut -c1-20
           )"
           echo "computed source fingerprint: $tag (expected $SOURCE_TAG)"
