@@ -159,7 +159,7 @@ jobs:
     timeout-minutes: 135
     strategy:
       fail-fast: false
-      max-parallel: 32
+      max-parallel: 8
       matrix:
         batch: ${{ fromJSON(needs.preflight.outputs.batches) }}
     steps:
