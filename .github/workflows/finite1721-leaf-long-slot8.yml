@@ -1,4 +1,4 @@
-name: Recover long batch-76 slot 8
+name: Recover very long batch-76 slot 8
 
 on:
   push:
@@ -13,14 +13,14 @@ permissions:
 
 env:
   LEAN_NUM_THREADS: 1
-  LEAF_TIMEOUT: 60m
+  LEAF_TIMEOUT: 90m
   SOURCE_TAG: "706d96dd43719a88f5f8"
 
 jobs:
   leaf:
     name: recover-b76-leaf-8-long
     runs-on: macos-15-intel
-    timeout-minutes: 80
+    timeout-minutes: 110
     steps:
       - uses: actions/checkout@v4
 
