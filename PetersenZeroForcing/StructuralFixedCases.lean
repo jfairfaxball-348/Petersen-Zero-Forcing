@@ -1,4 +1,5 @@
 import PetersenZeroForcing.Structural19
+import PetersenZeroForcing.CyclicCertificate
 
 namespace PetersenZeroForcing
 
