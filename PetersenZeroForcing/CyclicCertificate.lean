@@ -6,7 +6,7 @@ namespace PetersenZeroForcing
 structure CyclicShapeDatum (n : Nat) [NeZero n] where
   weight : Nat
   vertices : Finset (Vertex n)
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 structure CyclicCertificate (n : Nat) [NeZero n] where
   shapeCount : Nat
@@ -59,6 +59,25 @@ def properBoundsB (n : Nat) [NeZero n]
   FiniteScan.allB (Finset.range 8) fun a =>
     decide (cert.sizeBound a < 2 * n)
 
+def directedTouchesB (n : Nat) [NeZero n]
+    (A B : Finset (Vertex n)) : Bool :=
+  A.any fun x =>
+    B.any fun y => decide (x = y ∨ y ∈ neighbors n x)
+
+def cyclicTouchesB (n : Nat) [NeZero n]
+    (A B : Finset (Vertex n)) : Bool :=
+  directedTouchesB n A B || directedTouchesB n B A
+
+theorem directedTouchesB_eq_true (n : Nat) [NeZero n]
+    (A B : Finset (Vertex n)) :
+    directedTouchesB n A B = true ↔ DirectedTouches n A B := by
+  simp [directedTouchesB, DirectedTouches]
+
+theorem cyclicTouchesB_eq_true (n : Nat) [NeZero n]
+    (A B : Finset (Vertex n)) :
+    cyclicTouchesB n A B = true ↔ CyclicTouches n A B := by
+  simp [cyclicTouchesB, CyclicTouches, directedTouchesB_eq_true]
+
 def mergeWitnessB (n : Nat) [NeZero n]
     (cert : CyclicCertificate n)
     (a b : Fin cert.shapeCount) (t : ZMod n) : Bool :=
@@ -71,9 +90,11 @@ def mergeWitnessB (n : Nat) [NeZero n]
 def mergeRowB (n : Nat) [NeZero n]
     (cert : CyclicCertificate n)
     (a b : Fin cert.shapeCount) (t : ZMod n) : Bool :=
-  if cert.weight a + cert.weight b ≤ 7 ∧
-      CyclicTouches n (cert.shape a) (rotateSet n t (cert.shape b)) then
-    mergeWitnessB n cert a b t
+  if cert.weight a + cert.weight b ≤ 7 then
+    if cyclicTouchesB n (cert.shape a) (rotateSet n t (cert.shape b)) then
+      mergeWitnessB n cert a b t
+    else
+      true
   else
     true
 
@@ -111,13 +132,11 @@ theorem shapeRowsB_spec (n : Nat) [NeZero n]
   have hi := (FiniteScan.allB_eq_true
     (Finset.univ : Finset (Fin cert.shapeCount)) _).1
     h i (Finset.mem_univ i)
-  unfold shapeRowB at hi
-  rcases Bool.and_eq_true.mp hi with ⟨hclosed, hrest⟩
-  rcases Bool.and_eq_true.mp hrest with ⟨hweight, hcard⟩
+  simp only [shapeRowB, Bool.and_eq_true] at hi
   exact ⟨
-    (FiniteScan.closedB_eq_true n (cert.shape i)).1 hclosed,
-    of_decide_eq_true hweight,
-    of_decide_eq_true hcard⟩
+    (FiniteScan.closedB_eq_true n (cert.shape i)).1 hi.1,
+    of_decide_eq_true hi.2.1,
+    of_decide_eq_true hi.2.2⟩
 
 theorem superadditiveB_spec (n : Nat) [NeZero n]
     (cert : CyclicCertificate n)
@@ -130,9 +149,8 @@ theorem superadditiveB_spec (n : Nat) [NeZero n]
     h a (Finset.mem_range.mpr ha8)
   have hb := (FiniteScan.allB_eq_true (Finset.range 8) _).1
     ha b (Finset.mem_range.mpr hb8)
-  unfold superadditiveB at h
-  rw [if_pos hab] at hb
-  exact of_decide_eq_true hb
+  simp [hab] at hb
+  exact hb
 
 theorem properBoundsB_spec (n : Nat) [NeZero n]
     (cert : CyclicCertificate n)
@@ -164,10 +182,11 @@ theorem mergeRowsB_spec (n : Nat) [NeZero n]
   have ht := (FiniteScan.allB_eq_true
     (Finset.univ : Finset (ZMod n)) _).1
     hb t (Finset.mem_univ t)
-  unfold mergeRowB at ht
-  rw [if_pos ⟨hweight, htouch⟩] at ht
-  unfold mergeWitnessB at ht
-  exact of_decide_eq_true ht
+  have htouchB :
+      cyclicTouchesB n (cert.shape a) (rotateSet n t (cert.shape b)) = true :=
+    (cyclicTouchesB_eq_true n _ _).2 htouch
+  simp [mergeRowB, hweight, htouchB, mergeWitnessB] at ht
+  exact ht
 
 theorem checkedB_specs (n : Nat) [NeZero n]
     (cert : CyclicCertificate n)
@@ -193,18 +212,7 @@ theorem rotateSet_add
     (S : Finset (Vertex n)) :
     rotateSet n s (rotateSet n r S) = rotateSet n (r + s) S := by
   ext x
-  constructor
-  · intro hx
-    rcases Finset.mem_map.mp hx with ⟨y, hy, rfl⟩
-    rcases Finset.mem_map.mp hy with ⟨z, hz, rfl⟩
-    rw [rotateEquiv_add_apply]
-    exact Finset.mem_map.mpr ⟨z, hz, rfl⟩
-  · intro hx
-    rcases Finset.mem_map.mp hx with ⟨z, hz, hzx⟩
-    subst x
-    rw [← rotateEquiv_add_apply]
-    exact Finset.mem_map.mpr
-      ⟨rotateEquiv n r z, Finset.mem_map.mpr ⟨z, hz, rfl⟩, rfl⟩
+  simp [rotateSet, rotateEquiv, add_assoc]
 
 @[simp] theorem rotateSet_zero
     (n : Nat) [NeZero n] (S : Finset (Vertex n)) :
