@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: finite19-exact-windows-a
+  group: finite19-exact-windows-middle
   cancel-in-progress: true
 
 permissions:
