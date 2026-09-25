@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        batch: [79, 82]
+        batch: [76, 77, 78, 81]
     steps:
       - uses: actions/checkout@v4
 
