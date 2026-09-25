@@ -12,7 +12,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: finite1721-infra-recovery-${{ github.ref }}
+  group: finite1721-infra-recovery-v2-${{ github.ref }}
   cancel-in-progress: false
 
 env:
@@ -27,9 +27,9 @@ jobs:
     timeout-minutes: 135
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 2
       matrix:
-        batch: [74, 77, 78]
+        batch: [79, 82]
     steps:
       - uses: actions/checkout@v4
 
