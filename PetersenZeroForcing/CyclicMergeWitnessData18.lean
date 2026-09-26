@@ -12,6 +12,8 @@ def cyclicMergeWitness18OfNat (c q : Nat) :
     exact Nat.mod_lt c (by decide)⟩
   shift := (q : ZMod 18)
 
+set_option maxRecDepth 100000 in
+set_option maxHeartbeats 0 in
 def cyclicMergeWitness18
     (a b : Fin cyclicCertificate18.shapeCount) (t : ZMod 18) :
     CyclicCertificate.MergeWitness 18 cyclicCertificate18 :=
