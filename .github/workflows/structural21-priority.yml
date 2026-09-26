@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: structural-n21-priority-${{ github.ref }}-${{ github.sha }}
+  group: structural-n21-priority-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -16,8 +16,8 @@ permissions:
 jobs:
   structural-cyclic-21:
     name: structural-cyclic-21-clean
-    runs-on: ubuntu-22.04
-    timeout-minutes: 30
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
     env:
       LEAN_NUM_THREADS: 1
     steps:
