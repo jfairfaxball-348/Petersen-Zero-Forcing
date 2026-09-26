@@ -26,3 +26,5 @@ import PetersenZeroForcing.BlockMerge
 import PetersenZeroForcing.BlockFamily
 import PetersenZeroForcing.TerminalBounds
 import PetersenZeroForcing.LargeLowerBound
+
+import PetersenZeroForcing.MainTheorem
