@@ -10,12 +10,12 @@ permissions:
 
 jobs:
   palomar-preflight:
-    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@e48a86d0495356b5131a92c9406aa6e27cf99e56
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@a59f25bd8a66bf6faf3a4f4260d412989c0185ea
     with:
       repository: ${{ github.repository }}
       commit: ${{ github.sha }}
-      pipeline_commit: e48a86d0495356b5131a92c9406aa6e27cf99e56
+      pipeline_commit: a59f25bd8a66bf6faf3a4f4260d412989c0185ea
       request_id: petersenzf01
       mode: full
-      execution_profile: palomar-standard-v1
+      execution_profile: palomar-namespace-16x32-v1
       options: '{"comparator_config_path":"comparator.json","authorization_relationship":"I am a responsible author or maintainer"}'
