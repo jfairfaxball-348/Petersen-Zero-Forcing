@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Zero forcing number of the generalized Petersen graphs P(n,3)"
+  description: >-
+    A Lean 4 proof that the zero-forcing number of the generalized Petersen
+    graph P(n,3) is exactly 8 for every natural number n >= 13. The formalized
+    result is the statement recorded as Conjecture 5 in Arnav Krishnan's July
+    2026 correction preprint; this repository supplies and kernel-checks a proof
+    of that conjectured statement rather than formalizing a proof already given
+    in the cited preprint.
+  authors:
+    - name: "John Fairfax-Ball"
+      github: "jfairfaxball-348"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "John Fairfax-Ball"
+
+classification:
+  arxiv: ["math.CO"]
+  msc2020: ["05C50"]
+
+sources:
+  - title: "A correction to the Zero Forcing Number of the Generalized Petersen Graphs P(n,3)"
+    authors:
+      - "Arnav Krishnan"
+    id: "arXiv:2607.19412v1"
+    type: "preprint"
+    location: "https://arxiv.org/abs/2607.19412"
+    relationship: "formalizes"
+    note: >-
+      The repository provenance record identifies the target as Conjecture 5
+      of this preprint and records Proposition 4 as supplying the eight-vertex
+      upper bound. This project proves the exact n >= 13 statement presented
+      there as a conjecture; it does not claim that the cited preprint already
+      contains the proof formalized here. No novelty or priority claim is made
+      by this metadata; the broader literature refresh remains deferred to the
+      research-paper gate.
+
+status:
+  scope: >-
+    Proves PetersenZeroForcing.zero_forcing_number_eq_eight: for every natural
+    number n with NeZero n and 13 <= n, the zero-forcing number Z of the
+    generalized Petersen graph P(n,3), using the repository's explicit graph and
+    standard color-change definitions, is exactly 8. The theorem does not cover
+    n < 13; the repository provenance specifically records failure at n = 12.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["OpenAI GPT-5.6 Sol"]
+      framework: "ChatGPT"
+      tool_setup: >-
+        Human-directed AI-assisted mathematical development, Lean formalization,
+        repository operations, and verification using ChatGPT, the GitHub
+        connector, GitHub Actions, Lean tactics, independent C++/Python evidence
+        checks, theorem-level axiom audits, and Palomar Comparator replay.
+      cost:
+        wall_time: "multiple interactive sessions over 23-26 September 2026"
+        spend_usd: "subscription-based; exact API-equivalent spend not tracked"
+        hardware: "GitHub-hosted Linux CI and ChatGPT-hosted tool execution"
+      prompting_notes: >-
+        Prompts enforced the phase order PROOF -> LEAN -> PALOMAR -> PAPER,
+        preservation of the exact n >= 13 theorem, explicit trust-boundary
+        checks for finite evidence and certificates, kernel-checked Lean proofs,
+        transitive axiom auditing, and faithful Palomar Challenge/Solution
+        packaging.
+  spend_usd: "subscription-based; exact API-equivalent spend not tracked"
+  notes: >-
+    The human maintainer selected the target and scope, directed repeated proof
+    and formalization audits, and controls submission, registration, licensing,
+    and publication decisions. AI assistance was used extensively for proof
+    development, Lean work, debugging, repository operations, and Palomar
+    packaging.
+
+fidelity:
+  divergences: >-
+    No known mathematical divergence in the advertised n >= 13 result. The
+    Challenge reproduces the actual declarations determining the theorem
+    statement, and Comparator checks them against the complete Solution. The
+    source's recorded n = 12 failure remains outside the theorem scope.
+
+review:
+  status: "self-assessed"
+  reviewers:
+    - "none"
+  notes: >-
+    The mathematical proof passed the repository's independent hostile proof
+    audit on 2026-09-23 with no blocking findings. The completed Lean theorem
+    then passed a clean build, prohibited-shortcut checks, and a transitive
+    axiom audit whose headline dependency set is exactly propext,
+    Classical.choice, and Quot.sound. These checks are not represented as
+    independent human peer review. Palomar mechanical verification and registry
+    registration are tracked separately.
+
+alignment:
+  namespace: "PetersenZeroForcing"
+  statements:
+    - source: "Krishnan (2026), Conjecture 5"
+      lean: "PetersenZeroForcing.zero_forcing_number_eq_eight"
+      module: "PetersenZeroForcing.MainTheorem"
+      status: "proved"
+      note: >-
+        States Z(P(n,3)) = 8 for every natural n >= 13 using the repository's
+        explicit generalized Petersen graph and zero-forcing definitions.
+
+acknowledgements: >-
+  Arnav Krishnan for the source conjecture and correction preprint; Mathlib for
+  the Lean mathematical library; and the Lean, Comparator, NanoDa, con-ron, and
+  Palomar toolchains used for verification.
