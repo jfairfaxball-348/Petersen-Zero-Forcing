@@ -13,6 +13,8 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read
+  statuses: write
 
 jobs:
   validate:
@@ -49,7 +51,8 @@ jobs:
       LEAN_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Build n=13 cyclic certificate from source
+      - id: lean
+        name: Build n=13 cyclic certificate from source
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
@@ -58,6 +61,24 @@ jobs:
           test: false
           lint: false
           use-github-cache: false
+      - name: Report n=13 kernel-check status
+        if: always()
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEAN_OUTCOME: ${{ steps.lean.outcome }}
+        run: |
+          set -euo pipefail
+          job_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '.jobs[] | select(.name=="structural-cyclic-13-clean") | .id' | tail -n 1)"
+          state=error
+          if [ "${LEAN_OUTCOME}" = success ]; then state=success; fi
+          if [ "${LEAN_OUTCOME}" = failure ]; then state=failure; fi
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="${state}" \
+            -f context="lean/structural-cyclic-13-clean" \
+            -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
 
   structural-cyclic-15:
     name: structural-cyclic-15-clean
@@ -67,7 +88,8 @@ jobs:
       LEAN_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Build n=15 cyclic certificate from source
+      - id: lean
+        name: Build n=15 cyclic certificate from source
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
@@ -76,6 +98,24 @@ jobs:
           test: false
           lint: false
           use-github-cache: false
+      - name: Report n=15 kernel-check status
+        if: always()
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEAN_OUTCOME: ${{ steps.lean.outcome }}
+        run: |
+          set -euo pipefail
+          job_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '.jobs[] | select(.name=="structural-cyclic-15-clean") | .id' | tail -n 1)"
+          state=error
+          if [ "${LEAN_OUTCOME}" = success ]; then state=success; fi
+          if [ "${LEAN_OUTCOME}" = failure ]; then state=failure; fi
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="${state}" \
+            -f context="lean/structural-cyclic-15-clean" \
+            -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
 
   structural-cyclic-18:
     name: structural-cyclic-18-clean
@@ -85,7 +125,8 @@ jobs:
       LEAN_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Build n=18 cyclic certificate from source
+      - id: lean
+        name: Build n=18 cyclic certificate from source
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
@@ -94,3 +135,21 @@ jobs:
           test: false
           lint: false
           use-github-cache: false
+      - name: Report n=18 kernel-check status
+        if: always()
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEAN_OUTCOME: ${{ steps.lean.outcome }}
+        run: |
+          set -euo pipefail
+          job_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '.jobs[] | select(.name=="structural-cyclic-18-clean") | .id' | tail -n 1)"
+          state=error
+          if [ "${LEAN_OUTCOME}" = success ]; then state=success; fi
+          if [ "${LEAN_OUTCOME}" = failure ]; then state=failure; fi
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="${state}" \
+            -f context="lean/structural-cyclic-18-clean" \
+            -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
