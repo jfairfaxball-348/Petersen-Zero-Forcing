@@ -41,6 +41,11 @@ jobs:
         run: |
           set -euo pipefail
           lake exe cache get
+      - name: Build certificate bridge under Palomar toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake build PetersenZeroForcing.CertificateLemmas
       - name: Build headline theorem under Palomar toolchain
         shell: bash
         run: |
