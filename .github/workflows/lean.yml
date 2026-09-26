@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -R -n -E '\\b(native_decide|sorry|admit)\\b' PetersenZeroForcing/FiniteScan*.lean PetersenZeroForcing/FiniteLowerBound.lean PetersenZeroForcing/Structural*.lean PetersenZeroForcing/CyclicCertificate*.lean; then
+          if grep -R -n -E '\\b(native_decide|sorry|admit)\\b' PetersenZeroForcing/FiniteScan*.lean PetersenZeroForcing/FiniteLowerBound.lean PetersenZeroForcing/Structural*.lean PetersenZeroForcing/CyclicCertificate*.lean PetersenZeroForcing/UpperBound.lean PetersenZeroForcing/MainTheorem.lean; then
             echo "Prohibited proof shortcut found in finite lower-bound sources." >&2
             exit 1
           fi
@@ -62,22 +62,37 @@ jobs:
           test: false
           lint: false
           use-github-cache: false
-      - name: Report finite lower-bound kernel-check status
+      - id: headline
+        name: Build headline equality theorem from source
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake build PetersenZeroForcing.MainTheorem
+      - name: Report production kernel-check statuses
         if: always()
         continue-on-error: true
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           LEAN_OUTCOME: ${{ steps.lean.outcome }}
+          HEADLINE_OUTCOME: ${{ steps.headline.outcome }}
         run: |
           set -euo pipefail
           job_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '.jobs[] | select(.name=="finite-lower-bound-production-clean") | .id' | tail -n 1)"
-          state=error
-          if [ "${LEAN_OUTCOME}" = success ]; then state=success; fi
-          if [ "${LEAN_OUTCOME}" = failure ]; then state=failure; fi
+          lower_state=error
+          if [ "${LEAN_OUTCOME}" = success ]; then lower_state=success; fi
+          if [ "${LEAN_OUTCOME}" = failure ]; then lower_state=failure; fi
+          headline_state=error
+          if [ "${HEADLINE_OUTCOME}" = success ]; then headline_state=success; fi
+          if [ "${HEADLINE_OUTCOME}" = failure ]; then headline_state=failure; fi
           gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
-            -f state="${state}" \
+            -f state="${lower_state}" \
             -f context="lean/finite-lower-bound-production-clean" \
+            -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="${headline_state}" \
+            -f context="lean/headline-theorem-production-clean" \
             -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
             -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
 
