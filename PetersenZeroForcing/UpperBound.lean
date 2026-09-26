@@ -292,7 +292,7 @@ theorem upper_prefix_reached
           rw [show 2 + (m + 1) = (2 + m) + 1 by omega]
           simpa only [upperBlue, Function.iterate_succ_apply'] using htarget
 
-theorem vertex_card (n : Nat) [NeZero n] :
+theorem upper_vertex_card (n : Nat) [NeZero n] :
     Fintype.card (Vertex n) = 2 * n := by
   have hLayer : Fintype.card Layer = 2 := by decide
   simp [Vertex, hLayer]
@@ -317,7 +317,7 @@ theorem upperSeed_forces
         simpa [v, ZMod.natCast_zmod_val i] using h
   have hround :
       2 + (n - 8) ≤ Fintype.card (Vertex n) := by
-    rw [vertex_card n]
+    rw [upper_vertex_card n]
     omega
   have hmono := upperBlue_mono_rounds n hround hxstage
   simpa [IsZeroForcing, closure, upperBlue] using hmono
