@@ -19,10 +19,12 @@ theorem shape_row_properties (i : ShapeId) :
   have h' :
       (((shapeClosedNatB i.1 = true ∧ coordsOKNatB i.1 = true) ∧
           (CertificateData.shapeByNat i.1).vertices.Nodup) ∧
-        (1 ≤ weight i ∧ weight i ≤ 7)) ∧
-      (shape i).card ≤ sizeBound (weight i) := by
+        decide (1 ≤ weight i ∧ weight i ≤ 7) = true) ∧
+      decide ((shape i).card ≤ sizeBound (weight i)) = true := by
     simpa [shapeRowNatB, shape, weight, datum, shapeNat, weightNat] using h
-  exact ⟨h'.1.1.1.1, h'.1.1.1.2, h'.1.1.2, h'.1.2, h'.2⟩
+  rcases h' with ⟨⟨⟨hchecks, hnodup⟩, hweight⟩, hcard⟩
+  exact ⟨hchecks.1, hchecks.2, hnodup,
+    of_decide_eq_true hweight, of_decide_eq_true hcard⟩
 
 theorem shape_closed (i : ShapeId) : StripClosed (shape i) := by
   intro x hx
@@ -30,9 +32,11 @@ theorem shape_closed (i : ShapeId) : StripClosed (shape i) := by
     have hnodup := (shape_row_properties i).2.2.1
     simpa [shape, hnodup] using hx
   have hcheck : shapeClosedNatB i.1 = true := (shape_row_properties i).1
-  have hall : ∀ y ∈ (datum i).vertices, (stripNeighbors y \ shape i).card ≠ 1 := by
+  have hall :
+      ∀ y ∈ (datum i).vertices,
+        decide ((stripNeighbors y \ shape i).card ≠ 1) = true := by
     simpa [shapeClosedNatB, shapeNat, shape, datum] using hcheck
-  exact hall x hxlist
+  exact of_decide_eq_true (hall x hxlist)
 
 theorem shape_coord_bounds (i : ShapeId) {x : StripVertex} (hx : x ∈ shape i) :
     0 ≤ x.2 ∧ x.2 ≤ 18 := by
@@ -40,9 +44,10 @@ theorem shape_coord_bounds (i : ShapeId) {x : StripVertex} (hx : x ∈ shape i) 
     have hnodup := (shape_row_properties i).2.2.1
     simpa [shape, hnodup] using hx
   have hcheck : coordsOKNatB i.1 = true := (shape_row_properties i).2.1
-  have hall : ∀ y ∈ (datum i).vertices, 0 ≤ y.2 ∧ y.2 ≤ 18 := by
+  have hall :
+      ∀ y ∈ (datum i).vertices, decide (0 ≤ y.2 ∧ y.2 ≤ 18) = true := by
     simpa [coordsOKNatB, datum] using hcheck
-  exact hall x hxlist
+  exact of_decide_eq_true (hall x hxlist)
 
 theorem weight_pos (i : ShapeId) : 1 ≤ weight i :=
   (shape_row_properties i).2.2.2.1.1
@@ -77,15 +82,17 @@ theorem merge_row_properties (m : CertificateData.MergeDatum)
       translateSet (shapeNat m.target) m.targetShift := by
   have h := merge_row_checked m hm
   have h' :
-      (((((m.left < 38 ∧ m.right < 38 ∧ m.target < 38) ∧
-            weightNat m.left + weightNat m.right ≤ 7) ∧
+      (((((decide (m.left < 38 ∧ m.right < 38 ∧ m.target < 38) = true ∧
+            decide (weightNat m.left + weightNat m.right ≤ 7) = true) ∧
           touchesNatB m.left m.right m.shift = true) ∧
-        weightNat m.target ≤ weightNat m.left + weightNat m.right) ∧
-      shapeNat m.left ⊆ translateSet (shapeNat m.target) m.targetShift) ∧
-      translateSet (shapeNat m.right) m.shift ⊆
-        translateSet (shapeNat m.target) m.targetShift := by
+        decide (weightNat m.target ≤ weightNat m.left + weightNat m.right) = true) ∧
+      decide (shapeNat m.left ⊆ translateSet (shapeNat m.target) m.targetShift) = true) ∧
+      decide (translateSet (shapeNat m.right) m.shift ⊆
+        translateSet (shapeNat m.target) m.targetShift) = true := by
     simpa [mergeRowOKB] using h
-  exact ⟨h'.1.1.1.1.1, h'.1.1.1.1.2, h'.1.1.1.2, h'.1.1.2, h'.1.2, h'.2⟩
+  rcases h' with ⟨⟨⟨⟨⟨hidx, hweight⟩, htouch⟩, htarget⟩, hleft⟩, hright⟩
+  exact ⟨of_decide_eq_true hidx, of_decide_eq_true hweight, htouch,
+    of_decide_eq_true htarget, of_decide_eq_true hleft, of_decide_eq_true hright⟩
 
 theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
     (htouch : StripTouches (shape a) (translateSet (shape b) t)) :
