@@ -18,6 +18,8 @@ permissions:
 
 jobs:
   validate:
+    needs: [structural-cyclic-13, structural-cyclic-15, structural-cyclic-18]
+    if: ${{ always() }}
     name: cheap-source-validation
     runs-on: ubuntu-latest
     timeout-minutes: 30
