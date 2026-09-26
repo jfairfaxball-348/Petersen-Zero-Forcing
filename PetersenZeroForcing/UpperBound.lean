@@ -4,7 +4,7 @@ namespace PetersenZeroForcing
 
 /-- The explicit eight-vertex upper-bound seed: u_0,...,u_7. -/
 def upperSeed (n : Nat) [NeZero n] : Finset (Vertex n) :=
-  (Finset.range 8).image (fun i => u (i : ZMod n))
+  (Finset.range 8).image (fun i : Nat => u (i : ZMod n))
 
 /-- Blue vertices after a specified number of simultaneous forcing rounds. -/
 def upperBlue (n : Nat) [NeZero n] (r : Nat) : Finset (Vertex n) :=
@@ -16,8 +16,10 @@ theorem upperSeed_mem_u (n : Nat) [NeZero n] {i : Nat} (hi : i < 8) :
 
 theorem upperSeed_card (n : Nat) [NeZero n] (hn : 9 ≤ n) :
     (upperSeed n).card = 8 := by
+  unfold upperSeed
   calc
-    (upperSeed n).card = (Finset.range 8).card := by
+    ((Finset.range 8).image (fun i : Nat => u (i : ZMod n))).card =
+        (Finset.range 8).card := by
       apply Finset.card_image_iff.mpr
       intro a ha b hb hab
       have ha8 : a < 8 := Finset.mem_range.mp ha
@@ -189,27 +191,43 @@ theorem upper_prefix_base
     by_cases hj0 : j = 0
     · subst j
       have hv3 : v (3 : ZMod n) ∈ upperBlue n 1 :=
-        initial_inner_round_one n (by omega) (by omega)
+        initial_inner_round_one n (j := 3) (by norm_num) (by norm_num)
       have hv6 : v (6 : ZMod n) ∈ upperBlue n 1 :=
-        initial_inner_round_one n (by omega) (by omega)
-      have hu3seed : u (3 : ZMod n) ∈ upperSeed n := upperSeed_mem_u n (by omega)
+        initial_inner_round_one n (j := 6) (by norm_num) (by norm_num)
+      have hu3seed : u (3 : ZMod n) ∈ upperSeed n := upperSeed_mem_u n (by norm_num)
       have hu3 : u (3 : ZMod n) ∈ upperBlue n 1 := by
         exact subset_iterate_forceStep n (upperSeed n) 1 hu3seed
+      have hforward : v ((3 : ZMod n) + 3) ∈ upperBlue n 1 := by
+        have heq : (3 : ZMod n) + 3 = 6 := by ring
+        rw [heq]
+        exact hv6
       have hforce := inner_backward_mem_forceStep n (upperBlue n 1) (3 : ZMod n)
-        hv3 (by simpa using hv6) hu3
-      simpa [upperBlue, Function.iterate_succ_apply'] using hforce
+        hv3 hforward hu3
+      have htarget : v (0 : ZMod n) ∈ forceStep n (upperBlue n 1) := by
+        have heq : (3 : ZMod n) - 3 = 0 := by ring
+        rw [heq] at hforce
+        exact hforce
+      simpa [upperBlue, Function.iterate_succ_apply'] using htarget
     · by_cases hj7 : j = 7
       · subst j
         have hv4 : v (4 : ZMod n) ∈ upperBlue n 1 :=
-          initial_inner_round_one n (by omega) (by omega)
+          initial_inner_round_one n (j := 4) (by norm_num) (by norm_num)
         have hv1 : v (1 : ZMod n) ∈ upperBlue n 1 :=
-          initial_inner_round_one n (by omega) (by omega)
-        have hu4seed : u (4 : ZMod n) ∈ upperSeed n := upperSeed_mem_u n (by omega)
+          initial_inner_round_one n (j := 1) (by norm_num) (by norm_num)
+        have hu4seed : u (4 : ZMod n) ∈ upperSeed n := upperSeed_mem_u n (by norm_num)
         have hu4 : u (4 : ZMod n) ∈ upperBlue n 1 := by
           exact subset_iterate_forceStep n (upperSeed n) 1 hu4seed
+        have hback : v ((4 : ZMod n) - 3) ∈ upperBlue n 1 := by
+          have heq : (4 : ZMod n) - 3 = 1 := by ring
+          rw [heq]
+          exact hv1
         have hforce := inner_forward_mem_forceStep n (upperBlue n 1) (4 : ZMod n)
-          hv4 (by simpa using hv1) hu4
-        simpa [upperBlue, Function.iterate_succ_apply'] using hforce
+          hv4 hback hu4
+        have htarget : v (7 : ZMod n) ∈ forceStep n (upperBlue n 1) := by
+          have heq : (4 : ZMod n) + 3 = 7 := by ring
+          rw [heq] at hforce
+          exact hforce
+        simpa [upperBlue, Function.iterate_succ_apply'] using htarget
       · have hj1 : 1 ≤ j := by omega
         have hj6 : j ≤ 6 := by omega
         have h1 := initial_inner_round_one n hj1 hj6
@@ -243,12 +261,11 @@ theorem upper_prefix_reached
             exact hprev0
           have hforce := outer_forward_mem_forceStep n (upperBlue n (2 + m))
             ((7 + m : Nat) : ZMod n) hsrc hprev hspoke
-          have htarget : u (8 + m : ZMod n) ∈ forceStep n (upperBlue n (2 + m)) := by
-            have heq : (((7 + m : Nat) : ZMod n) + 1) = ((8 + m : Nat) : ZMod n) := by
-              push_cast
-              ring
-            simpa [heq] using hforce
-          simpa [upperBlue, Function.iterate_succ_apply', Nat.add_assoc] using htarget
+          have htarget :
+              u ((8 + m : Nat) : ZMod n) ∈ forceStep n (upperBlue n (2 + m)) := by
+            convert hforce using 1 <;> push_cast <;> ring
+          rw [show 2 + (m + 1) = (2 + m) + 1 by omega]
+          simpa only [upperBlue, Function.iterate_succ_apply'] using htarget
       · intro j hj
         by_cases hold : j ≤ 7 + m
         · have hjmem := ih.2 j hold
@@ -267,16 +284,16 @@ theorem upper_prefix_reached
             exact hback0
           have hforce := inner_forward_mem_forceStep n (upperBlue n (2 + m))
             ((5 + m : Nat) : ZMod n) hsrc hback hspoke
-          have htarget : v (8 + m : ZMod n) ∈ forceStep n (upperBlue n (2 + m)) := by
-            have heq : (((5 + m : Nat) : ZMod n) + 3) = ((8 + m : Nat) : ZMod n) := by
-              push_cast
-              ring
-            simpa [heq] using hforce
-          simpa [upperBlue, Function.iterate_succ_apply', Nat.add_assoc] using htarget
+          have htarget :
+              v ((8 + m : Nat) : ZMod n) ∈ forceStep n (upperBlue n (2 + m)) := by
+            convert hforce using 1 <;> push_cast <;> ring
+          rw [show 2 + (m + 1) = (2 + m) + 1 by omega]
+          simpa only [upperBlue, Function.iterate_succ_apply'] using htarget
 
 theorem vertex_card (n : Nat) [NeZero n] :
     Fintype.card (Vertex n) = 2 * n := by
-  simp [Vertex, Layer]
+  have hLayer : Fintype.card Layer = 2 := by decide
+  simp [Vertex, hLayer]
 
 theorem upperSeed_forces
     (n : Nat) [NeZero n] (hn : 9 ≤ n) :
