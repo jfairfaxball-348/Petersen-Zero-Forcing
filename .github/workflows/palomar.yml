@@ -78,7 +78,6 @@ jobs:
 
   comparator:
     name: palomar-comparator
-    needs: core
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
