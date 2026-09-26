@@ -70,3 +70,17 @@ jobs:
             echo "Prohibited proof shortcut found in production theorem sources." >&2
             exit 1
           fi
+      - name: Build Palomar Challenge and Solution modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake build Challenge Solution
+      - name: Install bubblewrap for Comparator sandbox
+        shell: bash
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq bubblewrap >/dev/null
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Run Palomar Comparator with bundled external kernels
+        shell: bash
+        run: ./scripts/verify-comparator.sh

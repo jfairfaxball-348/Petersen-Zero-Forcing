@@ -1,9 +1,17 @@
 name = "PetersenZeroForcing"
 version = "0.1.0"
-defaultTargets = ["PetersenZeroForcing"]
+defaultTargets = ["PetersenZeroForcing", "Challenge", "Solution"]
 
 [[lean_lib]]
 name = "PetersenZeroForcing"
+
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]
 
 [[require]]
 name = "mathlib"
