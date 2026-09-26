@@ -5,7 +5,7 @@ namespace PetersenZeroForcing
 open scoped BigOperators
 
 def blockFamilyWeight (F : Finset CertifiedBlock) : Nat :=
-  ∑ b in F, CertifiedBlock.weight b
+  ∑ b ∈ F, CertifiedBlock.weight b
 
 def blockFamilyUnion (n : Nat) [NeZero n]
     (F : Finset CertifiedBlock) : Finset (Vertex n) :=
@@ -86,7 +86,7 @@ theorem terminalize_block_family
       · have heq : F' = R := Finset.insert_eq_of_mem hcR
         rw [heq]
         exact hcardB.trans hcardA
-      · rw [show F' = insert c R from rfl, Finset.card_insert_of_not_mem hcR]
+      · rw [show F' = insert c R from rfl, Finset.card_insert_of_notMem hcR]
         omega
     have hcover :
         blockFamilyUnion n F ⊆ blockFamilyUnion n F' := by
