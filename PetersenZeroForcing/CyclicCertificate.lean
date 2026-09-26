@@ -540,7 +540,7 @@ open scoped BigOperators
 def cyclicBlockFamilyWeight
     (n : Nat) [NeZero n] (cert : CyclicCertificate n)
     (F : Finset (CyclicCertifiedBlock n cert)) : Nat :=
-  ∑ b in F, CyclicCertifiedBlock.weight n cert b
+  ∑ b ∈ F, CyclicCertifiedBlock.weight n cert b
 
 def cyclicBlockFamilyUnion
     (n : Nat) [NeZero n] (cert : CyclicCertificate n)
@@ -635,7 +635,7 @@ theorem terminalize_cyclic_block_family
       · have heq : F' = R := Finset.insert_eq_of_mem hcR
         rw [heq]
         exact hcardB.trans hcardA
-      · rw [show F' = insert c R from rfl, Finset.card_insert_of_not_mem hcR]
+      · rw [show F' = insert c R from rfl, Finset.card_insert_of_notMem hcR]
         omega
     have hcover :
         cyclicBlockFamilyUnion n cert F ⊆
@@ -751,9 +751,9 @@ theorem cyclicInitialBlockFamily_weight_le_card
         = (cyclicInitialBlockFamily n cert S).card := by
             unfold cyclicBlockFamilyWeight
             calc
-              (∑ b in cyclicInitialBlockFamily n cert S,
+              (∑ b ∈ cyclicInitialBlockFamily n cert S,
                   CyclicCertifiedBlock.weight n cert b)
-                  = ∑ _b in cyclicInitialBlockFamily n cert S, 1 := by
+                  = ∑ _b ∈ cyclicInitialBlockFamily n cert S, 1 := by
                     apply Finset.sum_congr rfl
                     intro b hb
                     rcases Finset.mem_image.mp hb with ⟨p, hp, rfl⟩
@@ -768,7 +768,7 @@ theorem cyclicBlockFamily_bound_sum_le
     (hsuper : CyclicCertificate.superadditiveB n cert = true)
     (F : Finset (CyclicCertifiedBlock n cert))
     (hweight : cyclicBlockFamilyWeight n cert F ≤ 7) :
-    (∑ b in F, cert.sizeBound (CyclicCertifiedBlock.weight n cert b)) ≤
+    (∑ b ∈ F, cert.sizeBound (CyclicCertifiedBlock.weight n cert b)) ≤
       cert.sizeBound (cyclicBlockFamilyWeight n cert F) := by
   classical
   induction F using Finset.induction_on with
@@ -782,10 +782,10 @@ theorem cyclicBlockFamily_bound_sum_le
       have hs : cyclicBlockFamilyWeight n cert s ≤ 7 := by omega
       have hih := ih hs
       calc
-        (∑ b in insert a s,
+        (∑ b ∈ insert a s,
             cert.sizeBound (CyclicCertifiedBlock.weight n cert b))
             = cert.sizeBound (CyclicCertifiedBlock.weight n cert a) +
-                ∑ b in s,
+                ∑ b ∈ s,
                   cert.sizeBound (CyclicCertifiedBlock.weight n cert b) := by
                     simp [ha]
         _ ≤ cert.sizeBound (CyclicCertifiedBlock.weight n cert a) +
@@ -811,7 +811,7 @@ theorem cyclicBlockFamilyUnion_card_le_bound
       cert.sizeBound (cyclicBlockFamilyWeight n cert F) := by
   calc
     (cyclicBlockFamilyUnion n cert F).card
-        ≤ ∑ b in F, (CyclicCertifiedBlock.vertices n cert b).card := by
+        ≤ ∑ b ∈ F, (CyclicCertifiedBlock.vertices n cert b).card := by
           exact Finset.card_biUnion_le
     _ ≤ ∑ b in F,
           cert.sizeBound (CyclicCertifiedBlock.weight n cert b) := by
