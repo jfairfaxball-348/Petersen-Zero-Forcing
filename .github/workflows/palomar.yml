@@ -1,0 +1,67 @@
+name: Palomar compatibility
+
+on:
+  push:
+    branches: [palomar]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: palomar-compatibility-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compatibility:
+    name: palomar-compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Check committed dependency manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Fetch Mathlib cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake exe cache get
+      - name: Build headline theorem under Palomar toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake build PetersenZeroForcing.MainTheorem
+      - name: Audit transitive axioms under Palomar toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean PetersenZeroForcing/AxiomAudit.lean
+      - name: Guard production theorem sources against prohibited shortcuts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n -E '\\b(native_decide|sorry|admit)\\b' \
+            PetersenZeroForcing/FiniteLowerBound.lean \
+            PetersenZeroForcing/Structural*.lean \
+            PetersenZeroForcing/CyclicCertificate*.lean \
+            PetersenZeroForcing/LargeLowerBound.lean \
+            PetersenZeroForcing/UpperBound.lean \
+            PetersenZeroForcing/MainTheorem.lean; then
+            echo "Prohibited proof shortcut found in production theorem sources." >&2
+            exit 1
+          fi

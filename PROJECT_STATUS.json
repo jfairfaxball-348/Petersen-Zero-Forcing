@@ -12,12 +12,12 @@
   "scaffold": "complete",
   "imported_pilot_verdict": "PILOT_POSITIVE",
   "baseline": "reproduced",
-  "active_phase": "LEAN",
+  "active_phase": "PALOMAR",
   "independent_proof_audit": "passed",
   "phase_gates": {
     "PROOF": "passed",
-    "LEAN": "open",
-    "PALOMAR": "locked_by_LEAN",
+    "LEAN": "passed",
+    "PALOMAR": "in_progress",
     "PAPER": "locked_by_PALOMAR"
   },
   "proof_audit": {
@@ -53,18 +53,34 @@
       "14_to_30": 16
     }
   },
-  "next_permitted_task": "Continue Lean formalisation on branch lean-formalisation / draft PR #2. Do not begin Palomar until the exact theorem builds and the final transitive axiom audit passes.",
+  "next_permitted_task": "Complete Palomar compatibility packaging and verification from the audited Lean result. Do not begin paper drafting until Palomar is complete.",
   "bootstrap_date": "2026-09-23",
   "lean_formalisation": {
-    "state": "in_progress",
+    "state": "complete",
     "branch": "lean-formalisation",
     "pull_request": 2,
-    "pre_handoff_implementation_head": "8cfa7c67ed1238e672530a887b6da6cde70708b9",
+    "final_verified_head": "554f90beb1614a12dca325dd2c02dbad82fe69d5",
     "toolchain": "leanprover/lean4:v4.19.0",
     "mathlib": "v4.19.0",
-    "baseline_verification_on_pre_handoff_head": "passed",
-    "lean_build_on_pre_handoff_head": "pending_at_handoff",
-    "trust_audit": "not_yet_run",
+    "production_workflow_run": 36239618086,
+    "production_job": 108397544350,
+    "final_cheap_source_validation_job": 108400571191,
+    "final_cheap_source_validation": "passed",
+    "transitive_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
     "native_decide_allowed": false
+  },
+  "palomar": {
+    "state": "in_progress",
+    "branch": "palomar",
+    "source_lean_head": "554f90beb1614a12dca325dd2c02dbad82fe69d5",
+    "compatibility_toolchain": "leanprover/lean4:v4.35.0-rc2",
+    "compatibility_mathlib": "v4.35.0-rc2",
+    "submission_state": "not_submitted",
+    "registration_state": "not_registered",
+    "note": "Palomar compatibility work is supplementary packaging of the completed theorem; it does not replace or weaken the audited Lean proof."
   }
 }
