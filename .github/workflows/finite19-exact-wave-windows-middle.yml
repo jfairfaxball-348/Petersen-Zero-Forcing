@@ -22,6 +22,8 @@ env:
 
 jobs:
   leaf:
+    # Historical recovery matrix: permanently dormant; retained as evidence only.
+    if: ${{ false }}
     name: recover-b${{ matrix.batch }}-leaf-${{ matrix.slot }}
     runs-on: windows-latest
     timeout-minutes: 110
