@@ -45,6 +45,44 @@ jobs:
             exit 1
           fi
 
+  finite-lower-bound-production:
+    needs: [structural-cyclic-13, structural-cyclic-15, structural-cyclic-18]
+    name: finite-lower-bound-production-clean
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - id: lean
+        name: Build migrated finite lower bound from source
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.FiniteLowerBound
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Report finite lower-bound kernel-check status
+        if: always()
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEAN_OUTCOME: ${{ steps.lean.outcome }}
+        run: |
+          set -euo pipefail
+          job_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '.jobs[] | select(.name=="finite-lower-bound-production-clean") | .id' | tail -n 1)"
+          state=error
+          if [ "${LEAN_OUTCOME}" = success ]; then state=success; fi
+          if [ "${LEAN_OUTCOME}" = failure ]; then state=failure; fi
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="${state}" \
+            -f context="lean/finite-lower-bound-production-clean" \
+            -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
+
   structural-cyclic-13:
     name: structural-cyclic-13-clean
     runs-on: ubuntu-latest
