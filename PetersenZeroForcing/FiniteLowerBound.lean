@@ -1,5 +1,3 @@
-import PetersenZeroForcing.FiniteReduction
-import PetersenZeroForcing.FiniteScanChecked21
 import PetersenZeroForcing.StructuralFixedCases
 
 namespace PetersenZeroForcing
@@ -19,6 +17,6 @@ theorem lower_bound_finite
   · exact lower_bound_18_structural
   · exact lower_bound_19_structural
   · exact lower_bound_20_structural
-  · exact lower_bound_of_reducedScan 21 (by omega) FiniteScan.scan21_checked
+  · exact lower_bound_21_structural
 
 end PetersenZeroForcing

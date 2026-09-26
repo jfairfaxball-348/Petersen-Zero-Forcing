@@ -1,8 +1,6 @@
 name: Structural n=21 priority
 
 on:
-  push:
-    branches: [lean-formalisation]
   workflow_dispatch:
 
 concurrency:
@@ -16,8 +14,8 @@ permissions:
 jobs:
   structural-cyclic-21:
     name: structural-cyclic-21-clean
-    runs-on: ubuntu-slim
-    timeout-minutes: 15
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
     env:
       LEAN_NUM_THREADS: 1
     steps:

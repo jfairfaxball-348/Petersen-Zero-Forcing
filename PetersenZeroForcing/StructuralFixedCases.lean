@@ -54,5 +54,6 @@ example : 8 ≤ Z 17 := by exact lower_bound_17_structural
 example : 8 ≤ Z 18 := by exact lower_bound_18_structural
 example : 8 ≤ Z 19 := by exact lower_bound_19_structural
 example : 8 ≤ Z 20 := by exact lower_bound_20_structural
+example : 8 ≤ Z 21 := by exact lower_bound_21_structural
 
 end PetersenZeroForcing
