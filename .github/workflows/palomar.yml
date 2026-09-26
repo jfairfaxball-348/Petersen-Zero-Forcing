@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  core:
-    name: palomar-core-compatibility
+  compatibility:
+    name: palomar-compatibility
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -75,55 +75,6 @@ jobs:
         run: |
           set -euo pipefail
           lake build Challenge Solution
-      - name: Package warmed project build
-        shell: bash
-        run: |
-          set -euo pipefail
-          tar -C .lake -cf "$RUNNER_TEMP/palomar-build.tar" build
-      - name: Upload warmed project build
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: palomar-build-${{ github.sha }}
-          path: ${{ runner.temp }}/palomar-build.tar
-          if-no-files-found: error
-          retention-days: 1
-          compression-level: 0
 
-  comparator:
-    name: palomar-comparator
-    needs: core
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    env:
-      LEAN_NUM_THREADS: 1
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          persist-credentials: false
-      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
-        with:
-          auto-config: false
-          build: false
-          test: false
-          lint: false
-          use-github-cache: false
-      - name: Download warmed project build
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          name: palomar-build-${{ github.sha }}
-          path: ${{ runner.temp }}/palomar-build
-      - name: Restore warmed project build
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p .lake
-          tar -xf "$RUNNER_TEMP/palomar-build/palomar-build.tar" -C .lake
-      - name: Install bubblewrap for Comparator sandbox
-        shell: bash
-        run: |
-          sudo apt-get update -qq >/dev/null
-          sudo apt-get install -y -qq bubblewrap >/dev/null
-          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-      - name: Run Palomar Comparator with bundled external kernels
-        shell: bash
-        run: ./scripts/verify-comparator.sh
+# Full Comparator replay with NanoDa and con-ron runs in the separate
+# Palomar Preflight workflow on Palomar's approved high-memory runner profile.
