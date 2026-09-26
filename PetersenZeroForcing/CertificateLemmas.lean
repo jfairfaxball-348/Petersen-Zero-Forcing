@@ -16,13 +16,18 @@ theorem shape_row_properties (i : ShapeId) :
     (1 ≤ weight i ∧ weight i ≤ 7) ∧
     (shape i).card ≤ sizeBound (weight i) := by
   have h := shape_row_checked i
-  have h' :
-      (((shapeClosedNatB i.1 = true ∧ coordsOKNatB i.1 = true) ∧
-          (CertificateData.shapeByNat i.1).vertices.Nodup) ∧
-        (1 ≤ weight i ∧ weight i ≤ 7)) ∧
-      (shape i).card ≤ sizeBound (weight i) := by
-    simpa [shapeRowNatB, shape, weight, datum, shapeNat, weightNat, decide_eq_true_eq] using h
-  exact ⟨h'.1.1.1.1, h'.1.1.1.2, h'.1.1.2, h'.1.2, h'.2⟩
+  simp only [shapeRowNatB, Bool.and_eq_true] at h
+  have hnodup : (CertificateData.shapeByNat i.1).vertices.Nodup :=
+    of_decide_eq_true h.1.1.2
+  have hweightNat : 1 ≤ weightNat i.1 ∧ weightNat i.1 ≤ 7 :=
+    of_decide_eq_true h.1.2
+  have hcardNat : (shapeNat i.1).card ≤ sizeBound (weightNat i.1) :=
+    of_decide_eq_true h.2
+  have hweight : 1 ≤ weight i ∧ weight i ≤ 7 := by
+    simpa [weight, weightNat, datum] using hweightNat
+  have hcard : (shape i).card ≤ sizeBound (weight i) := by
+    simpa [shape, weight, datum, shapeNat, weightNat] using hcardNat
+  exact ⟨h.1.1.1.1, h.1.1.1.2, hnodup, hweight, hcard⟩
 
 theorem shape_closed (i : ShapeId) : StripClosed (shape i) := by
   intro x hx
@@ -30,9 +35,12 @@ theorem shape_closed (i : ShapeId) : StripClosed (shape i) := by
     have hnodup := (shape_row_properties i).2.2.1
     simpa [shape, hnodup] using hx
   have hcheck : shapeClosedNatB i.1 = true := (shape_row_properties i).1
-  have hall : ∀ y ∈ (datum i).vertices, (stripNeighbors y \ shape i).card ≠ 1 := by
-    simpa [shapeClosedNatB, shapeNat, shape, datum, decide_eq_true_eq] using hcheck
-  exact hall x hxlist
+  unfold shapeClosedNatB at hcheck
+  have hxraw : x ∈ (CertificateData.shapeByNat i.1).vertices := by
+    simpa [datum] using hxlist
+  have hdec := List.all_eq_true.mp hcheck x hxraw
+  have hprop := of_decide_eq_true hdec
+  simpa [shape, shapeNat, datum] using hprop
 
 theorem shape_coord_bounds (i : ShapeId) {x : StripVertex} (hx : x ∈ shape i) :
     0 ≤ x.2 ∧ x.2 ≤ 18 := by
@@ -40,9 +48,11 @@ theorem shape_coord_bounds (i : ShapeId) {x : StripVertex} (hx : x ∈ shape i) 
     have hnodup := (shape_row_properties i).2.2.1
     simpa [shape, hnodup] using hx
   have hcheck : coordsOKNatB i.1 = true := (shape_row_properties i).2.1
-  have hall : ∀ y ∈ (datum i).vertices, 0 ≤ y.2 ∧ y.2 ≤ 18 := by
-    simpa [coordsOKNatB, datum, decide_eq_true_eq] using hcheck
-  exact hall x hxlist
+  unfold coordsOKNatB at hcheck
+  have hxraw : x ∈ (CertificateData.shapeByNat i.1).vertices := by
+    simpa [datum] using hxlist
+  have hdec := List.all_eq_true.mp hcheck x hxraw
+  exact of_decide_eq_true hdec
 
 theorem weight_pos (i : ShapeId) : 1 ≤ weight i :=
   (shape_row_properties i).2.2.2.1.1
@@ -76,16 +86,14 @@ theorem merge_row_properties (m : CertificateData.MergeDatum)
     translateSet (shapeNat m.right) m.shift ⊆
       translateSet (shapeNat m.target) m.targetShift := by
   have h := merge_row_checked m hm
-  have h' :
-      (((((m.left < 38 ∧ m.right < 38 ∧ m.target < 38) ∧
-            weightNat m.left + weightNat m.right ≤ 7) ∧
-          touchesNatB m.left m.right m.shift = true) ∧
-        weightNat m.target ≤ weightNat m.left + weightNat m.right) ∧
-      shapeNat m.left ⊆ translateSet (shapeNat m.target) m.targetShift) ∧
-      translateSet (shapeNat m.right) m.shift ⊆
-        translateSet (shapeNat m.target) m.targetShift := by
-    simpa [mergeRowOKB, decide_eq_true_eq] using h
-  exact ⟨h'.1.1.1.1.1, h'.1.1.1.1.2, h'.1.1.1.2, h'.1.1.2, h'.1.2, h'.2⟩
+  simp only [mergeRowOKB, Bool.and_eq_true] at h
+  exact ⟨
+    of_decide_eq_true h.1.1.1.1.1,
+    of_decide_eq_true h.1.1.1.1.2,
+    h.1.1.1.2,
+    of_decide_eq_true h.1.1.2,
+    of_decide_eq_true h.1.2,
+    of_decide_eq_true h.2⟩
 
 theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
     (htouch : StripTouches (shape a) (translateSet (shape b) t)) :
@@ -100,7 +108,7 @@ theorem touchesNatB_true_of_touch (a b : ShapeId) (t : ℤ)
   refine ⟨x, hxl, ?_⟩
   refine ⟨translateVertex t y0, ?_, ?_⟩
   · exact List.mem_map.mpr ⟨y0, hy0l, rfl⟩
-  · simpa [decide_eq_true_eq] using hxy
+  · exact decide_eq_true hxy
 
 theorem expected_key_mem_of_touch (a b : ShapeId) (s : ShiftId)
     (hweight : weight a + weight b ≤ 7)
