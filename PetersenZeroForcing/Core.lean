@@ -6,7 +6,16 @@ namespace PetersenZeroForcing
 inductive Layer
   | outer
   | inner
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq, Repr
+
+/-- Explicit finite enumeration for compatibility with the Palomar-supported
+Lean toolchain. This has the same two elements as the derived instance used by
+the audited Lean 4.19 development. -/
+instance : Fintype Layer where
+  elems := {Layer.outer, Layer.inner}
+  complete := by
+    intro x
+    cases x <;> simp
 
 /-- Vertices of P(n,3), represented by a layer and an index modulo n. -/
 abbrev Vertex (n : Nat) := Layer × ZMod n
