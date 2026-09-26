@@ -31,4 +31,14 @@ The archive's own `SHA256SUMS.txt` and the nested input checksum manifest both p
 
 ## Authorship and licensing
 
-The archive contains no `LICENSE` file and no explicit licence grant was found in its text sources. This repository therefore does **not** infer or copy TreeStack's Apache-2.0 licence. No project-wide licence is asserted by this bootstrap. The mathematical conjecture/source is attributed to the cited literature; the pilot evidence is recorded as imported session material. A later maintainer may add a licence only after confirming the intended rights for both new repository material and imported code/evidence.
+The imported pilot archive contains no `LICENSE` file and no explicit licence
+grant was found in its text sources. No licence is inferred from the imported
+pilot, cited papers, Mathlib, or other third-party material merely because it is
+referenced or preserved for provenance.
+
+On 2026-09-26 the repository maintainer explicitly selected the same project
+licence used by the maintainer's other Palomar submissions: Apache-2.0. The
+root `LICENSE` and `formalization.yaml` therefore declare
+`Apache-2.0` for this submitted repository project. This project licence does
+not alter the separate provenance or licensing status of cited literature,
+dependencies, or imported third-party material.
