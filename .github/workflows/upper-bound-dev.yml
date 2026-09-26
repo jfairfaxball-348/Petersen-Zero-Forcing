@@ -1,0 +1,36 @@
+name: Upper bound development
+
+on:
+  push:
+    branches: [upper-bound-dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  upper-bound:
+    name: upper-bound-clean
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build structural upper bound from source
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.UpperBound
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Guard upper-bound source against prohibited shortcuts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -n -E '\\b(native_decide|sorry|admit)\\b' PetersenZeroForcing/UpperBound.lean; then
+            echo "Prohibited proof shortcut found in upper-bound source." >&2
+            exit 1
+          fi
