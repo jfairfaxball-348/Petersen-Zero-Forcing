@@ -26,7 +26,7 @@ sources:
     authors:
       - "Arnav Krishnan"
     id: "arXiv:2607.19412v1"
-    type: "preprint"
+    type: "paper"
     location: "https://arxiv.org/abs/2607.19412"
     relationship: "formalizes"
     note: >-
