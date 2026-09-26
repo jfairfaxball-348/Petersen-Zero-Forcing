@@ -68,6 +68,12 @@ jobs:
         run: |
           set -euo pipefail
           lake build PetersenZeroForcing.MainTheorem
+      - id: axioms
+        name: Audit transitive axioms of production theorems
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean PetersenZeroForcing/AxiomAudit.lean
       - name: Report production kernel-check statuses
         if: always()
         continue-on-error: true
@@ -76,6 +82,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           LEAN_OUTCOME: ${{ steps.lean.outcome }}
           HEADLINE_OUTCOME: ${{ steps.headline.outcome }}
+          AXIOM_OUTCOME: ${{ steps.axioms.outcome }}
         run: |
           set -euo pipefail
           job_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '.jobs[] | select(.name=="finite-lower-bound-production-clean") | .id' | tail -n 1)"
@@ -85,6 +92,9 @@ jobs:
           headline_state=error
           if [ "${HEADLINE_OUTCOME}" = success ]; then headline_state=success; fi
           if [ "${HEADLINE_OUTCOME}" = failure ]; then headline_state=failure; fi
+          axiom_state=error
+          if [ "${AXIOM_OUTCOME}" = success ]; then axiom_state=success; fi
+          if [ "${AXIOM_OUTCOME}" = failure ]; then axiom_state=failure; fi
           gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
             -f state="${lower_state}" \
             -f context="lean/finite-lower-bound-production-clean" \
@@ -93,6 +103,11 @@ jobs:
           gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
             -f state="${headline_state}" \
             -f context="lean/headline-theorem-production-clean" \
+            -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="${axiom_state}" \
+            -f context="lean/transitive-axiom-audit-clean" \
             -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
             -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
 
