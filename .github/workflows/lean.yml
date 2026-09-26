@@ -36,25 +36,61 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -R -n -E '\\b(native_decide|sorry|admit)\\b' PetersenZeroForcing/FiniteScan*.lean PetersenZeroForcing/FiniteLowerBound.lean; then
+          if grep -R -n -E '\\b(native_decide|sorry|admit)\\b' PetersenZeroForcing/FiniteScan*.lean PetersenZeroForcing/FiniteLowerBound.lean PetersenZeroForcing/Structural*.lean PetersenZeroForcing/CyclicCertificate*.lean; then
             echo "Prohibited proof shortcut found in finite lower-bound sources." >&2
             exit 1
           fi
 
-  structural-fixed-cases:
-    name: structural-fixed-cases-clean
+  structural-cyclic-13:
+    name: structural-cyclic-13-clean
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       LEAN_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Build structural fixed-n cases from source
+      - name: Build n=13 cyclic certificate from source
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: true
-          build-args: PetersenZeroForcing.StructuralFixedCases
+          build-args: PetersenZeroForcing.StructuralCyclic13
+          test: false
+          lint: false
+          use-github-cache: false
+
+  structural-cyclic-15:
+    name: structural-cyclic-15-clean
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build n=15 cyclic certificate from source
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.StructuralCyclic15
+          test: false
+          lint: false
+          use-github-cache: false
+
+  structural-cyclic-18:
+    name: structural-cyclic-18-clean
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build n=18 cyclic certificate from source
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.StructuralCyclic18
           test: false
           lint: false
           use-github-cache: false
