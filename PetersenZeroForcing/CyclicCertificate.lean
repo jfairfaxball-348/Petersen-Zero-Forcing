@@ -813,7 +813,7 @@ theorem cyclicBlockFamilyUnion_card_le_bound
     (cyclicBlockFamilyUnion n cert F).card
         ≤ ∑ b ∈ F, (CyclicCertifiedBlock.vertices n cert b).card := by
           exact Finset.card_biUnion_le
-    _ ≤ ∑ b in F,
+    _ ≤ ∑ b ∈ F,
           cert.sizeBound (CyclicCertifiedBlock.weight n cert b) := by
           exact Finset.sum_le_sum fun b _ =>
             CyclicCertifiedBlock.card_le_sizeBound n cert hrows b
