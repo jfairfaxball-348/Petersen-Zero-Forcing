@@ -228,6 +228,161 @@ theorem checkedB_specs (n : Nat) [NeZero n]
     mergeRowsB n cert = true := by
   simpa [checkedB, Bool.and_eq_true] using h
 
+
+/-- A transparent, untrusted merge witness supplied by finite certificate data.
+The Boolean checker below verifies the witness against the original
+`rotateSet`, weight, and containment semantics before it is used. -/
+structure MergeWitness
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n) where
+  target : Fin cert.shapeCount
+  shift : ZMod n
+
+def providedMergeWitnessB
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert)
+    (a b : Fin cert.shapeCount) (t : ZMod n) : Bool :=
+  let w := witness a b t
+  decide (
+    cert.weight w.target ≤ cert.weight a + cert.weight b ∧
+    cert.shape a ⊆ rotateSet n w.shift (cert.shape w.target) ∧
+    rotateSet n t (cert.shape b) ⊆
+      rotateSet n w.shift (cert.shape w.target))
+
+def mergeRowWithWitnessB
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert)
+    (a b : Fin cert.shapeCount) (t : ZMod n) : Bool :=
+  if cert.weight a + cert.weight b ≤ 7 then
+    if cyclicTouchesB n (cert.shape a) (rotateSet n t (cert.shape b)) then
+      providedMergeWitnessB n cert witness a b t
+    else
+      true
+  else
+    true
+
+def mergeRowsWithWitnessB
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert) : Bool :=
+  FiniteScan.allB (Finset.univ : Finset (Fin cert.shapeCount)) fun a =>
+    FiniteScan.allB (Finset.univ : Finset (Fin cert.shapeCount)) fun b =>
+      FiniteScan.allB (Finset.univ : Finset (ZMod n)) fun t =>
+        mergeRowWithWitnessB n cert witness a b t
+
+def checkedWithWitnessB
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert) : Bool :=
+  singletonRowsB n cert &&
+    (shapeRowsB n cert &&
+      (superadditiveB n cert &&
+        (properBoundsB n cert &&
+          mergeRowsWithWitnessB n cert witness)))
+
+theorem providedMergeWitnessB_spec
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert)
+    (a b : Fin cert.shapeCount) (t : ZMod n)
+    (h : providedMergeWitnessB n cert witness a b t = true) :
+    cert.weight (witness a b t).target ≤ cert.weight a + cert.weight b ∧
+    cert.shape a ⊆
+      rotateSet n (witness a b t).shift
+        (cert.shape (witness a b t).target) ∧
+    rotateSet n t (cert.shape b) ⊆
+      rotateSet n (witness a b t).shift
+        (cert.shape (witness a b t).target) := by
+  change decide (
+    cert.weight (witness a b t).target ≤ cert.weight a + cert.weight b ∧
+    cert.shape a ⊆
+      rotateSet n (witness a b t).shift
+        (cert.shape (witness a b t).target) ∧
+    rotateSet n t (cert.shape b) ⊆
+      rotateSet n (witness a b t).shift
+        (cert.shape (witness a b t).target)) = true at h
+  exact of_decide_eq_true h
+
+theorem mergeRowsWithWitnessB_spec
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert)
+    (h : mergeRowsWithWitnessB n cert witness = true)
+    (a b : Fin cert.shapeCount) (t : ZMod n)
+    (hweight : cert.weight a + cert.weight b ≤ 7)
+    (htouch :
+      CyclicTouches n (cert.shape a) (rotateSet n t (cert.shape b))) :
+    ∃ c : Fin cert.shapeCount, ∃ q : ZMod n,
+      cert.weight c ≤ cert.weight a + cert.weight b ∧
+      cert.shape a ⊆ rotateSet n q (cert.shape c) ∧
+      rotateSet n t (cert.shape b) ⊆ rotateSet n q (cert.shape c) := by
+  have ha := (FiniteScan.allB_eq_true
+    (Finset.univ : Finset (Fin cert.shapeCount)) _).1
+    h a (Finset.mem_univ a)
+  have hb := (FiniteScan.allB_eq_true
+    (Finset.univ : Finset (Fin cert.shapeCount)) _).1
+    ha b (Finset.mem_univ b)
+  have ht := (FiniteScan.allB_eq_true
+    (Finset.univ : Finset (ZMod n)) _).1
+    hb t (Finset.mem_univ t)
+  have htouchB :
+      cyclicTouchesB n (cert.shape a) (rotateSet n t (cert.shape b)) = true :=
+    (cyclicTouchesB_eq_true n _ _).2 htouch
+  have hw :
+      providedMergeWitnessB n cert witness a b t = true := by
+    simpa [mergeRowWithWitnessB, hweight, htouchB] using ht
+  have hv := providedMergeWitnessB_spec
+    n cert witness a b t hw
+  exact ⟨(witness a b t).target, (witness a b t).shift, hv⟩
+
+theorem mergeRowsB_eq_true_of_mergeRowsWithWitnessB
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert)
+    (h : mergeRowsWithWitnessB n cert witness = true) :
+    mergeRowsB n cert = true := by
+  apply (FiniteScan.allB_eq_true
+    (Finset.univ : Finset (Fin cert.shapeCount)) _).2
+  intro a _ha
+  apply (FiniteScan.allB_eq_true
+    (Finset.univ : Finset (Fin cert.shapeCount)) _).2
+  intro b _hb
+  apply (FiniteScan.allB_eq_true
+    (Finset.univ : Finset (ZMod n)) _).2
+  intro t _ht
+  unfold mergeRowB
+  by_cases hweight : cert.weight a + cert.weight b ≤ 7
+  · rw [if_pos hweight]
+    by_cases htouchB :
+        cyclicTouchesB n (cert.shape a) (rotateSet n t (cert.shape b)) = true
+    · rw [if_pos htouchB]
+      unfold mergeWitnessB
+      apply decide_eq_true_iff.mpr
+      exact mergeRowsWithWitnessB_spec n cert witness h a b t hweight
+        ((cyclicTouchesB_eq_true n _ _).1 htouchB)
+    · rw [if_neg htouchB]
+  · rw [if_neg hweight]
+
+theorem checkedB_eq_true_of_checkedWithWitnessB
+    (n : Nat) [NeZero n] (cert : CyclicCertificate n)
+    (witness :
+      (a b : Fin cert.shapeCount) → ZMod n → MergeWitness n cert)
+    (h : checkedWithWitnessB n cert witness = true) :
+    checkedB n cert = true := by
+  have hs :
+      singletonRowsB n cert = true ∧
+      shapeRowsB n cert = true ∧
+      superadditiveB n cert = true ∧
+      properBoundsB n cert = true ∧
+      mergeRowsWithWitnessB n cert witness = true := by
+    simpa [checkedWithWitnessB, Bool.and_eq_true] using h
+  have hm : mergeRowsB n cert = true :=
+    mergeRowsB_eq_true_of_mergeRowsWithWitnessB
+      n cert witness hs.2.2.2.2
+  simp only [checkedB, Bool.and_eq_true]
+  exact ⟨hs.1, hs.2.1, hs.2.2.1, hs.2.2.2.1, hm⟩
+
 end CyclicCertificate
 
 @[simp] theorem rotateEquiv_add_apply
