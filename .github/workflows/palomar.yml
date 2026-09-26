@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  compatibility:
-    name: palomar-compatibility
+  core:
+    name: palomar-core-compatibility
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -75,6 +75,25 @@ jobs:
         run: |
           set -euo pipefail
           lake build Challenge Solution
+
+  comparator:
+    name: palomar-comparator
+    needs: core
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-github-cache: false
       - name: Install bubblewrap for Comparator sandbox
         shell: bash
         run: |
