@@ -1,10 +1,6 @@
 name: Lean formalisation
 
 on:
-  push:
-    branches: [main, lean-formalisation]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:

@@ -1,0 +1,52 @@
+name: Structural n=21 priority
+
+on:
+  push:
+    branches: [lean-formalisation]
+  workflow_dispatch:
+
+concurrency:
+  group: structural-n21-priority-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  structural-cyclic-21:
+    name: structural-cyclic-21-clean
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - id: lean
+        name: Build n=21 cyclic certificate from source
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: PetersenZeroForcing.StructuralCyclic21
+          test: false
+          lint: false
+          use-github-cache: false
+      - name: Report n=21 kernel-check status
+        if: always()
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEAN_OUTCOME: ${{ steps.lean.outcome }}
+        run: |
+          set -euo pipefail
+          job_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '.jobs[] | select(.name=="structural-cyclic-21-clean") | .id' | tail -n 1)"
+          state=error
+          if [ "${LEAN_OUTCOME}" = success ]; then state=success; fi
+          if [ "${LEAN_OUTCOME}" = failure ]; then state=failure; fi
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="${state}" \
+            -f context="lean/structural-cyclic-21-clean" \
+            -f description="run ${GITHUB_RUN_ID} job ${job_id}" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${job_id}"
