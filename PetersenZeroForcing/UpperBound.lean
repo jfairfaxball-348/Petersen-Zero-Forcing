@@ -212,8 +212,10 @@ theorem upper_prefix_base
       · subst j
         have hv4 : v (4 : ZMod n) ∈ upperBlue n 1 :=
           initial_inner_round_one n (j := 4) (by norm_num) (by norm_num)
-        have hv1 : v (1 : ZMod n) ∈ upperBlue n 1 :=
+        have hv1cast : v (((1 : Nat) : ZMod n)) ∈ upperBlue n 1 :=
           initial_inner_round_one n (j := 1) (by norm_num) (by norm_num)
+        have hv1 : v (1 : ZMod n) ∈ upperBlue n 1 := by
+          simpa only [Nat.cast_one] using hv1cast
         have hu4seed : u (4 : ZMod n) ∈ upperSeed n := upperSeed_mem_u n (by norm_num)
         have hu4 : u (4 : ZMod n) ∈ upperBlue n 1 := by
           exact subset_iterate_forceStep n (upperSeed n) 1 hu4seed
