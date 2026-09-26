@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: lean-validation-${{ github.workflow }}-${{ github.ref }}
+  group: lean-validation-${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: true
 
 permissions:
@@ -18,8 +18,8 @@ permissions:
 
 jobs:
   validate:
-    needs: [structural-cyclic-13, structural-cyclic-15, structural-cyclic-18, structural-cyclic-21]
-    if: ${{ always() }}
+    needs: [structural-cyclic-21]
+    if: ${{ !cancelled() }}
     name: cheap-source-validation
     runs-on: ubuntu-latest
     timeout-minutes: 30
