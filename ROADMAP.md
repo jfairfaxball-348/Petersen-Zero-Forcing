@@ -1,25 +1,62 @@
 # Roadmap and phase gates
 
-## 1. PROOF — complete, gate passed
+Project status: **COMPLETE**
+
+The project is closed after the prior-art / novelty audit. It is retained as an alternative formalisation and verification method; no research paper or arXiv submission is planned.
+
+## 1. PROOF — complete, passed
 
 Decision: **PROOF_PASS** on 2026-09-23.
 
-The hostile audit checked the exact theorem for every integer `n >= 13`, directly inspected the canonical certificate and both standalone verifiers, independently matched all 1,591 ordered touching translations and containment/weight witnesses, audited projection and cyclic contact lifting, proved the repeated-merge invariant and termination, audited the first-force finite reduction and the cases `n=13,...,21`, and checked the eight-seed upper construction and final assembly.
+Audited proof/evidence commit:
+`08164566d86c7129c5b5b0b8bed9c9a539aa55c0`.
 
-Audited proof/evidence commit: `08164566d86c7129c5b5b0b8bed9c9a539aa55c0`.
+The exact theorem `Z(P(n,3)) = 8` for every `n >= 13` survived the mathematical audit.
 
-No substantive proof obligation remains open. If later formalisation exposes a genuine mathematical gap, PROOF must be reopened rather than patched around.
+## 2. LEAN — complete, passed
 
-## 2. LEAN — active, gate open
+The exact theorem was formalised in Lean.
 
-Formalise the audited theorem with the exact quantifier and definitions in `proof/`. Connect executable evidence to mathematical propositions rather than importing producer assumptions. Pin the toolchain during this phase.
+Final accepted Lean head:
+`554f90beb1614a12dca325dd2c02dbad82fe69d5`.
 
-Completion requires a clean build, no `sorry`, no added axioms, no private `native_decide` axioms, kernel-checked external evidence, and a transitive axiom audit permitting only `propext`, `Classical.choice`, and `Quot.sound` in final dependencies.
+The final trust audit permits only the expected axioms `propext`, `Classical.choice`, and `Quot.sound`.
 
-## 3. PALOMAR — locked by LEAN
+## 3. PALOMAR — complete, passed and registered
 
-After Lean and its trust audit pass, check the then-current Palomar requirements, package a faithful challenge and reproducible submission, and separately record packaging, submission, successful mechanical verification, and actual registry registration.
+Registration:
+**PALOMAR-2026-09-27-000004 v1**
 
-## 4. PAPER — locked by PALOMAR
+Immutable registered commit:
+`5dd760e79ab33b3fcf2feb93eb37e23509d184ed`.
 
-After Palomar verification **and registration**, develop the manuscript from the audited proof and formalisation. Refresh novelty checking, preserve attribution, state limitations, and include reproducibility material.
+Authoritative verification run:
+`36253833547`.
+
+The registered `palomar` snapshot is immutable.
+
+## 4. PRIOR-ART / NOVELTY AUDIT — complete
+
+Audit branch:
+`prior-art-novelty-audit-2026-09-27`
+
+Audit commit:
+`aacf9f1d292b41940b0c2c6fa2d74150d963bcbf`
+
+The audit found:
+- an earlier public proof of the exact theorem;
+- an earlier independent Lean formalisation.
+
+Accordingly, the project does not claim novelty or priority for the theorem or its formalisation.
+
+## 5. PAPER — not pursued
+
+The paper phase was intentionally not entered after the prior-art findings.
+
+## 6. ARXIV — not pursued
+
+No arXiv submission is planned.
+
+## Final disposition
+
+The repository remains public as a completed alternative formalisation and verification method for the theorem. No further phase is active.
