@@ -314,4 +314,10 @@ Reason: the literature/public-source audit is sufficiently thorough to support c
 - an independent complete Lean formalisation of that proof architecture;
 - an immutable Palomar-registered mechanically verified snapshot.
 
-The RESEARCH PAPER phase is therefore unlocked, with the mandatory positioning constraints recorded above.
+The literature-audit gate itself is complete. After reviewing these findings, the project owner elected on 2026-09-27 **not to enter the RESEARCH PAPER or ARXIV phases**. The project is closed and retained only as an alternative formalisation and verification method.
+
+## R. Post-audit project disposition
+
+**PROJECT COMPLETE — NO PUBLICATION PLANNED.**
+
+The earlier public mathematical proof and earlier independent Lean formalisation make theorem/formalisation priority unavailable. The project will therefore stop at this stage. Its preserved role is an alternative Lean formalisation/verification route, including the immutable Palomar registration `PALOMAR-2026-09-27-000004 v1`. No research paper or arXiv submission will be prepared from this project.
