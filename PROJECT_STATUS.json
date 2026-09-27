@@ -1,19 +1,31 @@
 {
   "project": "Zero Forcing in Generalized Petersen Graphs",
   "repository": "jfairfaxball-348/Petersen-Zero-Forcing",
+  "project_state": "complete",
+  "completion_date": "2026-09-27",
+  "completion_disposition": "Retained as an alternative formalisation and verification method. No research paper or arXiv submission is planned after the prior-art audit found earlier public proof and formalisation work.",
   "suggested_lean_namespace": "PetersenZeroForcing",
   "target_theorem": "For every integer n >= 13, Z(P(n,3)) = 8.",
-  "phase_order": ["PROOF", "LEAN", "PALOMAR", "PAPER"],
+  "phase_order": [
+    "PROOF",
+    "LEAN",
+    "PALOMAR",
+    "PRIOR_ART_NOVELTY",
+    "PAPER",
+    "ARXIV"
+  ],
   "scaffold": "complete",
   "imported_pilot_verdict": "PILOT_POSITIVE",
   "baseline": "reproduced",
-  "active_phase": "LEAN",
+  "active_phase": "COMPLETE",
   "independent_proof_audit": "passed",
   "phase_gates": {
     "PROOF": "passed",
-    "LEAN": "open",
-    "PALOMAR": "locked_by_LEAN",
-    "PAPER": "locked_by_PALOMAR"
+    "LEAN": "passed",
+    "PALOMAR": "passed",
+    "PRIOR_ART_NOVELTY": "completed",
+    "PAPER": "not_pursued_after_prior_art_audit",
+    "ARXIV": "not_pursued_after_prior_art_audit"
   },
   "proof_audit": {
     "decision": "PROOF_PASS",
@@ -28,6 +40,40 @@
     "python_finite_reference_blob": "f716a29935108f7323bdb7bad58312c8cacab928",
     "blocking_findings": 0
   },
+  "lean_formalisation": {
+    "state": "complete",
+    "branch": "lean-formalisation",
+    "pull_request": 2,
+    "final_verified_head": "554f90beb1614a12dca325dd2c02dbad82fe69d5",
+    "toolchain": "leanprover/lean4:v4.19.0",
+    "mathlib": "v4.19.0",
+    "transitive_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "native_decide_allowed": false
+  },
+  "palomar": {
+    "state": "registered",
+    "branch": "palomar",
+    "registered_commit": "5dd760e79ab33b3fcf2feb93eb37e23509d184ed",
+    "registration_id": "PALOMAR-2026-09-27-000004",
+    "version": 1,
+    "verification_run": "36253833547",
+    "verification": "passed",
+    "note": "The registered Palomar snapshot is immutable and remains unchanged."
+  },
+  "prior_art_novelty_audit": {
+    "state": "complete",
+    "date": "2026-09-27",
+    "audit_branch": "prior-art-novelty-audit-2026-09-27",
+    "audit_commit": "aacf9f1d292b41940b0c2c6fa2d74150d963bcbf",
+    "earlier_public_proof_found": true,
+    "earlier_public_lean_formalisation_found": true,
+    "publication_decision": "do_not_publish",
+    "project_positioning": "alternative_formalisation_method_only"
+  },
   "treestack_blueprint": {
     "repository": "jfairfaxball-348/TreeStack-Structural-Certificates-for-Stacking-on-Trees",
     "commit": "9963a9d7d30c2c31a251e069ac87fea0c802882b"
@@ -38,10 +84,15 @@
     "certificate_sha256": "6da40e67669395d515e2da5e4e0c25c901ca856ff4e0a4fb489af5b7e1da6453",
     "certificate_shapes": 38,
     "ordered_touching_merges": 1591,
-    "finite_scan_range": [13, 30],
+    "finite_scan_range": [
+      13,
+      30
+    ],
     "finite_reduced_entries_per_implementation": 14271318,
-    "maximum_closure": {"13": 18, "14_to_30": 16}
+    "maximum_closure": {
+      "13": 18,
+      "14_to_30": 16
+    }
   },
-  "next_permitted_task": "Lean formalisation of the audited theorem and dependency graph; do not begin Palomar work until the Lean trust gate passes.",
-  "bootstrap_date": "2026-09-23"
+  "next_permitted_task": null
 }
