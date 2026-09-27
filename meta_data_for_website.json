@@ -2,28 +2,32 @@
   "schema_version": 1,
   "title": "Zero Forcing in Generalized Petersen Graphs",
   "slug": "petersen-zero-forcing",
-  "status": "Active research",
-  "headline": "The mathematical proof of $Z(P(n,3))=8$ for every $n\\ge 13$ has passed an independent hostile audit; Lean formalisation is the next active phase.",
+  "status": "Complete",
+  "headline": "Completed alternative Lean formalisation and Palomar-verified implementation of $Z(P(n,3))=8$ for every $n\\ge 13$; no publication is planned after the prior-art audit found earlier public proofs/formalisations.",
   "year": 2026,
-  "date": "2026-09-23",
-  "description": "Research on the zero-forcing number of the generalized Petersen graphs $P(n,3)$. The imported computational pilot and baseline were reproduced, and the exact quantified mathematical proof has now passed an independent hostile audit. Lean formalisation is next; Palomar verification and publication work have not begun.",
+  "date": "2026-09-27",
+  "description": "Completed formal-verification project for the theorem $Z(P(n,3))=8$ for every $n\\ge 13$. The project developed and audited an alternative proof architecture, completed a Lean 4 formalisation, and registered the verified snapshot with Palomar. A subsequent prior-art audit found an earlier public proof and an earlier independent Lean formalisation, so the project is retained as an alternative formalisation method and will not proceed to a research paper or arXiv submission.",
   "topics": [
     "Graph theory",
     "Zero forcing",
     "Generalized Petersen graphs",
+    "Formal verification",
+    "Lean 4",
     "Computational verification"
   ],
   "github_url": "https://github.com/jfairfaxball-348/Petersen-Zero-Forcing",
-  "palomar_id": null,
-  "palomar_url": null,
+  "palomar_id": "PALOMAR-2026-09-27-000004",
+  "palomar_url": "https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-27-000004&version=1",
   "paper_url": null,
   "arxiv_id": null,
   "arxiv_url": null,
   "doi": null,
-  "formalisation_system": null,
-  "verification": "Computational baseline reproduced; independent mathematical proof audit passed; Lean formalisation pending.",
-  "attribution": "The target is Conjecture 5 in Arnav Krishnan's July 2026 preprint A correction to the Zero Forcing Number of the Generalized Petersen Graphs P(n,3) (arXiv:2607.19412v1). John Fairfax-Ball's repository reproduced the imported computational baseline and independently audited the candidate proof; it does not claim authorship of the underlying conjecture.",
+  "formalisation_system": "Lean 4",
+  "verification": "Mathematical proof audit passed; complete Lean formalisation passed its kernel and transitive-axiom audits; Palomar technical verification passed and the immutable snapshot is registered as PALOMAR-2026-09-27-000004 v1.",
+  "attribution": "The corrected target appears as Conjecture 5 in Arnav Krishnan's July 2026 preprint A correction to the Zero Forcing Number of the Generalized Petersen Graphs P(n,3) (arXiv:2607.19412v1). The project's prior-art audit subsequently found an earlier public proof package and an earlier independent Lean formalisation. This repository therefore makes no priority or publication claim and is retained as an alternative formalisation and verification method.",
   "original_source": "https://arxiv.org/abs/2607.19412v1",
   "featured": true,
-  "additional_links": []
+  "additional_links": [
+    "https://github.com/jfairfaxball-348/Petersen-Zero-Forcing/commit/aacf9f1d292b41940b0c2c6fa2d74150d963bcbf"
+  ]
 }
