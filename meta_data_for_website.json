@@ -3,17 +3,11 @@
   "title": "Zero Forcing in Generalized Petersen Graphs",
   "slug": "petersen-zero-forcing",
   "status": "Archived",
-  "headline": "An independent Lean 4 formalisation and Palomar-verified snapshot of $Z(P(n,3))=8$ for every $n\\ge 13$, retained as an archived alternative after prior-art review.",
+  "headline": "An independent Lean 4 formalisation and Palomar-verified route to $Z(P(n,3))=8$ for every $n\\ge 13$, archived after prior-art review.",
   "year": 2026,
-  "description": "This project studies zero forcing in generalized Petersen graphs and establishes $Z(P(n,3))=8$ for every integer $n\\ge 13$ via an audited proof architecture, reproducible computational certificates, and a complete Lean 4 formalisation. The Lean development passed its kernel and transitive-axiom audits, and the registered snapshot passed Palomar verification. A later prior-art audit identified an earlier public proof and an earlier independent Lean formalisation, so this repository is archived as an alternative verification route rather than a novelty or priority claim.",
-  "topics": [
-    "Graph theory",
-    "Zero forcing",
-    "Generalized Petersen graphs",
-    "Formal verification",
-    "Lean 4",
-    "Computational verification"
-  ],
+  "date": "2026-09-27",
+  "description": "This project establishes $Z(P(n,3))=8$ for every integer $n\\ge 13$ via an audited proof architecture, reproducible computational certificates and a complete Lean 4 formalisation. The registered snapshot passed Palomar verification. A later prior-art audit identified an earlier public proof and an earlier independent Lean formalisation, so this repository is retained as an alternative verification route rather than a novelty or priority claim.",
+  "topics": ["Graph theory", "Zero forcing", "Generalized Petersen graphs", "Formal verification", "Lean 4", "Computational verification"],
   "github_url": "https://github.com/jfairfaxball-348/Petersen-Zero-Forcing",
   "palomar_id": "PALOMAR-2026-09-27-000004",
   "palomar_url": "https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-27-000004&version=1",
@@ -23,10 +17,18 @@
   "doi": null,
   "formalisation_system": "Lean 4",
   "verification": "Mathematical proof audit passed; the Lean 4 formalisation is complete and passed its final kernel/transitive-axiom audit; Palomar verification passed and the immutable snapshot is registered as PALOMAR-2026-09-27-000004 v1.",
-  "attribution": "The corrected target appears as Conjecture 5 in Arnav Krishnan's July 2026 preprint, after a 2020 paper by Rashidi, Shajareh Poursalavati, and Tavakkoli had claimed the stronger $n\\ge 12$ statement. John Fairfax-Ball's contribution in this repository is an alternative proof and verification architecture, computational certification, and an independent Lean 4 formalisation. The prior-art audit found an earlier public proof package by txmy and an earlier independent Lean formalisation by TrueTuring, so no first-proof, first-formalisation, novelty, or publication-priority claim is made.",
-  "original_source": "https://arxiv.org/abs/2607.19412v1",
+  "attribution": "The corrected target appears as Conjecture 5 in Arnav Krishnan's July 2026 preprint. John Fairfax-Ball's contribution is an alternative proof and verification architecture, computational certification and an independent Lean 4 formalisation. Prior-art review found an earlier public proof by txmy and an earlier independent Lean formalisation by TrueTuring, so no first-proof, first-formalisation, novelty or publication-priority claim is made.",
+  "original_source": "Arnav Krishnan, “A correction to the Zero Forcing Number of the Generalized Petersen Graphs P(n,3)”, arXiv:2607.19412v1 (2026), Conjecture 5. Prior-art review subsequently located an earlier public proof package by txmy.",
   "featured": true,
   "additional_links": [
+    {
+      "label": "Krishnan correction",
+      "url": "https://arxiv.org/abs/2607.19412"
+    },
+    {
+      "label": "Earlier public proof",
+      "url": "https://github.com/txmy/pn3_zero_forcing_solution"
+    },
     {
       "label": "Prior-art / novelty audit",
       "url": "https://github.com/jfairfaxball-348/Petersen-Zero-Forcing/blob/aacf9f1d292b41940b0c2c6fa2d74150d963bcbf/audit/PRIOR_ART_NOVELTY.md"
